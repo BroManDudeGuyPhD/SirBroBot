@@ -5,7 +5,7 @@ package bromandudeguyphd.sirbrobot;
 // * To change this template file, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package com.bromandudeguyphd.sirbrobot;
+//package com.bromandudeguyphd.SirBroBot;
 //
 ///**
 // *

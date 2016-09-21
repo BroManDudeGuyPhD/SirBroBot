@@ -10,7 +10,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xms8000m -classpath %classpath bromandudeguyphd.sirbrobot.sirbrobot -classpath %classpath com.bromandudeguyphd.sirbrobot.sirbrobot -classpath %classpath bromandudeguyphd.sirbrobot.sirbrobot</exec.args>
+                <exec.args>-Xms8000m -classpath %classpath bromandudeguyphd.sirbrobot.SirBroBot -classpath %classpath
+                    com.bromandudeguyphd.sirbrobot.SirBroBot -classpath %classpath bromandudeguyphd.sirbrobot.SirBroBot</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +25,9 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Xms8000m -classpath %classpath bromandudeguyphd.sirbrobot.sirbrobot -classpath %classpath com.bromandudeguyphd.sirbrobot.sirbrobot -classpath %classpath bromandudeguyphd.sirbrobot.sirbrobot</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Xms8000m -classpath
+                    %classpath bromandudeguyphd.sirbrobot.SirBroBot -classpath %classpath
+                    com.bromandudeguyphd.sirbrobot.SirBroBot -classpath %classpath bromandudeguyphd.sirbrobot.SirBroBot</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +42,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xms8000m -classpath %classpath bromandudeguyphd.sirbrobot.sirbrobot -classpath %classpath com.bromandudeguyphd.sirbrobot.sirbrobot -classpath %classpath bromandudeguyphd.sirbrobot.sirbrobot</exec.args>
+                <exec.args>-Xms8000m -classpath %classpath bromandudeguyphd.sirbrobot.SirBroBot -classpath %classpath
+                    com.bromandudeguyphd.sirbrobot.SirBroBot -classpath %classpath bromandudeguyphd.sirbrobot.SirBroBot</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

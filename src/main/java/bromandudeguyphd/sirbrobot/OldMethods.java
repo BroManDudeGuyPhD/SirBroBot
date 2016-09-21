@@ -118,8 +118,8 @@ public class OldMethods {
 //            event.getMessage().reply(String.format("you've invited me to join the %s server!", response.getGuildName()));
 //            boolean inviteDeny = false;
 //
-//            for (int i = 0; i < sirbrobot.client.getGuilds().size(); i++) {
-//                if (response.getGuildName().equals(sirbrobot.client.getGuilds().get(i).getName())) {
+//            for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
+//                if (response.getGuildName().equals(SirBroBot.client.getGuilds().get(i).getName())) {
 //                    event.getMessage().reply(String.format("I am already Knight of the %s server", response.getGuildName()));
 //
 //                    invite.delete();

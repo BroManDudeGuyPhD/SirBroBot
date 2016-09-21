@@ -14,3 +14,5 @@
 /target/
 /src/tagData/gifs/
 /src/tagData/images/
+.idea/
+src/main/java/bromandudeguyphd/sirbrobot/tokens.java
