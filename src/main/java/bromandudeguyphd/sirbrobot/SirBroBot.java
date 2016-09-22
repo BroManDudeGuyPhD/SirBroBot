@@ -23,9 +23,9 @@ import com.samczsun.skype4j.exceptions.InvalidCredentialsException;
 import com.samczsun.skype4j.exceptions.NotParticipatingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.Discord4J;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 
@@ -39,7 +39,8 @@ import java.io.IOException;
 public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
-    public static IDiscordClient client;
+    private static final int SHARD_COUNT = 5;
+    public static IDiscordClient[] clients = new IDiscordClient[SHARD_COUNT];
     public static Skype skype;
     public static IUser root;
     public static CommandDispatcher dispatcher;
@@ -51,8 +52,16 @@ public class SirBroBot {
         boot();
     }
 
-    public static void boot() throws DiscordException {
-        client = new ClientBuilder().withToken(tokens.discordToken()).login();
+    public static void boot() throws DiscordException, InterruptedException {
+        Discord4J.disableChannelWarnings();
+        dispatcher = new CommandDispatcher();
+        MainListener listener = new MainListener();
+        for(int i = 0; i < SHARD_COUNT; i++){
+            clients[i] = new ClientBuilder().withShard(i, SHARD_COUNT).withToken(tokens.discordToken()).login();
+            clients[i].getDispatcher().registerListener(dispatcher);
+            clients[i].getDispatcher().registerListener(listener);
+            Thread.sleep(6000);
+        }
     }
 
     public static void bootSkype() throws InvalidCredentialsException, ConnectionException, NotParticipatingException {

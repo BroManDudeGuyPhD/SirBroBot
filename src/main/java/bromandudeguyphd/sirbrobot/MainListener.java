@@ -116,7 +116,7 @@ public class MainListener {
 
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
-
+        SirBroBot.LOGGER.info("Booted!!");
         sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
         event.getClient().changeStatus(status);
         serversJoined = event.getClient().getGuilds();
