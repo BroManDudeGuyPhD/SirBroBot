@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>e1c24a4</version>
+            <version>dev-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.twitter4j</groupId>

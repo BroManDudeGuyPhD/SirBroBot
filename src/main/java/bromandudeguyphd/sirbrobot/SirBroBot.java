@@ -40,7 +40,7 @@ public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
     private static final int SHARD_COUNT = 5;
-    public static IDiscordClient[] clients = new IDiscordClient[SHARD_COUNT];
+    public static IDiscordClient client;
     public static Skype skype;
     public static IUser root;
     public static CommandDispatcher dispatcher;
@@ -54,14 +54,9 @@ public class SirBroBot {
 
     public static void boot() throws DiscordException, InterruptedException {
         Discord4J.disableChannelWarnings();
-        dispatcher = new CommandDispatcher();
-        MainListener listener = new MainListener();
-        for(int i = 0; i < SHARD_COUNT; i++){
-            clients[i] = new ClientBuilder().withShard(i, SHARD_COUNT).withToken(tokens.discordToken()).login();
-            clients[i].getDispatcher().registerListener(dispatcher);
-            clients[i].getDispatcher().registerListener(listener);
-            Thread.sleep(6000);
-        }
+        client = new ClientBuilder().withToken(tokens.discordToken()).withShard(SHARD_COUNT).login();
+        client.getDispatcher().registerListener(new CommandDispatcher());
+        client.getDispatcher().registerListener(new MainListener());
     }
 
     public static void bootSkype() throws InvalidCredentialsException, ConnectionException, NotParticipatingException {

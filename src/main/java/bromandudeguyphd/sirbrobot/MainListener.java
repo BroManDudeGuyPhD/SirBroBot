@@ -4,7 +4,6 @@ import bromandudeguyphd.htmlparsing.HTMLUnit;
 import bromandudeguyphd.htmlparsing.TextParser;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
-import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.*;
 import sx.blah.discord.handle.obj.*;
@@ -2326,10 +2325,8 @@ public class MainListener {
 
     public static long getUsers() {
         long totalUsers = 0;
-        for(IDiscordClient client : SirBroBot.clients){
-            for (IGuild guild : client.getGuilds()) {
-                totalUsers += guild.getUsers().size();
-            }
+        for (IGuild guild : SirBroBot.client.getGuilds()) {
+            totalUsers += guild.getUsers().size();
         }
         return totalUsers;
     }
