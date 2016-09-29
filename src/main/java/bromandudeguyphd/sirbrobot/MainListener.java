@@ -1,6 +1,7 @@
 package bromandudeguyphd.sirbrobot;
 
 import bromandudeguyphd.htmlparsing.HTMLUnit;
+import bromandudeguyphd.htmlparsing.PostingHTMLData;
 import bromandudeguyphd.htmlparsing.TextParser;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
@@ -60,12 +61,12 @@ public class MainListener {
     Twitter twitter = TwitterFactory.getSingleton();
 
     boolean updateDispatcher = false;
-    boolean messageStatus = true;
+    boolean messageStatus = false;
     //private final HashMap<IUser, Long> commandCooldown = new HashMap<>();
     int usageCounter = 0;
 
     File dance = new File("src/images/dancingKnight.gif");
-    //    File joust = new File("src/images/joust.gif");
+    //File joust = new File("src/images/joust.gif");
     File wakeup = new File("src/images/wakeup.gif");
     File taunt = new File("src/images/taunt.gif");
     File insult = new File("src/images/insult.gif");
@@ -77,27 +78,27 @@ public class MainListener {
 
     @EventSubscriber
     public void onGuildCreate(GuildCreateEvent event) {
-        if (updateDispatcher) {
-            RequestBuffer.request(() -> {
-                try {
-                    Messages.send("Thanks for adding me to your guild! It definitely means a lot to the guy that made me.\n"
-                            + "My main command is `?commands`. It lets you see what I am capable of. Most of my features are opt-in, meaing you must enable them for them to work.\n"
-                            + "Definitely be sure to join the project at https://discord.gg/0wCCISzMcKMkfX88 \n"
-                            + "And check out my \n"
-                            + "**Twitter account:** <https://twitter.com/SirBroBotThe1st>\n"
-                            + "**Website: **http://bootswithdefer.tumblr.com/SirBroBot\n", event.getClient().getOrCreatePMChannel(event.getGuild().getOwner()));
-                } catch (DiscordException e) {
-                    SirBroBot.LOGGER.error(null, e);
-                }
-            });
-            IChannel updateChannel = event.getClient().getChannelByID("197567480439373824");
-            String alert = "Joined guild " + event.getGuild().getName()
-                    + " | Members: " + event.getGuild().getUsers().size()
-                    + "  :::  Server Count: " + event.getClient().getGuilds().size()
-                    + " User Count: " + getUsers();
-            System.out.println(alert);
-            Messages.send(alert, updateChannel);
-        }
+//        if (SirBroBot.client.isReady()) {
+//            RequestBuffer.request(() -> {
+//                try {
+//                    Messages.send("Thanks for adding me to your guild! It definitely means a lot to the guy that made me.\n"
+//                            + "My main command is `?commands`. It lets you see what I am capable of. Most of my features are opt-in, meaing you must enable them for them to work.\n"
+//                            + "Definitely be sure to join the project at https://discord.gg/0wCCISzMcKMkfX88 \n"
+//                            + "And check out my \n"
+//                            + "**Twitter account:** <https://twitter.com/SirBroBotThe1st>\n"
+//                            + "**Website: **http://bootswithdefer.tumblr.com/SirBroBot\n", event.getClient().getOrCreatePMChannel(event.getGuild().getOwner()));
+//                } catch (DiscordException e) {
+//                    SirBroBot.LOGGER.error(null, e);
+//                }
+//            });
+//            IChannel updateChannel = event.getClient().getChannelByID("197567480439373824");
+//            String alert = "Joined guild " + event.getGuild().getName()
+//                    + " | Members: " + event.getGuild().getUsers().size()
+//                    + "  :::  Server Count: " + event.getClient().getGuilds().size()
+//                    + " User Count: " + getUsers();
+//            System.out.println(alert);
+//            Messages.send(alert, updateChannel);
+//        }
     }
 
     @EventSubscriber
@@ -116,6 +117,8 @@ public class MainListener {
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
         SirBroBot.LOGGER.info("Booted!!");
+        System.out.println("Booted!");
+        
         sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
         event.getClient().changeStatus(status);
         serversJoined = event.getClient().getGuilds();
@@ -152,13 +155,13 @@ public class MainListener {
         fileIO.readHash(LAD, "LAD");
         fileIO.readHash(LADdata, "LADdata");
         fileIO.readHash(PMD, "PMD");
-//
-//        PostingHTMLData post = new PostingHTMLData();
-//        try {
-//            post.sendReq(event.getClient().getGuilds().size());
-//        } catch (IOException ex) {
-//            SirBroBot.LOGGER.error(null, ex);
-//        }
+
+        PostingHTMLData post = new PostingHTMLData();
+        try {
+            post.sendReq(SirBroBot.client.getGuilds().size());
+        } catch (IOException ex) {
+            SirBroBot.LOGGER.error(null, ex);
+        }
 
 //        for (int i = 0; i < autoJoinChannels.size(); i++) {
 //            try {
@@ -174,9 +177,6 @@ public class MainListener {
         updateDispatcher = true;
     }
 
-    /**
-     * @param event
-     */
     @EventSubscriber
     public void handleJoin(UserJoinEvent event) {
         if (WAD.containsKey(event.getGuild().getID())) {
@@ -995,9 +995,9 @@ public class MainListener {
                     event.getMessage().getChannel().sendMessage("Server stats sent!");
                     usageCounter++;
 
-                } else if (Mcontent.startsWith("?tweet ")) {
+                } else if (Mcontent.startsWith("?tweet:")) {
 
-                    String[] tweetToSend = message.getContent().split(":");
+                    String[] tweetToSend = message.getContent().trim().split(":");
                     Status status = twitter.updateStatus(tweetToSend[1]);
                     event.getMessage().getChannel().sendMessage("Tweet sent!");
                     twitterID = status.getId();
@@ -1025,10 +1025,14 @@ public class MainListener {
                     message.reply("Users and servers I see: \n" + temp.toString());
 
                     usageCounter++;
-                } else if (Mcontent.equals("?togglemessages")) {
+                } 
+                
+                else if (Mcontent.equals("?togglemessages")) {
                     messageStatus = !messageStatus;
                     message.reply("Messages " + (messageStatus ? "ON" : "OFF"));
-                } else if (Mcontent.equals("?toggleupdates")) {
+                } 
+                
+                else if (Mcontent.equals("?toggleupdates")) {
                     updateDispatcher = !updateDispatcher;
                     message.reply("Updates " + (updateDispatcher ? "ON" : "OFF"));
                 } else if (Mcontent.contains("?guildwithchannel")) {
@@ -1534,7 +1538,7 @@ public class MainListener {
                 usageCounter++;
             } else if (Mcontent.startsWith("?ocommands")) {
                 if (message.getAuthor().getID().equals(message.getGuild().getOwner().getID())) {
-                    message.getChannel().sendMessage(commands.commandListOwner);
+                    Messages.send(commands.commandListOwner, chan);
                 }
 
                 if (!Objects.equals(message.getAuthor().getID(), message.getGuild().getOwner().getID())) {
@@ -1556,7 +1560,7 @@ public class MainListener {
                 usageCounter++;
             } else if (Mcontent.equals("?servers")) {
 
-                Messages.send("I am currently the Knight of " + event.getClient().getGuilds().size() + " servers\n", chan);
+                Messages.send("I am currently the Knight of " + SirBroBot.client.getGuilds().size() + " servers\n", chan);
                 usageCounter++;
             } else if (Mcontent.equals("?serverinfo")) {
 
@@ -2084,7 +2088,9 @@ public class MainListener {
                     }
                 }
 
-            } else if (Mcontent.startsWith(">search:")) {
+            } 
+            
+            else if (Mcontent.startsWith(">search:")) {
                 AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
                 String[] videoSearch = Mcontent.split("search:");
                 String temp;
@@ -2095,7 +2101,7 @@ public class MainListener {
                         message.delete();
                     } catch (MissingPermissionsException ignored) {
                     }
-                    tempmessage = messageBuilder.withContent("Searching **YouTube** for terms: " + videoSearch[1].trim()).send();
+                    tempmessage = messageBuilder.withChannel(chan).withContent("Searching **YouTube** for terms: " + videoSearch[1].trim()).send();
                     temp = queueFromYouTubeSearch(audio, videoSearch[1].trim(), message.getGuild().getID());
                 } else {
                     temp = null;
@@ -2120,11 +2126,11 @@ public class MainListener {
 
                     if (videoSearch.length == 2) {
                         message.delete();
-                        tempmessage = messageBuilder.withContent("Searching **YouTube** for terms: " + videoSearch[1].trim()).send();
+                        tempmessage = messageBuilder.withChannel(chan).withContent("Searching **YouTube** for terms: " + videoSearch[1].trim()).send();
                         temp = queueFromYouTubeSearch(audio, videoSearch[1].trim(), message.getGuild().getID());
                     } else {
                         temp = null;
-                        message.reply("Command error. Syntax is `>stream search: keywords`");
+                        message.reply("Command error. Syntax is `>stream search: keywords` OR `>search: keywords`");
                     }
                     if (temp != null) {
                         IUser user = message.getAuthor();

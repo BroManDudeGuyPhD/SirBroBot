@@ -39,7 +39,7 @@ import java.io.IOException;
 public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
-    private static final int SHARD_COUNT = 5;
+    private static final int SHARD_COUNT = 2;
     public static IDiscordClient client;
     public static Skype skype;
     public static IUser root;
@@ -47,8 +47,8 @@ public class SirBroBot {
     private static long uptime = System.currentTimeMillis();
 
     public static void main(String[] args) throws Exception {
-//        FileChecker.purge();
-        //bootSkype();
+    FileChecker.purge();
+        bootSkype();
         boot();
     }
 
@@ -61,7 +61,7 @@ public class SirBroBot {
 
     public static void bootSkype() throws InvalidCredentialsException, ConnectionException, NotParticipatingException {
         String password = tokens.skypePassword();
-        skype = new SkypeBuilder("SirBroBot", password).withAllResources().build();
+        skype = new SkypeBuilder("sirbrobot", password).withAllResources().build();
         skype.login();
 
         skype.getEventDispatcher().registerListener(new Listener() {
