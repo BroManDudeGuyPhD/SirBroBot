@@ -39,14 +39,14 @@ public class FileChecker {
      //list out all the file name with .txt extension
      String[] list = dir.list(filter);
 
-     if (list.length == 0) return;
+       if (list == null || list.length == 0) return;
 
      File fileDelete;
 
      for (String file : list){
-   	String temp = new StringBuffer(FILE_DIR)
-                      .append(File.separator)
-                      .append(file).toString();
+   	String temp = FILE_DIR +
+            File.separator +
+            file;
     	fileDelete = new File(temp);
     	boolean isdeleted = fileDelete.delete();
     	System.out.println("file : " + temp + " is deleted : " + isdeleted);

@@ -1,5 +1,6 @@
 package bromandudeguyphd.sirbrobot.commands;
 
+import bromandudeguyphd.sirbrobot.SirBroBot;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -12,7 +13,13 @@ import java.util.function.BiPredicate;
 public enum CommandTypes {
     MUSIC(">", (guild, user) -> true),
     OWNER("?", (guild, user) -> guild.getOwner().equals(user)),
-    NORMAL("?", (guild, user) -> true);
+    NORMAL("?", (guild, user) -> true),
+    MENTION(null, (guild, user) -> true){
+        @Override
+        public String getTrigger() {
+            return SirBroBot.client.getOurUser().getID();
+        }
+    };
 
     private String trigger;
     private BiPredicate<IGuild, IUser> filter;

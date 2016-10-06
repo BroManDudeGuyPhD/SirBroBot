@@ -1,7 +1,6 @@
 package bromandudeguyphd.sirbrobot;
 
 import bromandudeguyphd.htmlparsing.HTMLUnit;
-import bromandudeguyphd.htmlparsing.PostingHTMLData;
 import bromandudeguyphd.htmlparsing.TextParser;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
@@ -156,12 +155,12 @@ public class MainListener {
         fileIO.readHash(LADdata, "LADdata");
         fileIO.readHash(PMD, "PMD");
 
-        PostingHTMLData post = new PostingHTMLData();
-        try {
-            post.sendReq(SirBroBot.client.getGuilds().size());
-        } catch (IOException ex) {
-            SirBroBot.LOGGER.error(null, ex);
-        }
+//        PostingHTMLData post = new PostingHTMLData();
+//        try {
+//            post.sendReq(SirBroBot.client.getGuilds().size());
+//        } catch (IOException ex) {
+//            SirBroBot.LOGGER.error(null, ex);
+//        }
 
 //        for (int i = 0; i < autoJoinChannels.size(); i++) {
 //            try {

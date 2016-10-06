@@ -24,7 +24,7 @@ public class Messages {
     public static void send(String msg, IChannel chan){
         RequestBuffer.request(() -> {
             try {
-                new MessageBuilder(chan.getClient()).appendContent(msg).withChannel(chan).send();
+                new MessageBuilder(chan.getClient()).appendContent(msg.substring(0, Math.min(msg.length(), 1999))).withChannel(chan).send();
             } catch (DiscordException | MissingPermissionsException e) {
                 sendException("Could not send message! ", e, chan);
             }

@@ -48,14 +48,16 @@ public class SirBroBot {
 
     public static void main(String[] args) throws Exception {
     FileChecker.purge();
-        bootSkype();
+        try {
+            bootSkype();
+        }catch (Exception ignored){}
         boot();
     }
 
     public static void boot() throws DiscordException, InterruptedException {
         Discord4J.disableChannelWarnings();
         client = new ClientBuilder().withToken(tokens.discordToken()).withShard(SHARD_COUNT).login();
-        client.getDispatcher().registerListener(new CommandDispatcher());
+        client.getDispatcher().registerListener(dispatcher = new CommandDispatcher());
         client.getDispatcher().registerListener(new MainListener());
     }
 
