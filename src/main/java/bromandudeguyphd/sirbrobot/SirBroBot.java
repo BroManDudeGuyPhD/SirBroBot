@@ -39,7 +39,7 @@ import java.io.IOException;
 public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
-    private static final int SHARD_COUNT = 2;
+    private static final int SHARD_COUNT = 5;
     public static IDiscordClient client;
     public static Skype skype;
     public static IUser root;
@@ -56,7 +56,7 @@ public class SirBroBot {
 
     public static void boot() throws DiscordException, InterruptedException {
         Discord4J.disableChannelWarnings();
-        client = new ClientBuilder().withToken(tokens.discordToken()).withShard(SHARD_COUNT).login();
+        client = new ClientBuilder().withToken(tokens.discordToken()).withShards(SHARD_COUNT).login();
         client.getDispatcher().registerListener(dispatcher = new CommandDispatcher());
         client.getDispatcher().registerListener(new MainListener());
     }

@@ -1638,7 +1638,7 @@ public class MainListener {
                         .sendMessage("Info for user " + message.getAuthor().getName() + " #" + message.getAuthor().getDiscriminator() + "\n"
                                 + "ID: " + message.getAuthor().getID() + "\n"
                                 + "Account created: " + message.getAuthor().getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
-                                + "Connected Voice Channel: " + message.getAuthor().getClient().getLaunchTime() + "/n```"
+                                + "Connected Voice Channel: " + message.getAuthor().getClient().getConnectedVoiceChannels().get(0).getName() + "/n```"
                                 + "IconURL: " + message.getAuthor().getAvatarURL());
 
                 usageCounter++;

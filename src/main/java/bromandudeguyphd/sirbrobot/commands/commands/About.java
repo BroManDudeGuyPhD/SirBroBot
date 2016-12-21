@@ -26,7 +26,7 @@ public class About implements Command {
                 + "Text Channels: " + channel.getClient().getChannels(false).size() + "\n"
                 + "Total Users: " + MainListener.getUsers() + "\n"
                 + "Messages Seen: " + MainListener.getMessagesSeen() + "\n"
-                + "Uptime: " + new SimpleDateFormat("DDD HH:mm:ss").format(new Date(SirBroBot.getUptime())) + "\n"
+                //+ "Uptime: " + new SimpleDateFormat("DDD HH:mm:ss").format(new Date(MainListener.getUptime())) + "\n"
                 + "My server (Join me!): https://discord.gg/0wCCISzMcKMkfX88 \n"
                 + "----------------\n"
                 + "Programmer: BroManDudeGuyPhD#5846 \n"
