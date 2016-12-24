@@ -1,7 +1,6 @@
 package bromandudeguyphd.sirbrobot;
 
-import bromandudeguyphd.htmlparsing.HTMLUnit;
-import bromandudeguyphd.htmlparsing.TextParser;
+import bromandudeguyphd.htmlparsing.*;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -115,12 +114,6 @@ public class MainListener {
 
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
-        SirBroBot.LOGGER.info("Booted!!");
-        System.out.println("Booted!");
-        
-        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
-        event.getClient().changeStatus(status);
-        serversJoined = event.getClient().getGuilds();
 
 //        try {
 //            fileIO.readFile(curseWords, "bannedWords.txt");
@@ -155,12 +148,14 @@ public class MainListener {
         fileIO.readHash(LADdata, "LADdata");
         fileIO.readHash(PMD, "PMD");
 
-//        PostingHTMLData post = new PostingHTMLData();
-//        try {
-//            post.sendReq(SirBroBot.client.getGuilds().size());
-//        } catch (IOException ex) {
-//            SirBroBot.LOGGER.error(null, ex);
-//        }
+        
+        //Posts data to Carbonitex stats page
+        PostingHTMLData post = new PostingHTMLData();
+        try {
+            post.sendReq(SirBroBot.client.getGuilds().size());
+        } catch (IOException ex) {
+            SirBroBot.LOGGER.error(null, ex);
+        }
 
 //        for (int i = 0; i < autoJoinChannels.size(); i++) {
 //            try {
@@ -173,7 +168,15 @@ public class MainListener {
 //            audio.setVolume((float) 0.13);
 //
 //        }
+
         updateDispatcher = true;
+        
+        SirBroBot.LOGGER.info("Booted!!");
+        System.out.println("Booted!");
+        
+        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+        event.getClient().changeStatus(status);
+        serversJoined = event.getClient().getGuilds();
     }
 
     @EventSubscriber
@@ -414,6 +417,16 @@ public class MainListener {
                     break;
             }
             usageCounter++;
+        }   
+        
+        
+//Temporary Christmas reply
+        if (mcontent.contains("christmas")) {
+            try {
+                message.reply("Merry Christmas! :christmas_tree: :gift: :ribbon: :snowman2: :santa: :slight_smile: :smiley:");
+            } catch (MissingPermissionsException | RateLimitException | DiscordException ex) {
+                SirBroBot.LOGGER.error(null, ex);
+            }
         }
 
         if (mcontent.contains("dance")) {
@@ -780,37 +793,24 @@ public class MainListener {
                 if (message.getContent().contains("?quit")) {
                     Messages.send("Goodbye!", chan);
                     event.getClient().logout();
-                    SirBroBot.skype.logout();
+                    //SirBroBot.skype.logout();
 
 //                    fileIO.save(serverIconNames, "ServerIconUrls.txt");
+                    try{
                     fileIO.saveHash(VAD, "VAD");
                     fileIO.saveHash(VADdata, "VADdata");
                     fileIO.saveHash(WAD, "WAD");
                     fileIO.saveHash(WADdata, "WADdata");
                     fileIO.saveHash(TAG, "TAG");
                     fileIO.saveHash(PMD, "PMD");
-
-//                    Path pathSource = null;
-//                    Path pathDestionation = null;
-
-//                    for (int i = 0; i < songsThisSession.size(); i++) {
-//                        pathSource = Paths.get("E:/Andrew/Documents/NetBeansProjects/SirBroBot1.0.1/" + songsThisSession.get(i) + ".webm");
-//                        pathDestionation = Paths.get("E:/Andrew/Documents/NetBeansProjects/SirBroBot1.0.1/src/songs/downloaded/" + songsThisSession.get(i) + ".webm");
-//                        try {
-//                            Files.move(pathSource, pathDestionation);
-//                        } catch (NoSuchFileException x) {
-//                            System.err.format("%s: no such" + " file or directory%n", pathSource);
-//                        } catch (DirectoryNotEmptyException x) {
-//                            System.err.format("%s not empty%n", pathSource);
-//                        } catch (IOException x) {
-//                            // File permission problems are caught here.
-//                            System.err.println(x);
-//                        }
-//                    }
-
+                    } catch(Exception e){
+                        
+                    }
                     System.exit(0);
 
-                } else if (Mcontent.equals("?reboot")) {
+                } 
+                
+                else if (Mcontent.equals("?reboot")) {
 //                    fileIO.save(serverIconNames, "ServerIconUrls.txt");
                     fileIO.saveHash(VAD, "VAD");
                     fileIO.saveHash(VADdata, "VADdata");
@@ -1053,6 +1053,16 @@ public class MainListener {
                     }
                 } else if (Mcontent.equals("?purge")) {
                     FileChecker.purge();
+                }
+                
+                else if (Mcontent.equals("?updatecarbon")) {
+                    PostingHTMLData post = new PostingHTMLData();
+                    try {
+                        post.sendReq(SirBroBot.client.getGuilds().size());
+                    } catch (IOException ex) {
+                        SirBroBot.LOGGER.error(null, ex);
+                    }
+                    message.reply("Carbonitex updated!");
                 }
             }
 
@@ -1600,9 +1610,13 @@ public class MainListener {
                     fileIO.saveImage(iconUrl, guildName, "src/images/serverIcons/");
                     usageCounter++;
                 }
-            } else if (Mcontent.startsWith("?tsearch ")) {
+            } 
+            
+            else if (Mcontent.startsWith("?tsearch:")) {
+                //Searches twitter for given username
                 try {
-                    String[] userToSearch = message.getContent().trim().split(":");
+                    String[] userToSearch;
+                    userToSearch = message.getContent().trim().split(":");
                     boolean iconSaveStatus = false;
 
                     String iconUrl = twitter.users().showUser(userToSearch[1].trim()).getBiggerProfileImageURL();
@@ -1673,7 +1687,7 @@ public class MainListener {
                                 + "Currently playing: " + game + "\n"
                                 + "Presence: " + who.getPresence() + "\n"
                                 + "```", chan);
-                    } catch (Exception e) {
+                    } catch (FileNotFoundException | DiscordException | RateLimitException | MissingPermissionsException e) {
                         e.printStackTrace();
                     }
 
@@ -1691,12 +1705,15 @@ public class MainListener {
                                 + "Currently playing: " + game + "\n"
                                 + "Presence: " + who.getPresence() + "\n"
                                 + "```", chan);
-                    } catch (Exception e) {
+                    } catch (IOException | DiscordException | RateLimitException | MissingPermissionsException e) {
                         e.printStackTrace();
                     }
                 }
                 usageCounter++;
-            } else if (Mcontent.startsWith("?img-mirror")) {
+            } 
+            
+            else if (Mcontent.startsWith("?img-mirror")) {
+                //Creates mirror image of given image
                 MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
                 if (message.getAttachments().size() > 0) {
                     IMessage update = messageBuilder.withContent("Processing image...").send();
@@ -1737,7 +1754,10 @@ public class MainListener {
                     update.edit("DONE!");
                 }
                 usageCounter++;
-            } else if (Mcontent.startsWith("?img-negative")) {
+            } 
+            
+            else if (Mcontent.startsWith("?img-negative")) {
+                //Creates negative image of given image
                 if (message.getAttachments().size() > 0) {
                     IMessage update = event.getMessage().getChannel().sendMessage("Processing image...");
 
@@ -1780,8 +1800,10 @@ public class MainListener {
                     update.edit("DONE!");
                 }
                 usageCounter++;
-            } else if (Mcontent.startsWith("?img-id ")) {
-
+            } 
+            
+            else if (Mcontent.startsWith("?img-id ")) {
+                //Posts image link to Microsofts image recognition bot and gets the result.
                 if (Mcontent.contains("http")) {
                     IMessage update = event.getMessage().getChannel().sendMessage("Processing image...");
 
@@ -1798,17 +1820,27 @@ public class MainListener {
                     update.edit(results);
                 }
                 usageCounter++;
-            } else if (Mcontent.startsWith("?sitetohtml")) {
+            } 
+            
+            else if (Mcontent.startsWith("?sitetohtml")) {
+                //Seemed cool
                 String url = message.getContent().replace("?sitetohtml", "");
                 TextParser.html(url);
                 File file = new File("src/dataDocuments/HTMLfiles/" + url.replace(":", "").replace("/", ".") + ".html");
                 event.getMessage().getChannel().sendFile(file);
                 usageCounter++;
-            } else if (Mcontent.startsWith("?google")) {
+            } 
+            
+            else if (Mcontent.startsWith("?google")) {
+                //Work in progress, as it were
                 GoogleSearch.run(message.getContent().replace("?google", ""));
                 event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults());
                 GoogleSearch.clearSearch();
-            } else if (Mcontent.startsWith("?d20")) {
+            } 
+            
+            
+            else if (Mcontent.startsWith("?d20")) {
+                //Could be replaced with something more intuitive, Im lazy.
                 int random = (int) (Math.random() * 20 + 1);
                 String response = null;
                 if (random == 0) {
@@ -1877,7 +1909,9 @@ public class MainListener {
 
                 event.getMessage().getChannel().sendMessage(response);
                 usageCounter++;
-            } else if (Mcontent.startsWith("?randnum")) {
+            } 
+            
+            else if (Mcontent.startsWith("?randnum")) {
                 String[] nums = Mcontent.split(" ");
                 int Low = 0;
                 int High = 0;
