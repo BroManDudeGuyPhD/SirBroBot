@@ -24,6 +24,13 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        
+        <repository>
+            <id>sedmelluq</id>
+            <name>sedmelluq</name>
+            <url>http://maven.sedmelluq.com/</url>
+        </repository>
+  
     </repositories>
 
     <dependencies>
@@ -33,6 +40,14 @@
             <version>2.7.0</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>com.sedmelluq</groupId>
+            <artifactId>lavaplayer</artifactId>
+            <version>1.1.30</version>
+        </dependency>
+  
+        
         <dependency>
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-core</artifactId>

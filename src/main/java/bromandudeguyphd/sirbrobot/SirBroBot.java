@@ -44,7 +44,7 @@ public class SirBroBot {
     public static Skype skype;
     public static IUser root;
     public static CommandDispatcher dispatcher;
-    private static long uptime = System.currentTimeMillis();
+    private static final long uptime = System.currentTimeMillis();
 
     public static void main(String[] args) throws Exception {
     FileChecker.purge();
