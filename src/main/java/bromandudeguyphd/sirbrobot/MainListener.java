@@ -1576,7 +1576,7 @@ public class MainListener {
                 Messages.send("I've issued " + usageCounter + " commands since my last upgrade.", chan);
                 usageCounter++;
             } else if (Mcontent.equals("?uptime")) {
-                Messages.send(new SimpleDateFormat("DDD HH:mm:ss").format(new Date(SirBroBot.getUptime())), chan);
+                Messages.send(SirBroBot.getUptime(), chan);
                 usageCounter++;
             } else if (Mcontent.equals("?servers")) {
 
@@ -1973,7 +1973,7 @@ public class MainListener {
             
             
             if (Mcontent.startsWith(">join")) {
-                musicManager.player.setVolume(25);
+                musicManager.player.setVolume(50);
                 try {
                     message.delete();
                 } catch (MissingPermissionsException ignored) {
@@ -2050,20 +2050,20 @@ public class MainListener {
             } 
             
             else if (Mcontent.equals(">play")) {
-                event.getMessage().getChannel().sendMessage("NOW PLAYING Predefined Playlist (>stop to clear queue)!");
-                AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
-                audio.setVolume((float) 0.13);
-
-                audio.queue(new File("src/songs/krewella - come and get it (razihel remix).mp3"));
-                audio.queue(new File("src/songs/Fuck Gravity (Original Mix).mp3"));
-                audio.queue(new File("src/songs/Turn Up (Original Mix).mp3"));
-                audio.queue(new File("src/songs/Teminiate.mp3"));//Teminite & Panda Eyes - Highscore
-                audio.queue(new File("src/songs/The Magician - Sunlight (Elephante Remix).mp3"));
-                audio.queue(new File("src/songs/Phoebe Ryan - Mine (Win & Woo Remix) Radio Edit.mp3"));
-                audio.queue(new File("src/songs/Bassist.mp3"));
-                audio.queue(new File("src/songs/I Am SOO Happy.mp3"));
-                audio.queue(new File("src/songs/Zircon - Just Hold On (Abstruse Remix).mp3"));
-                audio.queue(new File("src/songs/Maximum Overdrive.mp3"));
+                message.reply("Being reworked under new Music system, >stream with a URL still works");
+//                AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
+//                audio.setVolume((float) 0.13);
+//
+//                audio.queue(new File("src/songs/krewella - come and get it (razihel remix).mp3"));
+//                audio.queue(new File("src/songs/Fuck Gravity (Original Mix).mp3"));
+//                audio.queue(new File("src/songs/Turn Up (Original Mix).mp3"));
+//                audio.queue(new File("src/songs/Teminiate.mp3"));//Teminite & Panda Eyes - Highscore
+//                audio.queue(new File("src/songs/The Magician - Sunlight (Elephante Remix).mp3"));
+//                audio.queue(new File("src/songs/Phoebe Ryan - Mine (Win & Woo Remix) Radio Edit.mp3"));
+//                audio.queue(new File("src/songs/Bassist.mp3"));
+//                audio.queue(new File("src/songs/I Am SOO Happy.mp3"));
+//                audio.queue(new File("src/songs/Zircon - Just Hold On (Abstruse Remix).mp3"));
+//                audio.queue(new File("src/songs/Maximum Overdrive.mp3"));
 
 //                audio.queue(new File("src/songs/leaguesongs/Aftershock - Schoolboy.m4a"));
 //                audio.queue(new File("src/songs/leaguesongs/Radioactive - Imagine Dragons.m4a"));
@@ -2093,7 +2093,7 @@ public class MainListener {
             } 
             
             else if (Mcontent.equals(">skip")) {
-                skipTrack(message.getChannel());
+                skipTrack(message.getAuthor(), message.getChannel());
             } 
             
             else if (Mcontent.startsWith(">stop")) {
@@ -2103,6 +2103,8 @@ public class MainListener {
             
             else if (Mcontent.startsWith(">playlist")) {
                 MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
+                messageBuilder.withChannel(event.getMessage().getChannel());
+                
                 messageBuilder.appendContent("PLAYLIST: \n");
                     messageBuilder.appendContent("Currently playing: **" + musicManager.player.getPlayingTrack().getInfo().title +"**");
 
@@ -2187,7 +2189,7 @@ public class MainListener {
 
                 String urlContent = message.getContent().replace(">stream ", "");
 
-                loadAndPlay(message.getChannel(), urlContent);
+                loadAndPlay(message.getChannel(), urlContent, message.getAuthor());
             }
         }
     }
@@ -2209,13 +2211,13 @@ public class MainListener {
         return musicManager;
     }
  
-       private void loadAndPlay(final IChannel channel, final String trackUrl) {
+       private void loadAndPlay(final IChannel channel, final String trackUrl, IUser author) {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
 
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                sendMessageToChannel(channel, "Added **" + track.getInfo().title +"** "+ track.getInfo().length);
+                sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** "+ track.getInfo().length);
                 
                 play(channel.getGuild(), musicManager, track);
                 
@@ -2233,12 +2235,13 @@ public class MainListener {
                         firstTrack = playlist.getTracks().get(0);
                     }
 
-                    sendMessageToChannel(channel, "Added **" + firstTrack.getInfo().title + "** (first track of playlist **" + playlist.getName() + "**) \n"
+                    sendMessageWithMentionToChannel(author, channel, " Added **" + firstTrack.getInfo().title + "** (first track of playlist **" + playlist.getName() + "**) \n"
                             + "PLAYLIST OVER 100 Songs, choose smaller playlist");
 
                     play(channel.getGuild(), musicManager, firstTrack);
                 }
                 else {
+                    sendMessageWithMentionToChannel(author, channel, " Added **"+playlist.getName()+"** with `"+ playlist.getTracks().size()+"` songs");
                     for (AudioTrack track : playlist.getTracks()) {
                         
                         musicManager.scheduler.queue(track);
@@ -2264,16 +2267,22 @@ public class MainListener {
     musicManager.scheduler.queue(track);
 }
 
-  private void skipTrack(IChannel channel) {
+  private void skipTrack(IUser author, IChannel channel) {
     GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
     musicManager.scheduler.nextTrack();
 
-    sendMessageToChannel(channel, "Skipped to next track.");
+    sendMessageWithMentionToChannel(author, channel, "Skipped to next track.");
   }
 
   private void sendMessageToChannel(IChannel channel, String message) {
     try {
       channel.sendMessage(message);
+    } catch (Exception e) {
+    }
+}
+  private void sendMessageWithMentionToChannel(IUser author, IChannel channel, String message) {
+    try {
+      channel.sendMessage(author.mention()+message);
     } catch (Exception e) {
     }
 }
@@ -2407,7 +2416,7 @@ public class MainListener {
         }
     }
 
-    public static long getUptime() {
+    public static String getUptime() {
         return SirBroBot.getUptime();
     }
 

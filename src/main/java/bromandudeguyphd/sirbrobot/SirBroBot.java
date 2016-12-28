@@ -30,6 +30,7 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 //import sx.blah.discord.util.RateLimitException;
 
 
@@ -44,7 +45,7 @@ public class SirBroBot {
     public static Skype skype;
     public static IUser root;
     public static CommandDispatcher dispatcher;
-    private static final long uptime = System.currentTimeMillis();
+    private static final long startTime = System.currentTimeMillis();
 
     public static void main(String[] args) throws Exception {
     FileChecker.purge();
@@ -99,9 +100,20 @@ public class SirBroBot {
         skype.subscribe();
     }
 
-    public static long getUptime() {
-        return System.currentTimeMillis() - uptime;
+        
+        public static String getUptime() {
+            
+        long tEnd = System.currentTimeMillis();
+        long tDelta = tEnd - startTime;
+
+        int days = (int) TimeUnit.MILLISECONDS.toDays(tDelta);
+        long hrs = TimeUnit.MILLISECONDS.toHours(tDelta) - (days * 24);
+        long min = TimeUnit.MILLISECONDS.toMinutes(tDelta) - (TimeUnit.MILLISECONDS.toHours(tDelta) * 60);
+        long sec = TimeUnit.MILLISECONDS.toSeconds(tDelta) - (TimeUnit.MILLISECONDS.toMinutes(tDelta) * 60);
+
+        return String.format("%02dd:%02dh:%02dm:%02ds", days, hrs, min, sec);
     }
-}
+    }
+
 
 
