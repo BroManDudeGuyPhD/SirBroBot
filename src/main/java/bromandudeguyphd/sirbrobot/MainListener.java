@@ -31,13 +31,14 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sx.blah.discord.handle.audio.IAudioManager;
 
-//import sx.blah.discord.api.events.EventSubscriber;
-//import sx.blah.discord.util.audio.*;
+
 
 /**
- * @author AndrewFossier
+ * @author BroManDudeGuyPhD
  */
 @SuppressWarnings("JavaDoc")
 public class MainListener {
@@ -159,26 +160,7 @@ public class MainListener {
         fileIO.readHash(LADdata, "LADdata");
         fileIO.readHash(PMD, "PMD");
 
-        
-        //Posts data to Carbonitex stats page
-        PostingHTMLData post = new PostingHTMLData();
-        try {
-            post.sendReq(SirBroBot.client.getGuilds().size());
-        } catch (IOException ex) {
-            SirBroBot.LOGGER.error(null, ex);
-        }
 
-//        for (int i = 0; i < autoJoinChannels.size(); i++) {
-//            try {
-//                event.getClient().getVoiceChannelByID(autoJoinChannels.get(i)).join();
-//
-//            } catch (MissingPermissionsException e) {
-//                System.out.println("Cant connect to AutoJoinChannel "+event.getClient().getVoiceChannelByID(autoJoinChannels.get(i)).getName());
-//            }
-//            AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getClient().getVoiceChannelByID(autoJoinChannels.get(i)).getGuild());
-//            audio.setVolume((float) 0.13);
-//
-//        }
 
         updateDispatcher = true;
         
@@ -188,6 +170,16 @@ public class MainListener {
         sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
         event.getClient().changeStatus(status);
         serversJoined = event.getClient().getGuilds();
+        
+        for (int i = 0; i < autoJoinChannels.size(); i++) {
+            System.out.println(i+" "+autoJoinChannels.get(i));
+            try {
+                event.getClient().getVoiceChannelByID(autoJoinChannels.get(i)).join();
+            } catch (MissingPermissionsException ex) {
+                Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
     }
 
     @EventSubscriber
@@ -802,6 +794,7 @@ public class MainListener {
             if (message.getAuthor().equals(root)) {
 
                 if (message.getContent().contains("?quit")) {
+                    fileIO.save(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
                     Messages.send("Goodbye!", chan);
                     event.getClient().logout();
                     //SirBroBot.skype.logout();
@@ -814,6 +807,7 @@ public class MainListener {
                     fileIO.saveHash(WADdata, "WADdata");
                     fileIO.saveHash(TAG, "TAG");
                     fileIO.saveHash(PMD, "PMD");
+                    fileIO.save(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
                     } catch(Exception e){
                         
                     }
@@ -835,9 +829,9 @@ public class MainListener {
                     } catch (InterruptedException ignored) {
                         Thread.currentThread().interrupt();
                     }
-                    event.getClient().logout();
+                    SirBroBot.client.logout();
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(30000);
                     } catch (InterruptedException ignored) {
                         Thread.currentThread().interrupt();
                     }
@@ -1973,9 +1967,12 @@ public class MainListener {
             
             
             if (Mcontent.startsWith(">join")) {
-                musicManager.player.setVolume(50);
+                
                 try {
+                    
+                    message.reply(":warning: **WARNING** :warning: Control volume on the `User Volume` menu from Discord. Access by right clicking on the User menu on SirBroBots name. `Waiting 10 seconds to play` (Message may be deleivered twice for redundancy)");
                     message.delete();
+                    Thread.sleep(10000);
                 } catch (MissingPermissionsException ignored) {
 
                 }
@@ -1987,8 +1984,7 @@ public class MainListener {
                     } catch (MissingPermissionsException ignored) {
                         message.reply("I dont have permission to join this voice channel. ");
                     }
-                    AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
-                    audio.setVolume((float) 0.13);
+
                 }
 //                        channel.getAudioChannel().queueFile(new File("src/songs/I Am SOO Happy.mp3"));
 //                        channel.getAudioChannel().queueFile(new File("src/songs/Zircon - Just Hold On (Abstruse Remix).mp3"));
@@ -2001,33 +1997,43 @@ public class MainListener {
                 if (voiceChannel != null) {
                     try {
                         voiceChannel.join();
-                        AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
-                        audio.setVolume((float) 0.13);
+                        
                         message.reply("I will now join this channel in case of a reboot");
                     } catch (MissingPermissionsException ignored) {
                         message.reply("I dont have permission to join this voice channel. ");
                     }
 
-                    autoJoinChannels.add(message.getChannel().getID());
+                    if(!autoJoinChannels.contains(voiceChannel.getID())){
+                        autoJoinChannels.add(voiceChannel.getID());
+                        fileIO.save(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
+                    }
+                    
+                    else if(autoJoinChannels.contains(voiceChannel.getID())){
+                        message.reply("Im already set to autojoin this channel.");
+                    }
+                    
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ignored) {
                         Thread.currentThread().interrupt();
                     }
-                    File autoJoinChannelsFile = new File("src/dataDocuments" + "autoJoinChannels.txt");
-//                    fileIO.save(autoJoinChannels, "autoJoinChannels.txt");
+                    
+                    
+//                  
                 }
             }
 
             if (Mcontent.equals(">count")) {
                 event.getMessage().getChannel().sendMessage("" + event.getClient().getConnectedVoiceChannels().size());
-            } else if (Mcontent.equals(">leaveall")) {
-                if (message.getAuthor().equals(root)) {
+            } 
+            
+            else if (Mcontent.equals(">leaveall") && message.getAuthor().equals(root)) {
+
 
                     for (int i = 0; i < textChannel.size(); i++) {
 
                         try {
-                            IMessage sendMessage = event.getClient().getChannelByID(textChannel.get(i)).sendMessage("I needed to Disconnect from voice channels, give me a minute! ");
+                            IMessage sendMessage = event.getClient().getChannelByID(textChannel.get(i)).sendMessage("I needed to Disconnect from voice channels, give me a minute! (I am on `"+SirBroBot.client.getGuilds().size()+"` servers, I may be having streaming quality issues");
                         } catch (DiscordException | MissingPermissionsException ex) {
                             SirBroBot.LOGGER.error(null, ex);
                         }
@@ -2036,8 +2042,7 @@ public class MainListener {
 
 
                     }
-
-                }
+ 
             } 
             
 
@@ -2155,7 +2160,7 @@ public class MainListener {
             } 
             
             else if (Mcontent.startsWith(">search:")) {
-                message.reply("Search is undergoing maintenance. Use >stream with a link, **Playlists now supported if less than 100 songs**");
+                message.reply("Search is undergoing maintenance. Use >stream with a link, **Playlists now supported if less than 200 songs**");
 //                AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
 //                String[] videoSearch = Mcontent.split("search:");
 //                String temp;
@@ -2184,6 +2189,10 @@ public class MainListener {
             } 
             
             else if (Mcontent.startsWith(">stream")) {
+                if(musicManager.getAudioProvider().getChannels()==0){
+                message.reply(":warning: **WARNING** :warning: Control volume on the `User Volume` menu from Discord. Access by right clicking on the User menu on SirBroBots name. `Waiting 10 seconds to play any audio` (Message may be deleivered twice for redundancy)");
+                Thread.sleep(10000);
+                }
                 AudioSourceManagers.registerRemoteSources(playerManager);
                 AudioSourceManagers.registerLocalSource(playerManager);
 
@@ -2217,7 +2226,7 @@ public class MainListener {
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** "+ track.getInfo().length);
+                sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+")");
                 
                 play(channel.getGuild(), musicManager, track);
                 
@@ -2228,24 +2237,34 @@ public class MainListener {
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
 
-                if (playlist.getTracks().size() > 100) {
+                if (playlist.getTracks().size() > 200) {
                     AudioTrack firstTrack = playlist.getSelectedTrack();
 
                     if (firstTrack == null) {
                         firstTrack = playlist.getTracks().get(0);
                     }
 
-                    sendMessageWithMentionToChannel(author, channel, " Added **" + firstTrack.getInfo().title + "** (first track of playlist **" + playlist.getName() + "**) \n"
-                            + "PLAYLIST OVER 100 Songs, choose smaller playlist");
+                    long playlistMilis = 0;
+                    int counter = 0;
+                    for (AudioTrack track : playlist.getTracks()) {
+
+                        playlistMilis += playlist.getTracks().get(counter).getDuration();
+                        counter += 1;
+                    }
+                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks `(" + SirBroBot.getTimeFromMilis(playlistMilis) + ")`\n"
+                            + "PLAYLIST OVER 200 Songs, choose smaller playlist **(ONLY PLAYING FIRST SONG)**");
 
                     play(channel.getGuild(), musicManager, firstTrack);
-                }
-                else {
-                    sendMessageWithMentionToChannel(author, channel, " Added **"+playlist.getName()+"** with `"+ playlist.getTracks().size()+"` songs");
+                } else {
+
+                    long playlistMilis = 0;
+                    int counter = 0;
                     for (AudioTrack track : playlist.getTracks()) {
-                        
+                        playlistMilis += playlist.getTracks().get(counter).getDuration();
                         musicManager.scheduler.queue(track);
+                        counter += 1;
                     }
+                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks and `" + SirBroBot.getTimeFromMilis(playlistMilis) + "` of playtime");
                 }
             }
 
@@ -2302,9 +2321,9 @@ public class MainListener {
       }
     }
   }
-  
   //END LAVAPLAYER
 
+  
     private String queueFromYouTube(final AudioPlayer audio, String id, String guild) {
         String name = System.getProperty("os.name").contains("Windows") ? "youtube-dl.exe" : "youtube-dl";
 //        ProcessBuilder builder = new ProcessBuilder(name, "-q", "-f", "worstaudio",

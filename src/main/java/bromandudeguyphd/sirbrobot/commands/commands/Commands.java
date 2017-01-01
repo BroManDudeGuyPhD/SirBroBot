@@ -37,7 +37,7 @@ public class Commands implements Command {
                 "\n```\n";
         response += "Things I will respond to with an @SirBroBot mention behind it: \n```\n"
                 + StringUtils.join(SirBroBot.dispatcher.getCommands().stream().filter(command -> command.getType() == CommandTypes.MENTION).collect(Collectors.toList()), ", ")
-                + "\n```";
+               + "\n```";
         Messages.send(response, channel);
     }
 

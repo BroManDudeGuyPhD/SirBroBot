@@ -72,9 +72,11 @@ public class fileIO {
      * @param fileName
      * @param imagePath
      */
-    public static void save(ArrayList<String> list, String fileName, String imagePath) {
+    public static void save(ArrayList<String> list, String imagePath) {
 
-        try (PrintWriter writer = new PrintWriter(fileName)) {
+        File fileOne = new File(imagePath);
+        
+        try (PrintWriter writer = new PrintWriter(fileOne)) {
             int size = list.size();
             for (int i = 0; i < size; i++) {
                 String str = list.get(i);

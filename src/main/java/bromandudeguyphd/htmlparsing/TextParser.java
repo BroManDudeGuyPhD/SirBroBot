@@ -56,7 +56,7 @@ public class TextParser {
         response.append(ps.text());
 
         text.add(response.toString());
-        fileIO.save(text, "HTML__"+url.replace("/", ".").replace(":", ""),"src/dataDocuments/HTMLfiles/");
+        fileIO.save(text,"src/dataDocuments/HTMLfiles/"+"HTML__"+url.replace("/", ".").replace(":", ""));
         
 
         

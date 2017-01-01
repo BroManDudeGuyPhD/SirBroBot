@@ -113,6 +113,16 @@ public class SirBroBot {
 
         return String.format("%02dd:%02dh:%02dm:%02ds", days, hrs, min, sec);
     }
+        
+        public static String getTimeFromMilis(long milis) {
+
+        long hrs = TimeUnit.MILLISECONDS.toHours(milis);
+        long min = TimeUnit.MILLISECONDS.toMinutes(milis) - (TimeUnit.MILLISECONDS.toHours(milis) * 60);
+        long sec = TimeUnit.MILLISECONDS.toSeconds(milis) - (TimeUnit.MILLISECONDS.toMinutes(milis) * 60);
+
+        return String.format("%02dh:%02dm:%02ds", hrs, min, sec);
+    }
+        
     }
 
 
