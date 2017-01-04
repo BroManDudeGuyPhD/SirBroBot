@@ -169,7 +169,7 @@ public class MainListener {
         
         sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
         event.getClient().changeStatus(status);
-        serversJoined = event.getClient().getGuilds();
+        serversJoined = event.getClient().getGuilds(); 
         
         for (int i = 0; i < autoJoinChannels.size(); i++) {
             System.out.println(i+" "+autoJoinChannels.get(i));
