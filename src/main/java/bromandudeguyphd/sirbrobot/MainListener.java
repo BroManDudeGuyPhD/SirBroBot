@@ -1838,8 +1838,8 @@ public class MainListener {
             
             else if (Mcontent.startsWith("?google")) {
                 //Work in progress, as it were
-                GoogleSearch.run(message.getContent().replace("?google", ""));
-                event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults());
+                GoogleSearch.run(message.getContent().replace("?google ", ""));
+                event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
                 GoogleSearch.clearSearch();
             } 
             
