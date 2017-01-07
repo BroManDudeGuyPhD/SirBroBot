@@ -16,6 +16,8 @@ import sx.blah.discord.handle.impl.events.*;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.*;
 import sx.blah.discord.util.audio.AudioPlayer;
+import sx.blah.discord.handle.audio.IAudioManager;
+
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -33,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sx.blah.discord.handle.audio.IAudioManager;
 
 
 
@@ -67,7 +68,7 @@ public class MainListener {
     @SuppressWarnings("deprecation")
     commandsClass commands = new commandsClass();
     ArrayList<String> textChannel = new ArrayList<>();
-    ArrayList<String> autoJoinChannels = new ArrayList<>();
+    static ArrayList<String> autoJoinChannels = new ArrayList<>();
 
     Twitter twitter = TwitterFactory.getSingleton();
 
@@ -167,19 +168,16 @@ public class MainListener {
         SirBroBot.LOGGER.info("Booted!!");
         System.out.println("Booted!");
         
-        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("BOOTING UP", "https://www.twitch.tv/SirBroBot/profile");
         event.getClient().changeStatus(status);
-        serversJoined = event.getClient().getGuilds(); 
         
-        for (int i = 0; i < autoJoinChannels.size(); i++) {
-            System.out.println(i+" "+autoJoinChannels.get(i));
-            try {
-                event.getClient().getVoiceChannelByID(autoJoinChannels.get(i)).join();
-            } catch (MissingPermissionsException ex) {
-                Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
+        
+        
+        autoJoinVoiceClass autoJoinThread = new autoJoinVoiceClass();
+        Thread thread = new Thread(autoJoinThread);
+        thread.start();
+        
+        
     }
 
     @EventSubscriber
@@ -1879,7 +1877,7 @@ public class MainListener {
                     response = ":nine:";
                 }
                 if (random == 10) {
-                    response = ":ten:";
+                    response = ":one::zero:";
                 }
                 if (random == 11) {
                     response = ":one::one:";
@@ -1959,7 +1957,10 @@ public class MainListener {
                 usageCounter++;
             }
 
-        } //Music and streaming commands ahead
+        } 
+
+
+//Music and streaming commands ahead
 
         else if (Mcontent.startsWith(">")) {
 
@@ -1986,8 +1987,6 @@ public class MainListener {
                     }
 
                 }
-//                        channel.getAudioChannel().queueFile(new File("src/songs/I Am SOO Happy.mp3"));
-//                        channel.getAudioChannel().queueFile(new File("src/songs/Zircon - Just Hold On (Abstruse Remix).mp3"));
 
             }
 
