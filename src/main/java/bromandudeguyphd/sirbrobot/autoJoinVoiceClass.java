@@ -13,6 +13,7 @@ import bromandudeguyphd.sirbrobot.MainListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sx.blah.discord.api.events.Event;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.*;
 import sx.blah.discord.handle.obj.*;
@@ -21,37 +22,51 @@ import sx.blah.discord.util.audio.AudioPlayer;
 
 public class autoJoinVoiceClass implements Runnable {
 
+    Event controlledEvent;
+    
+    public autoJoinVoiceClass(Event passedEvent) {
+        this.controlledEvent = passedEvent;
+        
+        System.out.println("Shardcount: "+passedEvent.getClient().getShardCount());
+    }
+
     @Override
     public void run() {
+        ReadyEvent event;
+        
         int autoJoinChannelsAtStart = MainListener.autoJoinChannels.size();
         ArrayList<String> temp = new ArrayList<>();
         temp.addAll(MainListener.autoJoinChannels);
         boolean autoJoinCompleted = false;
         int servers = SirBroBot.client.getGuilds().size();
+        
+        
+        while(autoJoinCompleted == false){
+            
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (InterruptedException ex) {
             Logger.getLogger(autoJoinVoiceClass.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         
         if (servers == SirBroBot.client.getGuilds().size()) {
+            
             for (int i = 0; i < autoJoinChannelsAtStart; i++) {
                 System.out.println(i + " " + temp.get(i));
                 try {
-                    SirBroBot.client.getVoiceChannelByID(temp.get(i)).join();
+                    controlledEvent.getClient().getVoiceChannelByID(temp.get(i)).join();
                 } catch (MissingPermissionsException ex) {
                     Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
 
                 }
             }
-            sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("say ?commands", "https://www.twitch.tv/SirBroBot/profile");
-            SirBroBot.client.changeStatus(status);
+            sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("Say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+            controlledEvent.getClient().changeStatus(status);
+            autoJoinCompleted = true;
+            
         } 
-        
-        else {
-            run();
         }
-
+        
     }
 }

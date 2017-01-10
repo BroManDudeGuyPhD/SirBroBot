@@ -39,7 +39,7 @@ public class GoogleSearch {
                 continue; // Ads/news/etc.
             }
 
-            searchResults.add(counter+title+" :: <"+url +">\n");
+            searchResults.add(counter+") "+title+" :: <"+url +">\n");
             counter++;
         }
     }

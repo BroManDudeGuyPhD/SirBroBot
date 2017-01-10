@@ -127,7 +127,10 @@ public class MainListener {
 
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
-
+        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("Say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+        //sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.game("Boot in progress");
+        event.getClient().changeStatus(status);
+        
 //        try {
 //            fileIO.readFile(curseWords, "bannedWords.txt");
 //        } catch (IOException ex) {
@@ -168,16 +171,12 @@ public class MainListener {
         SirBroBot.LOGGER.info("Booted!!");
         System.out.println("Booted!");
         
-        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("BOOTING UP", "https://www.twitch.tv/SirBroBot/profile");
-        event.getClient().changeStatus(status);
         
-        
-        
-        autoJoinVoiceClass autoJoinThread = new autoJoinVoiceClass();
-        Thread thread = new Thread(autoJoinThread);
-        thread.start();
-        
-        
+
+//        autoJoinVoiceClass autoJoinThread = new autoJoinVoiceClass(event);
+//        Thread thread = new Thread(autoJoinThread);
+//        thread.start();
+
     }
 
     @EventSubscriber

@@ -49,10 +49,11 @@ public class SirBroBot {
 
     public static void main(String[] args) throws Exception {
     FileChecker.purge();
+    boot();
+    
         try {
             bootSkype();
-        }catch (Exception ignored){}
-        boot();
+        }catch (InvalidCredentialsException | ConnectionException | NotParticipatingException ignored){}
     }
 
     public static void boot() throws DiscordException, InterruptedException {
@@ -60,6 +61,8 @@ public class SirBroBot {
         client = new ClientBuilder().withToken(tokens.discordToken()).withShards(SHARD_COUNT).login();
         client.getDispatcher().registerListener(dispatcher = new CommandDispatcher());
         client.getDispatcher().registerListener(new MainListener());
+        
+        
     }
 
     public static void bootSkype() throws InvalidCredentialsException, ConnectionException, NotParticipatingException {
