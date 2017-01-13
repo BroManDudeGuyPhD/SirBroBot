@@ -1,5 +1,6 @@
 package bromandudeguyphd.sirbrobot;
 
+import bromandudeguyphd.htmlparsing.PostingHTMLData;
 import bromandudeguyphd.htmlparsing.*;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;

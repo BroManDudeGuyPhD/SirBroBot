@@ -40,6 +40,11 @@ public class GoogleSearch {
             }
 
             searchResults.add(counter+") "+title+" :: <"+url +">\n");
+            
+            if(counter == 5){
+                return;
+            }
+            
             counter++;
         }
     }
