@@ -57,12 +57,10 @@ public class HTMLUnit {
         
         DomElement element = page2.getFirstByXPath("//*[@id=\"captionLabel\"]");
 
-        if(element.asText().isEmpty() ){
-            return "Something went wrong";
-        }
+
         
-        else{
+       
             return element.asText();
-        }
+        
     }
 }
