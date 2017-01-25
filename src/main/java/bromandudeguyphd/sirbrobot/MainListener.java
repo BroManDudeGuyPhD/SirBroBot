@@ -2195,7 +2195,7 @@ public class MainListener {
                 AudioSourceManagers.registerRemoteSources(playerManager);
                 AudioSourceManagers.registerLocalSource(playerManager);
 
-                String urlContent = message.getContent().replace(">stream ", "");
+                String urlContent = message.getContent().toLowerCase().replace(">stream ", "");
 
                 loadAndPlay(message.getChannel(), urlContent, message.getAuthor());
             }

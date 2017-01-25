@@ -41,7 +41,7 @@ public class HTMLUnit {
         textField.setValueAttribute(url);
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
@@ -50,17 +50,19 @@ public class HTMLUnit {
 
         
         try {
-            Thread.sleep(7000);
+            Thread.sleep(8000);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
         
         DomElement element = page2.getFirstByXPath("//*[@id=\"captionLabel\"]");
 
-
+        if(element.asText().isEmpty() ){
+            return "Something went wrong";
+        }
         
-       
+        else{
             return element.asText();
-        
+        }
     }
 }
