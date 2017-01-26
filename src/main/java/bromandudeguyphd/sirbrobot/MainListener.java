@@ -1738,7 +1738,7 @@ public class MainListener {
                 }
 
                 if (message.getContent().contains("http")) {
-                    IMessage update = messageBuilder.withContent("Processing link...").send();
+                    IMessage update = event.getMessage().getChannel().sendMessage("Processing image...");
                     String url = message.getContent().replace("?img-mirror", "");
                     try {
                         fileIO.saveImage(url, "imagetomanipulate.jpg", "src/images/imageWriting/imagesToManipulate/");
@@ -1759,7 +1759,7 @@ public class MainListener {
                 usageCounter++;
             } 
             
-            else if (Mcontent.startsWith("?img-negative")) {
+            else if (Mcontent.startsWith("?img-neg")) {
                 //Creates negative image of given image
                 if (message.getAttachments().size() > 0) {
                     IMessage update = event.getMessage().getChannel().sendMessage("Processing image...");
@@ -2195,9 +2195,14 @@ public class MainListener {
                 AudioSourceManagers.registerRemoteSources(playerManager);
                 AudioSourceManagers.registerLocalSource(playerManager);
 
-                String urlContent = message.getContent().toLowerCase().replace(">stream ", "");
+                
+                String[] urlContent = message.getContent().split(" ");
 
-                loadAndPlay(message.getChannel(), urlContent, message.getAuthor());
+                if (urlContent.length < 1) {
+                    message.reply("Put space between >stream and URL");
+                } else {
+                    loadAndPlay(message.getChannel(), urlContent[1], message.getAuthor());
+                }
             }
         }
     }
