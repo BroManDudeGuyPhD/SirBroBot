@@ -1523,6 +1523,7 @@ public class MainListener {
                     if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
                         serverOwnerPM = true;
                         placeholder2 = i;
+                        break;
                     }
                 }
 
