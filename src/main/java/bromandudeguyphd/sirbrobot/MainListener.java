@@ -1523,7 +1523,6 @@ public class MainListener {
                     if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
                         serverOwnerPM = true;
                         placeholder2 = i;
-                        break;
                     }
                 }
 
@@ -1625,6 +1624,8 @@ public class MainListener {
 
                     String iconUrl = twitter.users().showUser(userToSearch[1].trim()).getBiggerProfileImageURL();
 
+                    
+                    
                     //twitterProfiles.add(twitter.users().showUser(userToSearch[1]).getName());
                     File serverIcon = new File("src/images/twitterIcons/" + twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg");
                     fileIO.saveImage(iconUrl, twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg", "src/images/twitterIcons/");
@@ -2443,6 +2444,9 @@ public class MainListener {
     public static String getUptime() {
         return SirBroBot.getUptime();
     }
+    
+    
+
 
     public static long getUsers() {
         long totalUsers = 0;
