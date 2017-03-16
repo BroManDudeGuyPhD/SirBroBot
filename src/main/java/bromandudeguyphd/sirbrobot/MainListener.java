@@ -1259,11 +1259,10 @@ public class MainListener {
                     fileIO.saveHash(WADdata, "WADdata");
 
                     usageCounter++;
-                } else if (Mcontent.startsWith("?welcomeedit")) {
+                } else if (Mcontent.startsWith("?welcomeedit")) { 
                    
                     WAD.put(message.getGuild().getID(), message.getContent().replace("?welcomeedit ", ""));
                     WADdata.put(message.getGuild().getID(), message.getChannel().getID());
-                    
                     message.reply("New User welcome message edited");
                     
                     fileIO.saveHash(WAD, "WAD");
