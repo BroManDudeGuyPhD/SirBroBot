@@ -12,6 +12,9 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
+import com.sedmelluq.discord.lavaplayer.format.AudioPlayerInputStream;
+
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.*;
 import sx.blah.discord.handle.obj.*;
@@ -185,7 +188,7 @@ public class MainListener {
         if (WAD.containsKey(event.getGuild().getID())) {
             Messages.send(WAD.get(event.getGuild().getID())
                     .replace("USERMENTION", event.getUser().mention())
-                    .replace("USERNAME", "**" + event.getUser().getName() + "**"), event.getGuild().getChannels().get(0));
+                    .replace("USERNAME", "**" + event.getUser().getName() + "**"), event.getGuild().getChannelByID(WADdata.get(event.getGuild().getID())));
         }
 
     }
@@ -1257,8 +1260,12 @@ public class MainListener {
 
                     usageCounter++;
                 } else if (Mcontent.startsWith("?welcomeedit")) {
+                   
+                    WAD.put(message.getGuild().getID(), message.getContent().replace("?welcomeedit ", ""));
+                    WADdata.put(message.getGuild().getID(), message.getChannel().getID());
+                    
                     message.reply("New User welcome message edited");
-                    WAD.replace(message.getGuild().getID(), message.getContent().replace("?welcomeedit ", ""));
+                    
                     fileIO.saveHash(WAD, "WAD");
                     fileIO.saveHash(WADdata, "WADdata");
 
@@ -1273,7 +1280,9 @@ public class MainListener {
                     } else {
                         message.reply("Welcome message is currently turned off. Use `?welcomeon Message Content` to activate");
                     }
-                } else if (Mcontent.startsWith("?purgechannel")) {
+                } 
+                
+                else if (Mcontent.startsWith("?purgechannel")) {
                     message.reply("This command is undergoing maintenance. Trust me, youll thank me -" + root.mention());
 //                    try{message.delete();} catch(MissingPermissionsException e){};
 //                    int timer = 10;
@@ -1442,6 +1451,8 @@ public class MainListener {
                 //                        tempmessage.edit("User was spared");
                 //                    }
                 //                }
+                
+                
                 else if (Mcontent.startsWith("?broadcaston")) {
                     if (PMD.containsKey(message.getAuthor().getID())) {
                         PMD.replace(message.getAuthor().getID(), "ON");
@@ -2112,14 +2123,14 @@ public class MainListener {
                 messageBuilder.withChannel(event.getMessage().getChannel());
                 
                 messageBuilder.appendContent("PLAYLIST: \n");
-                    messageBuilder.appendContent("Currently playing: **" + musicManager.player.getPlayingTrack().getInfo().title +"**");
+                messageBuilder.appendContent("Currently playing: **" + musicManager.player.getPlayingTrack().getInfo().title +"** Runtime:`"+musicManager.player.getPlayingTrack().getDuration()+"`");
 
 //                    if (audio.getPlaylist().size() > 1) {
 //                        for (int i = 1; i < audio.getPlaylistSize(); i++) {
 //                            messageBuilder.appendContent(i + ": " + audio.getPlaylist().get(i).getMetadata() + "\n");
 //                        }
 //                    }
-                    messageBuilder.send();
+                messageBuilder.send();
                     
                   
                     
@@ -2161,31 +2172,25 @@ public class MainListener {
             } 
             
             else if (Mcontent.startsWith(">search:")) {
-                message.reply("Search is undergoing maintenance. Use >stream with a link, **Playlists now supported if less than 200 songs**");
-//                AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
-//                String[] videoSearch = Mcontent.split("search:");
-//                String temp;
-//                IMessage tempmessage = null;
-//                MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
-//                if (videoSearch.length == 2) {
-//                    try {
-//                        message.delete();
-//                    } catch (MissingPermissionsException ignored) {
-//                    }
-//                    tempmessage = messageBuilder.withChannel(chan).withContent("Searching **YouTube** for terms: " + videoSearch[1].trim()).send();
-//                    temp = queueFromYouTubeSearch(audio, videoSearch[1].trim(), message.getGuild().getID());
-//                } else {
-//                    temp = null;
-//                    message.reply("Command error. Syntax is `>stream search: keywords`");
-//                }
-//                if (temp != null) {
-//                    IUser user = message.getAuthor();
-//                    tempmessage.edit(user.mention() + " added: **" + temp.trim() + "**  (" + execCmd("youtube-dl.exe ytsearch:\"" + temp + "\" --get-duration") + ")".trim());
-//                    //System.out.println(audio.getCurrentTrack().getMetadata().toString());
-//
-//                } else
-//                    Messages.send("There was an error, please forgive me.", updateChannel);
-//
+                
+               
+                String[] videoSearch = Mcontent.split("search:");
+                String temp;
+                IMessage tempmessage = null;
+                MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+                if (videoSearch.length == 2) {
+                    try {
+                        message.delete();
+                    } catch (MissingPermissionsException ignored) {
+                    }
+                    tempmessage = messageBuilder.withChannel(chan).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
+                    Thread.sleep(4000);
+                    loadYTSearch(message.getChannel(), videoSearch[1], message.getAuthor());
+                    
+                } else {
+                    temp = null;
+                    message.reply("Command error. Syntax is `>stream search: keywords`");
+                }
 
             } 
             
@@ -2229,6 +2234,7 @@ public class MainListener {
        private void loadAndPlay(final IChannel channel, final String trackUrl, IUser author) {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
 
+        
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -2277,6 +2283,76 @@ public class MainListener {
             @Override
             public void noMatches() {
                 sendMessageToChannel(channel, "Nothing found by " + trackUrl);
+            }
+
+            @Override
+            public void loadFailed(FriendlyException exception) {
+                sendMessageToChannel(channel, "Could not play: " + exception.getMessage());
+            }
+        });
+}
+       
+       private void loadYTSearch(final IChannel channel, final String query, IUser author) {
+           String id = "NONE";
+           String url = "NONE";
+        try {
+            id = execCmd("youtube-dl.exe ytsearch:\"" + query + "\" --get-id").trim();
+            url = "http://www.youtube.com/watch?v="+id;
+            
+        } catch (IOException ex) {
+            Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+              
+        GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
+
+        playerManager.loadItemOrdered(musicManager, url, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+")");
+                
+                play(channel.getGuild(), musicManager, track);
+                
+                
+                
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+                String results = "NULL";
+                if (playlist.getTracks().size() > 200) {
+                    AudioTrack firstTrack = playlist.getSelectedTrack();
+
+                    if (firstTrack == null) {
+                        firstTrack = playlist.getTracks().get(0);
+                    }
+
+                    long playlistMilis = 0;
+                    int counter = 0;
+                    for (AudioTrack track : playlist.getTracks()) {
+
+                        playlistMilis += playlist.getTracks().get(counter).getDuration();
+                        counter += 1;
+                    }
+                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks `(" + SirBroBot.getTimeFromMilis(playlistMilis) + ")`\n"
+                            + "PLAYLIST OVER 200 Songs, choose smaller playlist **(ONLY PLAYING FIRST SONG)**");
+
+                    play(channel.getGuild(), musicManager, firstTrack);
+                } else {
+
+                    long playlistMilis = 0;
+                    int counter = 0;
+                    for (AudioTrack track : playlist.getTracks()) {
+                        playlistMilis += playlist.getTracks().get(counter).getDuration();
+                        musicManager.scheduler.queue(track);
+                        counter += 1;
+                    }
+                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks and `" + SirBroBot.getTimeFromMilis(playlistMilis) + "` of playtime");
+                }
+            }
+
+            @Override
+            public void noMatches() {
+                sendMessageToChannel(channel, "Nothing found by `" + query+"`");
             }
 
             @Override
