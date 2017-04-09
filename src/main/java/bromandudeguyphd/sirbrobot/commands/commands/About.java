@@ -1,15 +1,10 @@
 package bromandudeguyphd.sirbrobot.commands.commands;
-
 import bromandudeguyphd.sirbrobot.MainListener;
 import bromandudeguyphd.sirbrobot.Messages;
-import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.Command;
 import bromandudeguyphd.sirbrobot.commands.CommandTypes;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * <br>

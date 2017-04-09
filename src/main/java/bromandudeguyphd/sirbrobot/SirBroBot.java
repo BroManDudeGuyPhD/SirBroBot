@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
-    private static final int SHARD_COUNT = 6;
+    private static final int SHARD_COUNT = 5;
     public static IDiscordClient client;
     public static Skype skype;
     public static IUser root;
@@ -76,28 +76,28 @@ public class SirBroBot {
                 System.out.println("Got message: " + e.getMessage().getContent());
                 //IMessage sendMessage = client.getOrCreatePMChannel(root).sendMessage("Recieved Skype Message: "+e.getMessage().getContent().toString()+"\nFrom: "+e.getMessage().getSender().getDisplayName());
 
-                if (e.getMessage().getContent().toString().contains("?REBOOT")) {
-
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                    ProcessBuilder pb = new ProcessBuilder("java", "-jar", SirBroBot.class.getProtectionDomain().getCodeSource().getLocation().toString());
-                    pb.inheritIO();
-                    try {
-                        pb.start();
-                    } catch (IOException e1) {
-                        LOGGER.error("Could not reboot!", e1);
-                        try {
-                            e.getMessage().getSender().getChat().sendMessage("Could not reboot! " + e);
-                        } catch (ConnectionException e2) {
-                            LOGGER.error("Could not send skype message!", e2);
-                        }
-                        return;
-                    }
-                    System.exit(0);
-                }
+//                if (e.getMessage().getContent().toString().contains("?REBOOT")) {
+//
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException ex) {
+//                        Thread.currentThread().interrupt();
+//                    }
+//                    ProcessBuilder pb = new ProcessBuilder("java", "-jar", SirBroBot.class.getProtectionDomain().getCodeSource().getLocation().toString());
+//                    pb.inheritIO();
+//                    try {
+//                        pb.start();
+//                    } catch (IOException e1) {
+//                        LOGGER.error("Could not reboot!", e1);
+//                        try {
+//                            e.getMessage().getSender().getChat().sendMessage("Could not reboot! " + e);
+//                        } catch (ConnectionException e2) {
+//                            LOGGER.error("Could not send skype message!", e2);
+//                        }
+//                        return;
+//                    }
+//                    System.exit(0);
+//                }
             }
         });
         skype.subscribe();

@@ -18,10 +18,11 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
     private long usageCounter = 0;
 
     public CommandDispatcher() {
-        registerCommand(new Commands());
-        registerCommand(new OwnerCommands());
-        registerCommand(new MusicCommands());
+        //registerCommand(new Commands());
+        //registerCommand(new OwnerCommands());
+        //registerCommand(new MusicCommands());
         registerCommand(new About());
+        registerCommand(new ServerInfo());
     }
 
     /**
