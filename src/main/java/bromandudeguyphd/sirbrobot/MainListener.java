@@ -1589,48 +1589,7 @@ public class MainListener {
 
                 Messages.send("I am currently the Knight of " + SirBroBot.client.getGuilds().size() + " servers\n", chan);
                 usageCounter++;
-            } 
-            
-//            else if (Mcontent.equals("?serverinfo")) {
-//
-//                IGuild guildID = message.getGuild();
-//                String guildName = guildID.getName();
-//                String iconUrl = guildID.getIconURL();
-//
-//                if (iconUrl.contains("/null.jpg")) {
-//                    File serverIcon = new File("src/images/serverIcons/null.jpg");
-//                    event.getMessage().getChannel().sendFile(serverIcon);
-//                    event.getMessage().getChannel().sendMessage("\n```" + "\nServer Name: " + guildName + "\n"
-//                            + "Owner: " + message.getGuild().getOwner().getName() + "\n"
-//                            + "Creation Date: " + guildID.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE)
-//                            + " "
-//                            + guildID.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_TIME) + "\n"
-//                            + "Members: " + guildID.getUsers().size() + "\n"
-//                            + "Region: " + guildID.getRegion().getName() + "\n"
-//                            + "-------------------------------------------------------------\n"
-//                            + "```");
-//                    System.out.println("Server " + message.getGuild().getName() + " has no Icon, provided one");
-//
-//                    usageCounter++;
-//                } else {
-//                    System.out.println("Server Icon Saved for " + message.getGuild().getName());
-//                    File serverIcon = new File("src/images/serverIcons/" + guildName + ".jpg");
-//                    fileIO.saveImage(iconUrl, guildName + ".jpg", "src/images/serverIcons/");
-//                    event.getMessage().getChannel().sendFile(serverIcon);
-//
-//                    event.getMessage().getChannel().sendMessage("\n```" + "\nServer Name: " + guildName + "\n"
-//                            + "Owner: " + message.getGuild().getOwner().getName() + "\n"
-//                            + "Creation Date: " + guildID.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE)
-//                            + " "
-//                            + guildID.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_TIME) + "\n"
-//                            + "Members: " + guildID.getUsers().size() + "\n"
-//                            + "Region: " + guildID.getRegion().getName() + "\n"
-//                            + "-------------------------------------------------------------\n"
-//                            + "```");
-//                    fileIO.saveImage(iconUrl, guildName, "src/images/serverIcons/");
-//                    usageCounter++;
-//                }
-//            } 
+            }      
             
             else if (Mcontent.startsWith("?tsearch:")) {
                 //Searches twitter for given username
