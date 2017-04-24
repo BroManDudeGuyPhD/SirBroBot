@@ -75,7 +75,8 @@ public class MainListener {
     static ArrayList<String> autoJoinChannels = new ArrayList<>();
 
     Twitter twitter = TwitterFactory.getSingleton();
-
+    public static IUser root;
+    
     boolean updateDispatcher = false;
     boolean messageStatus = false;
     int usageCounter = 0;
@@ -679,7 +680,7 @@ public class MainListener {
     public void onMessageReceived(MessageReceivedEvent event) throws Exception {
 
 
-        IUser root = event.getClient().getUserByID(tokens.rootID());
+        root = event.getClient().getUserByID(tokens.rootID());
         IChannel updateChannel = event.getClient().getChannelByID("197567480439373824");
         IChannel chan = event.getMessage().getChannel();
 
@@ -1589,7 +1590,8 @@ public class MainListener {
 
                 Messages.send("I am currently the Knight of " + SirBroBot.client.getGuilds().size() + " servers\n", chan);
                 usageCounter++;
-            }      
+            } 
+                       
             
             else if (Mcontent.startsWith("?tsearch:")) {
                 //Searches twitter for given username
@@ -2074,13 +2076,26 @@ public class MainListener {
                 event.getClient().getConnectedVoiceChannels().stream().filter((IVoiceChannel channel) -> channel.getGuild().equals(message.getGuild())).findFirst().ifPresent(IVoiceChannel::leave);
             } 
             
-            else if (Mcontent.equals(">skip")) {
-                skipTrack(message.getAuthor(), message.getChannel());
+            else if (Mcontent.startsWith(">skip")) {
+                if(Mcontent.equals(">skip")){
+                    skipTrack(message.getAuthor(), message.getChannel());
+                }
+                
+                else{
+                    String trackSkip[] = Mcontent.split(">skip ");
+                    String[] skipto = Mcontent.split(" ");
+                    Integer result = Integer.valueOf(skipto[1]);
+                    
+                    skipMultipleTrackS(message.getAuthor(), message.getChannel(),result);
+                    
+                }
+                
+                
             } 
             
             else if (Mcontent.startsWith(">stop")) {
                 musicManager.player.destroy();
-                
+                musicManager = getGuildAudioPlayer(message.getChannel().getGuild());
             } 
             
             else if (Mcontent.startsWith(">playlist")) {
@@ -2089,7 +2104,9 @@ public class MainListener {
                 
                 messageBuilder.appendContent("PLAYLIST: \n");
                 messageBuilder.appendContent("Currently playing: **" + musicManager.player.getPlayingTrack().getInfo().title +"** Runtime:`"+musicManager.player.getPlayingTrack().getDuration()+"`");
-
+                
+               
+                        
 //                    if (audio.getPlaylist().size() > 1) {
 //                        for (int i = 1; i < audio.getPlaylistSize(); i++) {
 //                            messageBuilder.appendContent(i + ": " + audio.getPlaylist().get(i).getMetadata() + "\n");
@@ -2168,12 +2185,12 @@ public class MainListener {
                 AudioSourceManagers.registerLocalSource(playerManager);
 
                 
-                String[] urlContent = message.getContent().split(" ");
+                String[] urlContent = message.getContent().split(">stream");
 
                 if (urlContent.length < 1) {
                     message.reply("Put space between >stream and URL");
                 } else {
-                    loadAndPlay(message.getChannel(), urlContent[1], message.getAuthor());
+                    loadAndPlay(message.getChannel(), urlContent[1].trim(), message.getAuthor());
                 }
             }
         }
@@ -2206,9 +2223,7 @@ public class MainListener {
                 sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+")");
                 
                 play(channel.getGuild(), musicManager, track);
-                
-                
-                
+             
             }
 
             @Override
@@ -2270,16 +2285,13 @@ public class MainListener {
         }
               
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
-
+        
         playerManager.loadItemOrdered(musicManager, url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+")");
                 
-                play(channel.getGuild(), musicManager, track);
-                
-                
-                
+                play(channel.getGuild(), musicManager, track);   
             }
 
             @Override
@@ -2339,6 +2351,16 @@ public class MainListener {
     musicManager.scheduler.nextTrack();
 
     sendMessageWithMentionToChannel(author, channel, "Skipped to next track.");
+  }
+  
+  private void skipMultipleTrackS(IUser author, IChannel channel, Integer skips) {
+    GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
+    
+    for(int i = 0; i < skips+1; i++){
+        musicManager.scheduler.nextTrack();
+    }
+
+    sendMessageWithMentionToChannel(author, channel, "Skipped "+skips.toString()+ " tracks.");
   }
 
   private void sendMessageToChannel(IChannel channel, String message) {
