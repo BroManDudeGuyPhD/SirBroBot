@@ -36,87 +36,116 @@ public class SteamStats implements Command{
     public void execute(String[] args, IUser sender, IChannel channel) {
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
         java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
-        
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setUseInsecureSSL(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+
+        //HTML variables
+        HtmlImage avatarURL = null;
+        HtmlElement recentActivity = null;
+        HtmlElement status = null;
+
+        //String counterparts
+        String STRavatarURL = null;
+        String STRrecentActivity = null;
+        String STRstatus = null;
+
         
-        // Get the first page
+        boolean failStatus = false;
+        
+        
+          
+    
         HtmlPage steamAccountInfo = null;
         try {
-            steamAccountInfo = webClient.getPage("http://steamcommunity.com/id/"+args[0]);
+            steamAccountInfo = webClient.getPage("http://steamcommunity.com/id/" + args[0]);
             
-        } catch (IOException | FailingHttpStatusCodeException ex) {    
-        }
- 
-
-        HtmlImage avatarURL = steamAccountInfo.getFirstByXPath("html/body/div[1]/div[7]/div[2]/div/div[1]/div/div/div/div[2]/div/img");
-        HtmlElement recentActivity = steamAccountInfo.getFirstByXPath("html/body/div[1]/div[7]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/h2");
-        HtmlElement status = steamAccountInfo.getFirstByXPath("html/body/div[1]/div[7]/div[2]/div/div[2]/div/div[1]/div[1]/div/div");
-        
-        //Account Info
-        String accountInfo = "Error: Timed Out";
-        
-        //Account URL
-        String imageURL = avatarURL.toString().replace("HtmlImage[<img src=\"", "").replace("\">]", "");
-        
-        if(recentActivity.asText().isEmpty()){
+            try {Thread.sleep(1000);} catch (InterruptedException ex) {Thread.currentThread().interrupt();}
             
+            avatarURL = steamAccountInfo.getFirstByXPath("html/body/div[1]/div[7]/div[2]/div/div[1]/div/div/div/div[2]/div/img");
+        } catch (IOException | FailingHttpStatusCodeException ex) {
+        } catch (NullPointerException e) {
+            Messages.send("No user by the name " + args[0] + " found. " + "http://steamcommunity.com/id/" + args[0], channel);
+            failStatus = true;
         }
-        
-        else if (!recentActivity.asText().isEmpty()){
-        //Embed stats
-        EmbedBuilder embed = new EmbedBuilder().ignoreNullEmptyFields();
-        embed.appendField("Recent Activity:", recentActivity.asText(), false);
-        embed.withTitle("Steam stats for "+args[0]+"\n");
-        embed.withUrl("http://steamcommunity.com/id/"+args[0]);
-        embed.withThumbnail(imageURL);
-        embed.appendField("Status: ", status.asText(), false);          
-        embed.withFooterText(" ?steamstats ");
-        embed.withFooterIcon("https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1024px-Steam_icon_logo.svg.png");
-        embed.withColor(Color.red);
-        embed.withTimestamp(LocalDateTime.now());
 
-        IMessage finalInfo = Messages.sendWithUpdatableEmbed("Getting account info...This can take a while so be patient :slight_smile:", embed.build(), false, channel);
-
-        try {Thread.sleep(1000);} catch (InterruptedException ex) {Thread.currentThread().interrupt();}
-        
-        
-        webClient.getOptions().setJavaScriptEnabled(true);
+        if (failStatus == false) {
+            EmbedBuilder embed = new EmbedBuilder().ignoreNullEmptyFields();
+            String accountInfo = null;
+            
+            
             try {
-                steamAccountInfo = webClient.getPage("https://www.mysteamgauge.com/account?username="+args[0]);
-            } catch (IOException | FailingHttpStatusCodeException ex) {
-                Logger.getLogger(SteamStats.class.getName()).log(Level.SEVERE, null, ex);
+                
+                recentActivity = steamAccountInfo.getFirstByXPath("html/body/div[1]/div[7]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/h2");
+                status = steamAccountInfo.getFirstByXPath("html/body/div[1]/div[7]/div[2]/div/div[2]/div/div[1]/div[1]/div/div");
+
+                //Set values to string within try catch
+                STRavatarURL = avatarURL.toString();
+                STRrecentActivity = recentActivity.toString();
+                STRstatus = status.asText();
+
+           } catch (NullPointerException e) {
+                e.printStackTrace();
             }
-        
-        
-        
-        HtmlElement element = null;
-        
-        for(int i = 0; i < 7; i++){
-        try{
-            webClient.waitForBackgroundJavaScript(2000);
-            element = steamAccountInfo.getFirstByXPath("html/body/div[2]/div/div[1]/table/tbody/tr/td[2]/div[2]");
-            accountInfo = element.asText().replace("you've", args[0]);
-        }
+
+
+                //Account Info
+                accountInfo = "Error: Timed Out";
+
+                //Avatar URL
+                String imageURL = STRavatarURL.replace("HtmlImage[<img src=\"", "").replace("\">]", "");
+
+                //Embed stats
+                
+                embed.appendField("Recent Activity:", STRrecentActivity, false);
+                embed.withTitle("Steam stats for " + args[0] + "\n");
+                embed.withUrl("http://steamcommunity.com/id/" + args[0]);
+                embed.withThumbnail(imageURL);
+                embed.appendField("Status: ", STRstatus, false);
+                embed.withFooterText(" ?steamstats ");
+                embed.withFooterIcon("https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1024px-Steam_icon_logo.svg.png");
+                embed.withColor(Color.red);
+                embed.withTimestamp(LocalDateTime.now());
+
+                
             
-        catch(NullPointerException | FailingHttpStatusCodeException e)
-        { System.out.println("=========================================================TRY"+i); try {Thread.sleep(100);} catch (InterruptedException ex) {Thread.currentThread().interrupt();}}
-        
+                IMessage finalInfo = Messages.sendWithUpdatableEmbed("Getting account info...This can take a while so be patient :slight_smile:", embed.build(), false, channel);
+
+               try {Thread.sleep(50);} catch (InterruptedException ex) {Thread.currentThread().interrupt();}
+
+                webClient.getOptions().setJavaScriptEnabled(true);
+                try {
+                    steamAccountInfo = webClient.getPage("https://www.mysteamgauge.com/account?username=" + args[0]);
+                } catch (IOException | FailingHttpStatusCodeException ex) {
+                    Logger.getLogger(SteamStats.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                HtmlElement element = null;
+
+                for (int i = 0; i < 7; i++) {
+                    try {
+                        webClient.waitForBackgroundJavaScript(1500);
+                        element = steamAccountInfo.getFirstByXPath("html/body/div[2]/div/div[1]/table/tbody/tr/td[2]/div[2]");
+                        accountInfo = element.asText().replace("you've", args[0]);
+                    } catch (NullPointerException | FailingHttpStatusCodeException e) {
+                        System.out.println("=========================================================TRY" + i);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                }
+
+                embed.appendField("Account Stats:", accountInfo, false);
+                finalInfo.edit("All Data retrieved", embed.build());
+
+            
         }
-        
-        
-        
-        embed.appendField("Account Stats:", accountInfo, false);
-        
-        finalInfo.edit("All Data retrieved", embed.build()); 
-        
-        }
-        
-           }
-        
-    
+    }
 
     @Override
     public String getName() {
@@ -132,6 +161,6 @@ public class SteamStats implements Command{
     public CommandTypes getType() {
         return CommandTypes.NORMAL;
     }
-    
+
     
 }

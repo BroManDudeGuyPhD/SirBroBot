@@ -370,6 +370,7 @@ public class MainListener {
         root = event.getClient().getUserByID(tokens.rootID());
         String mention = message.getAuthor().mention();
         IChannel channel = message.getChannel();
+        boolean tag = false;
         
 //Temporary Christmas reply
 //        if (mcontent.contains("christmas")) {
@@ -437,7 +438,11 @@ public class MainListener {
             }
 
             usageCounter++;
-        } else if (mcontent.startsWith("tag")) {
+        } 
+        
+        
+        
+        else if (mcontent.contains("tag")) {
 
             //Syntax @Mention tag <name> <action> <url (if applicable)
             String[] saveArray = message.getContent().split("\\s");
@@ -458,6 +463,7 @@ public class MainListener {
 
 
             if (saveArray.length == 2 && saveArray[1].toLowerCase().equals("taghelp")) {
+                tag = true;
                 messageBuilder.withContent("Syntax: @SirBroBot(mention) tag <name> <action> <url>\n```"
                         + "1. @SirBroBot\n"
                         + "2a. tag (always put when adding tag)\n"
@@ -471,7 +477,10 @@ public class MainListener {
                 } catch (RateLimitException | DiscordException | MissingPermissionsException ex) {
                     SirBroBot.LOGGER.error(null, ex);
                 }
-            } else if (saveArray.length == 2 && saveArray[1].toLowerCase().equals("tags")) {
+            } 
+            
+            else if (saveArray.length == 2 && saveArray[1].toLowerCase().equals("tags")) {
+                tag = true;
                 messageBuilder.appendContent("TAGS: " + TAG.size() + "\n```");
                 TAG.forEach((String a, String b) -> {
                     //System.out.printf("%s, %s\n", a, b);
@@ -609,16 +618,18 @@ public class MainListener {
         
 
         //NLP Starts here ONLY IN SBB TEST SERVER FOR NOW
-        else{
-        if(message.getGuild().getID().equals("168043804790751232") || message.getAuthor().getID().equals(tokens.rootID())){
+        else if (tag == false && !event.getMessage().mentionsEveryone() && !event.getMessage().mentionsHere()){
+                Messages.send(nlp.processMessageWithMentions(message), message.getChannel());
+            }
             
-            Messages.send(nlp.processMessageWithMentions(message), message.getChannel());
             
             
-        }
+            
+        
         messagesSeen++;
     }
-    }
+    
+
 
     
 

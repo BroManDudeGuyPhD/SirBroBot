@@ -33,6 +33,13 @@ public class Messages {
         });
     }
     
+     /**
+     * Sends a message with an embed, respecting the RequestBuffer
+     * @param msg The message to send
+     * @param eo Embed Object
+     * @param bln TTS or not
+     * @param chan Tha channel receiving the message
+     */
     public static void sendWithEmbed(String msg, EmbedObject eo, boolean bln, IChannel chan){
         RequestBuffer.request(() -> {
             try {
@@ -43,10 +50,19 @@ public class Messages {
         }); 
     }
     
+    
+     /**
+     * Sends a message with an embed,  WITHOUT respecting the RequestBuffer (so it can be edited)
+     * @param msg The message to send
+     * @param eo Embed Object
+     * @param bln TTS or not
+     * @param chan Tha channel receiving the message
+     * @return The embed object so it can be edited where it is called
+     */
     public static IMessage sendWithUpdatableEmbed(String msg, EmbedObject eo, boolean bln, IChannel chan){
         IMessage message = null;
             try {
-                message = new MessageBuilder(chan.getClient()).withEmbed(eo).withChannel(chan).send();
+                message = new MessageBuilder(chan.getClient()).withEmbed(eo).withContent(msg).withChannel(chan).send();
                 return message;
             } catch (DiscordException | MissingPermissionsException e) {
                 sendException("Could not send message! ", e, chan);

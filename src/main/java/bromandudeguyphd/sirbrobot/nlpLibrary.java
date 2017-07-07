@@ -43,6 +43,10 @@ public class nlpLibrary {
                             returnedMessage = returnedMessage.replace("USERMENTION", message.getAuthor().mention());
                         }
                         
+                        if(returnedMessage.contains("#getusername.user-name")){
+                            returnedMessage = returnedMessage.replace("#getusername.user-name", message.getAuthor().getName());
+                        }
+                        
                         if(returnedMessage.contains("OWNERMENTION")){
                             returnedMessage = returnedMessage.replace("OWNERMENTION", root.mention());
                         }
