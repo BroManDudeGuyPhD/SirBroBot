@@ -1,8 +1,3 @@
-// Andrew Fossier
-// aaf8553
-// CMPS 261
-// Programming Project : 18
-// Due Date : 1/25/16 11:55PM
 // Started Jun 22, 2016, 10:05:48 PM 
 
  /*
@@ -40,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
-    private static final int SHARD_COUNT = 5;
+    private static final int SHARD_COUNT = 6;
     public static IDiscordClient client;
     public static Skype skype;
     public static IUser root;
@@ -57,8 +52,8 @@ public class SirBroBot {
     }
 
     public static void boot() throws DiscordException, InterruptedException {
-        Discord4J.disableChannelWarnings();
-        client = new ClientBuilder().setMaxReconnectAttempts(100).withToken(tokens.discordToken()).withShards(SHARD_COUNT).login();
+        //Discord4J.disableChannelWarnings();
+        client = new ClientBuilder().setMaxReconnectAttempts(1000).withToken(tokens.discordToken()).withShards(SHARD_COUNT).login();
         client.getDispatcher().registerListener(dispatcher = new CommandDispatcher());
         client.getDispatcher().registerListener(new MainListener());
         
@@ -70,12 +65,12 @@ public class SirBroBot {
         skype = new SkypeBuilder("sirbrobot", password).withAllResources().build();
         skype.login();
 
-        skype.getEventDispatcher().registerListener(new Listener() {
-            @EventHandler
-            public void onMessage(MessageReceivedEvent e) {
-                System.out.println("Got message: " + e.getMessage().getContent());
-                //IMessage sendMessage = client.getOrCreatePMChannel(root).sendMessage("Recieved Skype Message: "+e.getMessage().getContent().toString()+"\nFrom: "+e.getMessage().getSender().getDisplayName());
-
+//        skype.getEventDispatcher().registerListener(new Listener() {
+//            @EventHandler
+//            public void onMessage(MessageReceivedEvent e) {
+//                System.out.println("Got message: " + e.getMessage().getContent());
+//                //IMessage sendMessage = client.getOrCreatePMChannel(root).sendMessage("Recieved Skype Message: "+e.getMessage().getContent().toString()+"\nFrom: "+e.getMessage().getSender().getDisplayName());
+//
 //                if (e.getMessage().getContent().toString().contains("?REBOOT")) {
 //
 //                    try {
@@ -98,9 +93,9 @@ public class SirBroBot {
 //                    }
 //                    System.exit(0);
 //                }
-            }
-        });
-        skype.subscribe();
+//            }
+//        });
+//        skype.subscribe();
     }
 
         
