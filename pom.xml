@@ -100,12 +100,6 @@
             <version>2.7</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>bromandudeguyphd</groupId>
-            <artifactId>SirBroBot</artifactId>
-            <version>1.0.0</version>
-            <type>jar</type>
-        </dependency>
         
         <dependency>
             <groupId>ai.api</groupId>
