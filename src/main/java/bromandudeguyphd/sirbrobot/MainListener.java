@@ -1998,21 +1998,35 @@ public class MainListener {
             
             else if (Mcontent.equals(">leaveall") && message.getAuthor().equals(root)) {
 
+                sx.blah.discord.handle.obj.Status statusStopUpdate = sx.blah.discord.handle.obj.Status.game("Rebooting Audio");
+                SirBroBot.client.changeStatus(statusStopUpdate);
 
-                    for (int i = 0; i < textChannel.size(); i++) {
+                List<IVoiceChannel> leaveList = SirBroBot.client.getConnectedVoiceChannels();
 
-                        try {
-                            IMessage sendMessage = event.getClient().getChannelByID(textChannel.get(i)).sendMessage("I needed to Disconnect from voice channels, give me a minute! (I am on `"+SirBroBot.client.getGuilds().size()+"` servers, I may be having streaming quality issues");
-                        } catch (DiscordException | MissingPermissionsException ex) {
-                            SirBroBot.LOGGER.error(null, ex);
+                for (int i = 0; i < leaveList.size(); i++) {
+
+                    leaveList.get(i).leave();
+                    try {
+                        musicManager = getGuildAudioPlayer(SirBroBot.client.getGuildByID(leaveList.get(i).getID()));
+                        while (musicManager.player.getPlayingTrack().isSeekable()) {
+                            musicManager.scheduler.nextTrack();
                         }
-
-                        event.getClient().getConnectedVoiceChannels().get(i).leave();
-
+                    } catch (NullPointerException E) {
 
                     }
- 
-            } 
+
+                }
+                System.out.println("Music Stopped on all servers: Now On: " + SirBroBot.client.getConnectedVoiceChannels().size());
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                statusStopUpdate = sx.blah.discord.handle.obj.Status.stream("In Development", "https://www.twitch.tv/sirbrobot/profile");
+                SirBroBot.client.changeStatus(statusStopUpdate);
+
+            }
             
 
             if (Mcontent.startsWith(">pause")) {
@@ -2084,8 +2098,14 @@ public class MainListener {
             } 
             
             else if (Mcontent.startsWith(">stop")) {
-                musicManager.player.destroy();
-                musicManager = getGuildAudioPlayer(message.getChannel().getGuild());
+            try{
+                while (!musicManager.player.getPlayingTrack().getIdentifier().equals("")){
+                    musicManager.scheduler.nextTrack();
+                }
+                }
+                catch(NullPointerException E){
+                    System.out.println("Music Stopped on: "+event.getMessage().getGuild().getName());
+                }
             } 
             
             else if (Mcontent.startsWith(">playlist")) {
@@ -2210,7 +2230,7 @@ public class MainListener {
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+")");
+                Messages.send(author.mention()+" Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+")", channel);
                 
                 play(channel.getGuild(), musicManager, track);
              
@@ -2233,8 +2253,8 @@ public class MainListener {
                         playlistMilis += playlist.getTracks().get(counter).getDuration();
                         counter += 1;
                     }
-                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks `(" + SirBroBot.getTimeFromMilis(playlistMilis) + ")`\n"
-                            + "PLAYLIST OVER 200 Songs, choose smaller playlist **(ONLY PLAYING FIRST SONG)**");
+                    Messages.send(author.mention()+" Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks `(" + SirBroBot.getTimeFromMilis(playlistMilis) + ")`\n"
+                            + "PLAYLIST OVER 200 Songs, choose smaller playlist **(ONLY PLAYING FIRST SONG)**", channel);
 
                     play(channel.getGuild(), musicManager, firstTrack);
                 } 
@@ -2247,7 +2267,7 @@ public class MainListener {
                         musicManager.scheduler.queue(track);
                         counter += 1;
                     }
-                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks and `" + SirBroBot.getTimeFromMilis(playlistMilis) + "` of playtime");
+                    Messages.send(author.mention()+" Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks and `" + SirBroBot.getTimeFromMilis(playlistMilis) + "` of playtime", channel);
                 }
             }
 
@@ -2282,7 +2302,7 @@ public class MainListener {
         playerManager.loadItemOrdered(musicManager, url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                sendMessageWithMentionToChannel(author, channel, "Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+") :: <"+finalURL+">");
+                Messages.send(author.mention()+" Added **" + track.getInfo().title +"** ("+ SirBroBot.getTimeFromMilis(track.getInfo().length)+") :: <"+finalURL+">", channel);
                 
                 play(channel.getGuild(), musicManager, track);   
             }
@@ -2304,8 +2324,8 @@ public class MainListener {
                         playlistMilis += playlist.getTracks().get(counter).getDuration();
                         counter += 1;
                     }
-                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks `(" + SirBroBot.getTimeFromMilis(playlistMilis) + ")`\n"
-                            + "PLAYLIST OVER 200 Songs, choose smaller playlist **(ONLY PLAYING FIRST SONG)**");
+                    Messages.send(author.mention()+" Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks `(" + SirBroBot.getTimeFromMilis(playlistMilis) + ")`\n"
+                            + "PLAYLIST OVER 200 Songs, choose smaller playlist **(ONLY PLAYING FIRST SONG)**", channel);
 
                     play(channel.getGuild(), musicManager, firstTrack);
                 } else {
@@ -2317,7 +2337,7 @@ public class MainListener {
                         musicManager.scheduler.queue(track);
                         counter += 1;
                     }
-                    sendMessageWithMentionToChannel(author, channel, " Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks and `" + SirBroBot.getTimeFromMilis(playlistMilis) + "` of playtime");
+                    Messages.send(author.mention()+" Added `" + playlist.getName() + "` with `" + playlist.getTracks().size() + "` tracks and `" + SirBroBot.getTimeFromMilis(playlistMilis) + "` of playtime", channel);
                 }
             }
 
@@ -2343,7 +2363,7 @@ public class MainListener {
     GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
     musicManager.scheduler.nextTrack();
 
-    sendMessageWithMentionToChannel(author, channel, "Skipped to next track.");
+    Messages.send(author.mention()+" Skipped to next track.", channel);
   }
   
   private void skipMultipleTrackS(IUser author, IChannel channel, Integer skips) {
@@ -2353,16 +2373,10 @@ public class MainListener {
         musicManager.scheduler.nextTrack();
     }
 
-    sendMessageWithMentionToChannel(author, channel, "Skipped "+skips.toString()+ " tracks.");
+    Messages.send(author.mention()+" Skipped "+skips.toString()+ " tracks.", channel);
   }
 
 
-  private void sendMessageWithMentionToChannel(IUser author, IChannel channel, String message) {
-    try {
-      channel.sendMessage(author.mention()+message);
-    } catch (Exception e) {
-    }
-}
   
   private static void connectToFirstVoiceChannel(IAudioManager audioManager) {
     for (IVoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()) {
