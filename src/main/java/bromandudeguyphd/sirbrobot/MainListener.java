@@ -140,7 +140,7 @@ public class MainListener {
 
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
-        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("Say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("?commands", "https://www.twitch.tv/SirBroBot/profile");
         //sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.game("Boot in progress");
         event.getClient().changeStatus(status);
         
@@ -587,12 +587,12 @@ public class MainListener {
                 fileIO.saveHash(TAG, "TAG");
 
                 if (TAG.get(tagName).equals("imagePNG")) {
-                    path = Paths.get("E:/Andrew/Documents/NetBeansProjects/SirBroBot1.0.1/src/tagData/images/" + tagName + ".png");
+                    path = Paths.get("src/tagData/images/" + tagName + ".png");
                 } else if (TAG.get(tagName).equals("imageJPG")) {
-                    path = Paths.get("E:/Andrew/Documents/NetBeansProjects/SirBroBot1.0.1/src/tagData/images/" + tagName + ".jpg");
+                    path = Paths.get("src/tagData/images/" + tagName + ".jpg");
                 }
                 if (TAG.get(tagName).equals("gif")) {
-                    path = Paths.get("E:/Andrew/Documents/NetBeansProjects/SirBroBot1.0.1/src/tagData/gifs/" + tagName + ".gif");
+                    path = Paths.get("src/tagData/gifs/" + tagName + ".gif");
                 }
 
                 if (path != null)
@@ -2023,7 +2023,7 @@ public class MainListener {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                statusStopUpdate = sx.blah.discord.handle.obj.Status.stream("In Development", "https://www.twitch.tv/sirbrobot/profile");
+                statusStopUpdate = sx.blah.discord.handle.obj.Status.stream("?commands", "https://www.twitch.tv/sirbrobot/profile");
                 SirBroBot.client.changeStatus(statusStopUpdate);
 
             }
@@ -2289,7 +2289,7 @@ public class MainListener {
            String url = "NONE";
            final String finalURL;
         try {
-            id = execCmd("youtube-dl.exe ytsearch:\"" + query + "\" --get-id").trim();
+            id = execCmd("youtube-dl ytsearch:\"" + query + "\" --get-id").trim();
             url = "http://www.youtube.com/watch?v="+id;
             
         } catch (IOException ex) {
