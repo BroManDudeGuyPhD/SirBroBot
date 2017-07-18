@@ -20,7 +20,8 @@ import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.format.AudioPlayerInputStream;
 
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.*;
+
+
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.*;
 import sx.blah.discord.util.audio.AudioPlayer;
@@ -41,8 +42,15 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import sx.blah.discord.handle.impl.events.ReadyEvent;
+import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
+import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 
 
 
@@ -210,7 +218,7 @@ public class MainListener {
 
             RequestBuffer.request(() -> {
                 try {
-                    MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+                    MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
                     messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(VADdata.get(event.getVoiceChannel().getGuild().getID())));
                     IMessage tempmessage = messageBuilder.withContent(userJoined + " joined " + channelJoined.getName()).withTTS().send();
 
@@ -247,7 +255,7 @@ public class MainListener {
 
             RequestBuffer.request(() -> {
                 try {
-                    MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+                    MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
                     messageBuilder.withChannel(event.getNewChannel().getGuild().getChannelByID(VADdata.get(event.getNewChannel().getGuild().getID())));
                     IMessage tempmessage = messageBuilder.withContent(userJoined + " moved to " + channelJoined.getName()).withTTS().send();
 
@@ -286,7 +294,7 @@ public class MainListener {
 
             RequestBuffer.request(() -> {
                 try {
-                    MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+                    MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
                     messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(LADdata.get(event.getVoiceChannel().getGuild().getID())));
                     IMessage tempmessage = messageBuilder.withContent(userJoined + " left " + channelJoined.getName()).withTTS().send();
 
@@ -684,7 +692,7 @@ public class MainListener {
                 }
 
                 int placeholder = 0;
-                for (int i = 0; i < event.getClient().getGuilds().size(); i++) {
+                for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
                     if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
                         serverOwner = true;
                         placeholder = i;
@@ -692,7 +700,7 @@ public class MainListener {
                 }
 
                 if (serverOwner) {
-                    tempmessage.edit("Hello **" + event.getClient().getGuilds().get(placeholder).getName() + "** server owner! \n"
+                    tempmessage.edit("Hello **" + SirBroBot.client.getGuilds().get(placeholder).getName() + "** server owner! \n"
                             + "Fetching commands");
                     try {
                         Thread.sleep(2100);
@@ -709,7 +717,7 @@ public class MainListener {
                     person.sendMessage(commands.commandListNormal);
                 }
             } else if (Mcontent.startsWith("?broadcaston")) {
-                for (int i = 0; i < event.getClient().getGuilds().size(); i++) {
+                for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
                     if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
                         serverOwner = true;
                     }
@@ -840,6 +848,28 @@ public class MainListener {
                     } catch (MissingPermissionsException ignored) {
                     }
                     Messages.send(Mcontent.substring(5), chan);
+                    usageCounter++;
+
+                } 
+                
+                else if (Mcontent.startsWith("?updatestatus")) {
+                    
+                    try {
+                        message.delete();
+                    } catch (MissingPermissionsException ignored) {
+                    }
+                    sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.game(message.getContent().replace("?updatestatus ", ""));
+                    usageCounter++;
+
+                } 
+                
+                else if (Mcontent.startsWith("?updatestream")) {
+                    
+                    try {
+                        message.delete();
+                    } catch (MissingPermissionsException ignored) {
+                    }
+                    sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream(message.getContent().replace("?updatestream ", ""), "https://www.twitch.tv/SirBroBot/profile");
                     usageCounter++;
 
                 } 
@@ -1502,27 +1532,23 @@ public class MainListener {
                     Thread.currentThread().interrupt();
                 }
                 boolean serverOwnerPM = false;
-                IPrivateChannel person = event.getClient().getOrCreatePMChannel(message.getAuthor());
+                IPrivateChannel person = SirBroBot.client.getOrCreatePMChannel(message.getAuthor());
                 person.toggleTypingStatus();
 
                 IMessage tempmessage = person.sendMessage("Determining Owner status...");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                }
+                try {Thread.sleep(2000);} catch (InterruptedException ignored) {Thread.currentThread().interrupt();}
 
 
                 int placeholder2 = 0;
-                for (int i = 0; i < event.getClient().getGuilds().size(); i++) {
-                    if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
+                for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
+                    if (SirBroBot.client.getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
                         serverOwnerPM = true;
                         placeholder2 = i;
                     }
                 }
 
                 if (serverOwnerPM) {
-                    tempmessage.edit("Hello **" + event.getClient().getGuilds().get(placeholder2).getName() + "** server owner! \n"
+                    tempmessage.edit("Hello **" + SirBroBot.client.getGuilds().get(placeholder2).getName() + "** server owner! \n"
                             + "Fetching commands");
                     try {
                         Thread.sleep(2000);
@@ -2176,12 +2202,12 @@ public class MainListener {
                     } catch (MissingPermissionsException ignored) {
                     }
                     tempmessage = messageBuilder.withChannel(chan).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
-                    Thread.sleep(2500);
+                    
                     loadYTSearch(message.getChannel(), videoSearch[1], message.getAuthor());
                     
                 } else {
                     temp = null;
-                    message.reply("Command error. Syntax is `>search: keywords`");
+                    message.reply("Command error. Syntax is `>search keywords`");
                 }
 
             } 
@@ -2288,13 +2314,11 @@ public class MainListener {
            String id = "NONE";
            String url = "NONE";
            final String finalURL;
-        try {
-            id = execCmd("youtube-dl ytsearch:\"" + query + "\" --get-id").trim();
-            url = "http://www.youtube.com/watch?v="+id;
-            
-        } catch (IOException ex) {
-            Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
-        }
+           id = execYTcmd("youtube-dl ytsearch:\"" + query + "\" --get-id");
+           
+           
+           
+           url = "http://www.youtube.com/watch?v="+id;
         finalURL = url; 
         
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
@@ -2410,11 +2434,7 @@ public class MainListener {
             id = listSpliter[0];
         }
         String URLSongname = null;
-        try {
-            URLSongname = execCmd("youtube-dl.exe ytsearch:\"" + id + "\" --get-title").trim();
-        } catch (IOException ex) {
-            SirBroBot.LOGGER.error(null, ex);
-        }
+        URLSongname = execCmd("youtube-dl.exe ytsearch:\"" + id + "\" --get-title").trim();
 
         try {
             Process process = builder.start();
@@ -2473,10 +2493,53 @@ public class MainListener {
 
     }
 
-    public static String execCmd(String cmd) throws java.io.IOException {
-        java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
-        return s.hasNext() ? s.next().trim() : "";
-    }
+private String execCmd(String command) {
+
+		StringBuffer output = new StringBuffer();
+
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+			BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+                        String line = "";
+			while ((line = reader.readLine())!= null) {
+				output.append(line + "\n");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return output.toString();
+
+	}
+
+private String execYTcmd(String command) {
+
+		String id = "Error";
+
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec("/bin/bash "+command);
+			p.waitFor();
+                        try {Thread.sleep(6000);} catch (InterruptedException ignored) {Thread.currentThread().interrupt();}
+			BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+                        id = reader.readLine();
+			
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+                System.out.println(id);
+		return id;
+
+	}
     
 
 
