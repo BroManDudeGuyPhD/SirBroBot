@@ -42,6 +42,8 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
@@ -209,6 +211,8 @@ public class MainListener {
         }
 
     }
+    
+    
 
     @EventSubscriber
     public void handleVoiceJoin(UserVoiceChannelJoinEvent event) {
@@ -644,12 +648,12 @@ public class MainListener {
 
     @EventSubscriber
     @SuppressWarnings("SleepWhileInLoop")
-    public void onMessageReceived(MessageReceivedEvent event) throws Exception {
+    public void onMessageReceived(MessageReceivedEvent event) throws InterruptedException{
 
 
         root = event.getClient().getUserByID(tokens.rootID());
         IChannel updateChannel = event.getClient().getChannelByID("197567480439373824");
-        IChannel chan = event.getMessage().getChannel();
+        IChannel channel = event.getMessage().getChannel();
 
         messagesSeen++;
 
@@ -777,7 +781,7 @@ public class MainListener {
 
                 if (message.getContent().contains("?quit")) {
                     fileIO.save(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
-                    Messages.send("Goodbye!", chan);
+                    Messages.send("Goodbye!", channel);
                     event.getClient().logout();
                     //SirBroBot.skype.logout();
 
@@ -847,7 +851,7 @@ public class MainListener {
                         message.delete();
                     } catch (MissingPermissionsException ignored) {
                     }
-                    Messages.send(Mcontent.substring(5), chan);
+                    Messages.send(Mcontent.substring(5), channel);
                     usageCounter++;
 
                 } 
@@ -859,6 +863,7 @@ public class MainListener {
                     } catch (MissingPermissionsException ignored) {
                     }
                     sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.game(message.getContent().replace("?updatestatus ", ""));
+                    event.getClient().changeStatus(status);
                     usageCounter++;
 
                 } 
@@ -870,6 +875,7 @@ public class MainListener {
                     } catch (MissingPermissionsException ignored) {
                     }
                     sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream(message.getContent().replace("?updatestream ", ""), "https://www.twitch.tv/SirBroBot/profile");
+                    event.getClient().changeStatus(status);
                     usageCounter++;
 
                 } 
@@ -888,7 +894,7 @@ public class MainListener {
                     message.delete();
                     IUser user;
                     user = message.getMentions().get(0);
-                    Messages.send(user.getName() + "'s ID is: " + user.getID(), chan);
+                    Messages.send(user.getName() + "'s ID is: " + user.getID(), channel);
                     usageCounter++;
                 } //Broadcasts message to server owners
                 
@@ -1003,13 +1009,17 @@ public class MainListener {
                 
                 else if (Mcontent.equals("?tweetabout")) {
 
-                    twitter.updateStatus(
-                            "Discord Servers: " + event.getClient().getGuilds().size() + "\n"
-                                    + "Voice Channels: " + event.getClient().getVoiceChannels().size() + "\n"
-                                    + "Text Channels: " + event.getClient().getChannels(false).size() + "\n"
-                                    + "Total Users: " + getUsers() + "\n"
-                                    + "Messages Seen: " + messagesSeen + "\n"
-                                    + "Uptime: " + getUptime() + "\n");
+                    try {
+                        twitter.updateStatus(
+                                "Discord Servers: " + event.getClient().getGuilds().size() + "\n"
+                                        + "Voice Channels: " + event.getClient().getVoiceChannels().size() + "\n"
+                                                + "Text Channels: " + event.getClient().getChannels(false).size() + "\n"
+                                                        + "Total Users: " + getUsers() + "\n"
+                                                                + "Messages Seen: " + messagesSeen + "\n"
+                                                                        + "Uptime: " + getUptime() + "\n");
+                    } catch (TwitterException ex) {
+                        message.reply("Error tweeting");
+                    }
                     event.getMessage().getChannel().sendMessage("Server stats sent!");
                     usageCounter++;
 
@@ -1018,7 +1028,12 @@ public class MainListener {
                 else if (Mcontent.startsWith("?tweet:")) {
 
                     String[] tweetToSend = message.getContent().trim().split(":");
-                    Status status = twitter.updateStatus(tweetToSend[1]);
+                    Status status = null;
+                    try {
+                        status = twitter.updateStatus(tweetToSend[1]);
+                    } catch (TwitterException ex) {
+                        message.reply("Error tweeting");
+                    }
                     event.getMessage().getChannel().sendMessage("Tweet sent!");
                     twitterID = status.getId();
 
@@ -1029,7 +1044,11 @@ public class MainListener {
                     if (twitterID == 0) {
                         message.reply("I dont have an ID to delete");
                     } else {
-                        twitter.destroyStatus(twitterID);
+                        try {
+                            twitter.destroyStatus(twitterID);
+                        } catch (TwitterException ex) {
+                            message.reply("Error Deleting");
+                        }
                         event.getMessage().getChannel().sendMessage("Tweet deleted!");
                     }
 
@@ -1099,10 +1118,11 @@ public class MainListener {
 
                     try {
                         fileIO.readFile(curseWords, fileName);
+                        event.getMessage().getChannel().sendFile(rolesOnServerFile);
                     } catch (IOException ignored) {
                         SirBroBot.LOGGER.warn("Unable to load cureWords file");
                     }
-                    event.getMessage().getChannel().sendFile(rolesOnServerFile);
+                    
 
                     rolesOnServer.clear();
 
@@ -1151,7 +1171,7 @@ public class MainListener {
 
                     message.getGuild().editUserRoles(user, roles);
 
-                    Messages.send("Operation successful: " + message.getGuild().getRoles().get(roleToAdd) + " role assigned to " + message.getMentions().get(0), chan);
+                    Messages.send("Operation successful: " + message.getGuild().getRoles().get(roleToAdd) + " role assigned to " + message.getMentions().get(0), channel);
 
                     usageCounter++;
 
@@ -1185,7 +1205,7 @@ public class MainListener {
 
                     message.getGuild().editUserRoles(user, roles);
 
-                    Messages.send("Operation successful: " + message.getGuild().getRoles().get(roleToAdd) + " role added to " + message.getMentions().get(0) + "\n", chan);
+                    Messages.send("Operation successful: " + message.getGuild().getRoles().get(roleToAdd) + " role added to " + message.getMentions().get(0) + "\n", channel);
 
 
                     usageCounter++;
@@ -1488,13 +1508,13 @@ public class MainListener {
             else if (message.getAuthor().getRolesForGuild(message.getGuild()).toString().contains("Admin")) {
                 switch (message.getContent()) {
                     case "?bannedListSize":
-                        Messages.send("There are " + curseWords.size() + " banned Words", chan);
+                        Messages.send("There are " + curseWords.size() + " banned Words", channel);
                         usageCounter++;
                         break;
 
                     //Returns list of roles to chat
                     case "?channels":
-                        Messages.send("Channels I can see: " + event.getClient().getChannels(false).toString(), chan);
+                        Messages.send("Channels I can see: " + event.getClient().getChannels(false).toString(), channel);
                         usageCounter++;
                         break;
 
@@ -1508,11 +1528,11 @@ public class MainListener {
             //Lists Commands
             if (Mcontent.startsWith("?commands")) {
                 //message.getAuthor().getRolesForGuild(message.getGuild()).toString().contains("Admin") ||
-                Messages.send(commands.commandListNormal, chan);
+                Messages.send(commands.commandListNormal, channel);
 
                 usageCounter++;
             } else if (Mcontent.startsWith("?mcommands")) {
-                Messages.send(commands.mcommands, chan);
+                Messages.send(commands.mcommands, channel);
                 
             } 
             
@@ -1573,7 +1593,7 @@ public class MainListener {
             
             else if (Mcontent.startsWith("?ocommands")) {
                 if (message.getAuthor().getID().equals(message.getGuild().getOwner().getID())) {
-                    Messages.send(commands.commandListOwner, chan);
+                    Messages.send(commands.commandListOwner, channel);
                 }
 
                 if (!Objects.equals(message.getAuthor().getID(), message.getGuild().getOwner().getID())) {
@@ -1591,18 +1611,18 @@ public class MainListener {
                     message.delete();
                 } catch (MissingPermissionsException ignored) {
                 }
-                Messages.send("I've issued " + usageCounter + " commands since my last upgrade.", chan);
+                Messages.send("I've issued " + usageCounter + " commands since my last upgrade.", channel);
                 usageCounter++;
             } 
             
             else if (Mcontent.equals("?uptime")) {
-                Messages.send(SirBroBot.getUptime(), chan);
+                Messages.send(SirBroBot.getUptime(), channel);
                 usageCounter++;
             } 
             
             else if (Mcontent.equals("?servers")) {
 
-                Messages.send("I am currently the Knight of " + SirBroBot.client.getGuilds().size() + " servers\n", chan);
+                Messages.send("I am currently the Knight of " + SirBroBot.client.getGuilds().size() + " servers\n", channel);
                 usageCounter++;
             } 
                        
@@ -1620,7 +1640,11 @@ public class MainListener {
                     
                     //twitterProfiles.add(twitter.users().showUser(userToSearch[1]).getName());
                     File serverIcon = new File("src/images/twitterIcons/" + twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg");
-                    fileIO.saveImage(iconUrl, twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg", "src/images/twitterIcons/");
+                    try {
+                        fileIO.saveImage(iconUrl, twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg", "src/images/twitterIcons/");
+                    } catch (IOException ex) {
+                        Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                     event.getMessage().getChannel().sendFile(serverIcon);
 
@@ -1634,10 +1658,12 @@ public class MainListener {
                             + "Followers: " + twitter.users().showUser(userToSearch[1]).getFollowersCount() + "\n"
                             + "Following: " + twitter.users().showUser(userToSearch[1]).getFriendsCount() + "\n"
                             + "Tweets: " + twitter.users().showUser(userToSearch[1]).getStatusesCount() + "\n"
-                            + "```", chan);
+                            + "```", channel);
                 } catch (TwitterException ignored) {
 
                     message.reply("User not found! Try again");
+                } catch (FileNotFoundException ex) {
+                    message.reply("Error with image upload");
                 }
             } //Returns Authors token in chat USE CAREFULLY
             
@@ -1686,7 +1712,7 @@ public class MainListener {
                                 + "Account created: " + who.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
                                 + "Currently playing: " + game + "\n"
                                 + "Presence: " + who.getPresence() + "\n"
-                                + "```", chan);
+                                + "```", channel);
                     } catch (FileNotFoundException | DiscordException | RateLimitException | MissingPermissionsException e) {
                         e.printStackTrace();
                     }
@@ -1704,7 +1730,7 @@ public class MainListener {
                                 + "Account created: " + who.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
                                 + "Currently playing: " + game + "\n"
                                 + "Presence: " + who.getPresence() + "\n"
-                                + "```", chan);
+                                + "```", channel);
                     } catch (IOException | DiscordException | RateLimitException | MissingPermissionsException e) {
                         e.printStackTrace();
                     }
@@ -1807,7 +1833,12 @@ public class MainListener {
                 if (Mcontent.contains("http")) {
                     IMessage update = event.getMessage().getChannel().sendMessage("Processing image...");
 
-                    String results = HTMLUnit.imgid(message.getContent().replace("?img-id", ""));
+                    String results = null;
+                    try {
+                        results = HTMLUnit.imgid(message.getContent().replace("?img-id", ""));
+                    } catch (Exception ex) {
+                        message.reply("I encountered an error, it would seem");
+                    }
 
                     if (results.contains("I think this may be inappropriate content so I won't show it")) {
                         try {
@@ -1823,17 +1854,25 @@ public class MainListener {
             } 
             
             else if (Mcontent.startsWith("?sitetohtml")) {
-                //Seemed cool
-                String url = message.getContent().replace("?sitetohtml", "");
-                TextParser.html(url);
-                File file = new File("src/dataDocuments/HTMLfiles/" + url.replace(":", "").replace("/", ".") + ".html");
-                event.getMessage().getChannel().sendFile(file);
-                usageCounter++;
+                try {
+                    //Seemed cool
+                    String url = message.getContent().replace("?sitetohtml", "");
+                    TextParser.html(url);
+                    File file = new File("src/dataDocuments/HTMLfiles/" + url.replace(":", "").replace("/", ".") + ".html");
+                    event.getMessage().getChannel().sendFile(file);
+                    usageCounter++;
+                } catch (Exception ex) {
+                    Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } 
             
             else if (Mcontent.startsWith("?google")) {
-                //Work in progress, as it were
-                GoogleSearch.run(message.getContent().replace("?google ", ""));
+                try {
+                    //Work in progress, as it were
+                    GoogleSearch.run(message.getContent().replace("?google ", ""));
+                } catch (IOException ex) {
+                    message.reply("Error searching");
+                }
                 event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
                 GoogleSearch.clearSearch();
             } 
@@ -2103,8 +2142,15 @@ public class MainListener {
 //                audio.queue(new File("src/songs/leaguesongs/Worlds Collide (Arty Remix).mp3"));
             } 
             else if (Mcontent.startsWith(">leave")) {
-                event.getClient().getConnectedVoiceChannels().stream().filter((IVoiceChannel channel) -> channel.getGuild().equals(message.getGuild())).findFirst().ifPresent(IVoiceChannel::leave);
+                SirBroBot.client.getConnectedVoiceChannels().stream().filter((IVoiceChannel Vchannel) -> Vchannel.getGuild().equals(message.getGuild())).findFirst().ifPresent(IVoiceChannel::leave);
+                            
             } 
+            
+//            IVoiceChannel voiceChannel = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
+//                textChannel.add(message.getChannel().getID());
+//                if (voiceChannel != null) {
+//                    try {
+//                        voiceChannel.join();
             
             else if (Mcontent.startsWith(">skip")) {
                 if(Mcontent.equals(">skip")){
@@ -2201,7 +2247,7 @@ public class MainListener {
                         message.delete();
                     } catch (MissingPermissionsException ignored) {
                     }
-                    tempmessage = messageBuilder.withChannel(chan).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
+                    tempmessage = messageBuilder.withChannel(channel).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
                     
                     loadYTSearch(message.getChannel(), videoSearch[1], message.getAuthor());
                     
@@ -2523,7 +2569,7 @@ private String execYTcmd(String command) {
 
 		Process p;
 		try {
-			p = Runtime.getRuntime().exec("/bin/bash "+command);
+			p = Runtime.getRuntime().exec(command);
 			p.waitFor();
                         try {Thread.sleep(6000);} catch (InterruptedException ignored) {Thread.currentThread().interrupt();}
 			BufferedReader reader =
