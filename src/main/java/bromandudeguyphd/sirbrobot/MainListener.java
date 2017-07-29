@@ -2144,7 +2144,7 @@ public class MainListener {
             else if (Mcontent.startsWith(">leave")) {
                 SirBroBot.client.getConnectedVoiceChannels().stream().filter((IVoiceChannel Vchannel) -> Vchannel.getGuild().equals(message.getGuild())).findFirst().ifPresent(IVoiceChannel::leave);
                             
-            } 
+            }  
             
 //            IVoiceChannel voiceChannel = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
 //                textChannel.add(message.getChannel().getID());
