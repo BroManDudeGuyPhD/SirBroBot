@@ -8,6 +8,7 @@ package bromandudeguyphd.htmlparsing;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
@@ -15,7 +16,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class HTMLUnit {
     
@@ -66,9 +74,41 @@ public class HTMLUnit {
         }
     }
         
+        public static String youtubeSearch(String search) {
+        String result = "Error";
+        String searchSplit = search.trim().replace(" ", "+");
+
+        String searchFinal = "https://www.youtube.com/results?search_query=" + searchSplit;
+
+        try {
+
+            Document doc = Jsoup
+                    .connect(searchFinal)
+                    .userAgent(
+                            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+                    .timeout(5000).get();
+            Elements links = doc.select("a[href]");
+
+            for (Element link : links) {
+
+                String temp = link.attr("href");
+                if (temp.contains("watch?v")) {
+
+                    return "http://www.youtube.com" + temp;
+                }
+
+            }
+
+            System.out.println(result);
+
+        } catch (IOException | FailingHttpStatusCodeException ex) {
+            return "Error";
+        }
+        return result;
+    }
         
-    public String steamGauge(String username) throws Exception {
-             
+        
+    public String steamGauge(String username) throws Exception {         
              
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
         java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);

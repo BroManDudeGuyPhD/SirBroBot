@@ -1875,6 +1875,7 @@ public class MainListener {
                 }
                 event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
                 GoogleSearch.clearSearch();
+                usageCounter++;
             } 
             
             
@@ -1990,6 +1991,16 @@ public class MainListener {
                     }
 
                 }
+                usageCounter++;
+            }
+            
+            else if(Mcontent.startsWith("?ping")){
+                Messages.send("PONG \n```"+execYTcmd("ping -c 4 www.google.com").toString()+"```", event.getChannel());
+                usageCounter++;
+            }
+            
+            else if(Mcontent.startsWith("?ascii")){
+                Messages.send("```"+execYTcmd("figlet "+event.getMessage().getContent().replace("?ascii", "")).toString()+"```", event.getChannel());
                 usageCounter++;
             }
 
@@ -2249,7 +2260,7 @@ public class MainListener {
                     }
                     tempmessage = messageBuilder.withChannel(channel).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
                     
-                    loadYTSearch(message.getChannel(), videoSearch[1], message.getAuthor());
+                    loadAndPlay(message.getChannel(), HTMLUnit.youtubeSearch(videoSearch[1].trim()), message.getAuthor());
                     
                 } else {
                     temp = null;
@@ -2360,7 +2371,7 @@ public class MainListener {
            String id = "NONE";
            String url = "NONE";
            final String finalURL;
-           id = execYTcmd("youtube-dl ytsearch:\"" + query + "\" --get-id");
+           id = execYTcmd("youtube-dl ytsearch:\"" + query + "\" --get-id").toString();
            
            
            
@@ -2563,27 +2574,27 @@ private String execCmd(String command) {
 
 	}
 
-private String execYTcmd(String command) {
-
-		String id = "Error";
+private StringBuffer execYTcmd(String command) {
+		StringBuffer output = new StringBuffer();
 
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(command);
 			p.waitFor();
-                        try {Thread.sleep(6000);} catch (InterruptedException ignored) {Thread.currentThread().interrupt();}
 			BufferedReader reader =
                             new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-                        id = reader.readLine();
+                        String line = "";
+			while ((line = reader.readLine())!= null) {
+				output.append(line + "\n");
+			}
 			
 			
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
-                System.out.println(id);
-		return id;
+		return output;
 
 	}
     

@@ -25,14 +25,15 @@ public class commandsClass {
             + " 7. ?serverinfo          :Info on this server\n"
             + " 8. ?about               :Learn about SirBroBot\n"
             + " 9. ?tsearch: <username> :Searches for a Twitter user and returns their info.\n"
-            + "10. ?myinfo              :Sends user PM with their ID, iconURL and other account info\n"
-            + "11. ?whois @UserMention  :Returns info about mentioned user\n"
-            + "12. ?d20                 :Returns random # (1-20)\n"
-            + "13. ?randnum <#> <#>     :Generates # between the 2 given\n"
-            + "14. ?img-negative <url>  :Accepts URL or an attatchment. Comment on the attatched image\n"
-            + "15. ?img-mirror <url>    :Same as above\n"
-            + "16. ?img-id <url>        :Identify what an image is\n"
-            + "17. ?google <term>       :Search Google for term\n"
+            + "10. ?whois @UserMention  :Returns info about mentioned user\n"
+            + "11. ?d20                 :Returns random # (1-20)\n"
+            + "12. ?randnum <#> <#>     :Generates # between the 2 given\n"
+            + "13. ?img-negative <url>  :Accepts URL or an attatchment. Comment on the attatched image\n"
+            + "14. ?img-mirror <url>    :Same as above\n"
+            + "15. ?img-id <url>        :Identify what an image is\n"
+            + "16. ?google <term>       :Search Google for term\n"
+            + "17. ?ping                :Pings Google\n"
+            + "18. ?ascii <message>     :Replies with ASCII message\n"
             + ""
             + "```"
             + "\nThings I will respond to with an @SirBroBot mention behind it: \n"
@@ -67,17 +68,15 @@ public class commandsClass {
             + " 8. ?welcomeON <Welcome Message>     :Welcomes NEW users in cast text channel. USERNAME or USERMENTION include these in welcome message.\n"
             + " 9. ?welcomeOFF                      :Turns off Welcome Message\n"
             + "10. ?welcomeedit<Welcome Message>    :Edit currently set Welcome message\n"
-            + "11. ?welcomeview                     :Displays current welcome Message, showing USERNAME or USERMENTION (if youve utilized them)"
+            + "11. ?welcomeview                     :Displays current welcome Message, showing USERNAME or USERMENTION (if youve utilized them)\n"
             + "11. ?purgechannel                    :Purge ALL messages in channel after 10 sec. Say abort to stop. \n"
             +"```"
             + "\n"
-            +"```"
-            + "12. ?broadcastoff / broadcaston      :Turns broadcast recieve status on or off"
+
             
-            + ""
-                            
-                           // + "3. ?addrole <role#> @MentionUser :Adds the tole to the user's roles"
-                            +"```";
+            + "";
+    
+    
     String mcommands = 
             "**Music Commands**:musical_note:\n"
           + "```xl\n"
