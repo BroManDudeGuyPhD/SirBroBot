@@ -1,5 +1,5 @@
 package bromandudeguyphd.sirbrobot.commands.commands;
-import bromandudeguyphd.sirbrobot.MainListener;
+import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.Command;
@@ -26,17 +26,17 @@ public class About implements Command {
                 int totalChannels = SirBroBot.client.getVoiceChannels().size()+SirBroBot.client.getChannels(false).size();
                 embed.appendField("Total Channels: "+ totalChannels," Voice: "+ SirBroBot.client.getVoiceChannels().size()+"  |  Text:"+SirBroBot.client.getChannels(false).size() ,false);
                 
-                long totalUsers = MainListener.getUsers();
+                long totalUsers = DiscordListener.getUsers();
                 
                 double guildUsers = channel.getGuild().getUsers().size(); 
                 double guildPercent = guildUsers/totalUsers; 
                 String guildUsersString = ""+guildUsers;
                 DecimalFormat decimalFormat = new DecimalFormat("0.000");
                 
-                embed.appendField("Total Users: "+ MainListener.getUsers(), channel.getGuild().getName()+": "+ guildUsersString.replace(".0", "") + " users  |  "+decimalFormat.format(guildPercent*100)+"% of userbase", false);
-                embed.appendField("Messages Seen: ", "" + MainListener.getMessagesSeen(), false);
+                embed.appendField("Total Users: "+ DiscordListener.getUsers(), channel.getGuild().getName()+": "+ guildUsersString.replace(".0", "") + " users  |  "+decimalFormat.format(guildPercent*100)+"% of userbase", false);
+                embed.appendField("Messages Seen: ", "" + DiscordListener.getMessagesSeen(), false);
                 embed.appendField("Uptime: ", "" + SirBroBot.getUptime(), false);
-                embed.appendField("Programmer: ",  MainListener.root.mention(), false);
+                embed.appendField("Programmer: ",  DiscordListener.root.mention(), false);
                 embed.appendField("Links: ", "" + "Twitter: https://twitter.com/SirBroBotThe1st \n Website: http://bootswithdefer.tumblr.com/SirBroBot ", false);
                 embed.withFooterText(" ?about ");
                 embed.withFooterIcon(sender.getAvatarURL());

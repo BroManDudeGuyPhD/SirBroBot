@@ -9,7 +9,7 @@ package bromandudeguyphd.sirbrobot;
  * @author BroManDudeGuyPhD
  */
 import bromandudeguyphd.sirbrobot.SirBroBot;
-import bromandudeguyphd.sirbrobot.MainListener;
+import bromandudeguyphd.sirbrobot.DiscordListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,9 +34,9 @@ public class autoJoinVoiceClass implements Runnable {
     public void run() {
         ReadyEvent event;
         
-        int autoJoinChannelsAtStart = MainListener.autoJoinChannels.size();
+        int autoJoinChannelsAtStart = DiscordListener.autoJoinChannels.size();
         ArrayList<String> temp = new ArrayList<>();
-        temp.addAll(MainListener.autoJoinChannels);
+        temp.addAll(DiscordListener.autoJoinChannels);
         boolean autoJoinCompleted = false;
         int servers = SirBroBot.client.getGuilds().size();
         
@@ -57,7 +57,7 @@ public class autoJoinVoiceClass implements Runnable {
                 try {
                     controlledEvent.getClient().getVoiceChannelByID(temp.get(i)).join();
                 } catch (MissingPermissionsException ex) {
-                    Logger.getLogger(MainListener.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DiscordListener.class.getName()).log(Level.SEVERE, null, ex);
 
                 }
             }

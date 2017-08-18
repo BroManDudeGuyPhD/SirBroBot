@@ -9,7 +9,7 @@ import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
-import static bromandudeguyphd.sirbrobot.MainListener.root;
+import static bromandudeguyphd.sirbrobot.DiscordListener.root;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**

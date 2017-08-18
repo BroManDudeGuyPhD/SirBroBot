@@ -55,7 +55,7 @@ public class SirBroBot {
         //Discord4J.disableChannelWarnings();
         client = new ClientBuilder().setMaxReconnectAttempts(1000).withToken(tokens.discordToken()).withShards(SHARD_COUNT).login();
         client.getDispatcher().registerListener(dispatcher = new CommandDispatcher());
-        client.getDispatcher().registerListener(new MainListener());
+        client.getDispatcher().registerListener(new DiscordListener());
         
         
     }

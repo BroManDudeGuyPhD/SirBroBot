@@ -5,7 +5,7 @@
  */
 
 package bromandudeguyphd.sirbrobot.commands.commands;
-import bromandudeguyphd.sirbrobot.MainListener;
+import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.Command;
