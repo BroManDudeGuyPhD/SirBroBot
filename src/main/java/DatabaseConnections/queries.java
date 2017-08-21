@@ -23,7 +23,7 @@ import sx.blah.discord.handle.obj.IMessage;
 public class queries {
 
     
-    public static void sendDataDB(String query) throws SQLException {
+    public static String sendDataDB(String query) throws SQLException {
         Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );  
         try{
         Class.forName("com.mysql.jdbc.Driver"); 
@@ -36,9 +36,11 @@ public class queries {
          }
          catch(ClassNotFoundException | SQLException err){
              System.out.println(err.getMessage());
+             return "ERROR";
              
     }
         con.close();
+        return "Success!";
     }
         
         
@@ -180,6 +182,147 @@ public static ArrayList voiceJoinQuery(String guildID){
         return null;
         
     }
+
+public static ArrayList voiceLeaveQuery(String guildID){
+
+        Connection con = null;
+        try {
+            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+
+        
+        
+        Statement stmt = null;
+        String query = "select guild_id, voice_announce_channel_id, voiceleave_status "
+                + "from guilds "
+                + "where guild_id = '" + guildID + "';";
+        
+        try {
+            stmt = (Statement) con.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                
+                String channelID = rs.getString("voice_announce_channel_id");
+                String status = rs.getString("voiceleave_status");
+                
+                ArrayList<String> data = new ArrayList<>(4);
+                data.add(status);
+                data.add(channelID);
+                
+                return data;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
+        return null;
+        
+    }
+
+
+public static ArrayList voiceMoveQuery(String guildID){
+
+        Connection con = null;
+        try {
+            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+
+        
+        
+        Statement stmt = null;
+        String query = "select guild_id, voice_announce_channel_id, voicemove_status "
+                + "from guilds "
+                + "where guild_id = '" + guildID + "';";
+        
+        try {
+            stmt = (Statement) con.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                
+                String channelID = rs.getString("voice_announce_channel_id");
+                String status = rs.getString("voicemove_status");
+                
+                ArrayList<String> data = new ArrayList<>(4);
+                data.add(status);
+                data.add(channelID);
+                
+                return data;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
+        return null;
+        
+    }
+
+
+public static ArrayList welcomeView(String guildID){
+    Connection con = null;
+        try {
+            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        Statement stmt = null;
+        String query = "SELECT welcome_status, welcome_channel_message "
+                + "from guilds "
+                + "where guild_id = '" + guildID + "';";
+        
+        try {
+            stmt = (Statement) con.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                
+                String welcomeStatus = rs.getString("welcome_status");
+                String message = rs.getString("welcome_channel_message");
+                
+                ArrayList<String> data = new ArrayList<>();
+                data.add(welcomeStatus);
+                data.add(message);
+                
+                return data;
+            
+            }
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
+        return null;
+        
+}
 
 
 }

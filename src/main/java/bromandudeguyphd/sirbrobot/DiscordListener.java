@@ -98,6 +98,7 @@ public class DiscordListener {
     boolean updateDispatcher = false;
     boolean messageStatus = false;
     int usageCounter = 0;
+    IChannel updateChannel = SirBroBot.client.getChannelByID("197567480439373824");
 
     File dance = new File("src/images/dancingKnight.gif");
     //File joust = new File("src/images/joust.gif");
@@ -129,20 +130,25 @@ public class DiscordListener {
             }
             
         } catch (SQLException ex) {
-            
-        }
+                updateChannel.sendMessage(root.mention()+" sql ERROR on GuildJoin event");
+                updateChannel.sendMessage(ex.getMessage());
+            }
     }
 
     @EventSubscriber
     public void onGuildLeave(GuildLeaveEvent event) {
-        IChannel updateChannel = event.getClient().getChannelByID("197567480439373824");
-        if (updateDispatcher) {
+        
+        
             try {
+                queries.sendDataDB("delete from guilds where guild_id = '"+event.getGuild().getStringID()+"' ");
                 updateChannel.sendMessage("Left guild " + event.getGuild().getName() + " | Members: " + event.getGuild().getUsers().size() + "  :::  Server Count: " + event.getClient().getGuilds().size() + " User Count: " + getUsers());
             } catch (MissingPermissionsException | RateLimitException | DiscordException ex) {
                 SirBroBot.LOGGER.error(null, ex);
+            } catch (SQLException ex) {
+                updateChannel.sendMessage(root.mention()+" sql ERROR on GuildLeave event");
+                updateChannel.sendMessage(ex.getMessage());
             }
-        }
+        
     }
 
     @EventSubscriber
@@ -204,9 +210,9 @@ public class DiscordListener {
             }
 
         } catch (SQLException ex) {
-            System.out.println("SQL ERROR");
-            ex.printStackTrace();
-        }
+                updateChannel.sendMessage(root.mention()+" sql ERROR on UserJoin event");
+                updateChannel.sendMessage(ex.getMessage());
+            }
 
     }
     
@@ -278,78 +284,128 @@ public class DiscordListener {
     
     @EventSubscriber
     public void handleVoiceMove(UserVoiceChannelMoveEvent event) {
-        if (VAD.containsKey(event.getNewChannel().getGuild().getID())) {
-            IVoiceChannel channelJoined = event.getNewChannel();
+        
+        ArrayList<String> results = queries.voiceMoveQuery(event.getGuild().getStringID());
+        if (results.get(0).contains("true")) {
+            IVoiceChannel channelJoined = event.getVoiceChannel();
             String userJoined = event.getUser().getName();
 
-            RequestBuffer.request(() -> {
                 try {
                     MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
-                    messageBuilder.withChannel(event.getNewChannel().getGuild().getChannelByID(VADdata.get(event.getNewChannel().getGuild().getID())));
-                    IMessage tempmessage = messageBuilder.withContent(userJoined + " moved to " + channelJoined.getName()).withTTS().send();
+                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(results.get(1)));
+                    
 
-
-                    if (VAD.get(event.getNewChannel().getGuild().getID()).equals("true save")) {
+                //Silence
+                    if (results.get(0).equals("true silent")) {
+                        
                         RequestBuffer.request(() -> {
                             try {
-                                tempmessage.edit("**" + userJoined + "**" + " moved to " + channelJoined.getName());
+                                 messageBuilder.withContent(userJoined + " moved to " + channelJoined.getName()).send();
                             } catch (MissingPermissionsException | DiscordException ex) {
-                                SirBroBot.LOGGER.error(null, ex);
                             }
                         });
                     }
-                    if (VAD.get(event.getNewChannel().getGuild().getID()).equals("true")) {
+                    
+                    else if (results.get(0).equals("true silent persist")) {
                         RequestBuffer.request(() -> {
                             try {
+                                messageBuilder.withContent(userJoined + " moved to " + channelJoined.getName()).send();
+                            } catch (MissingPermissionsException | DiscordException ex) {
+                            }
+                        });
+                    }
+                     
+                //Persistence
+                    else if (results.get(0).equals("true persist")) {
+                        RequestBuffer.request(() -> {
+                            try {
+                                messageBuilder.withContent(userJoined + " moved to " + channelJoined.getName()).withTTS().send();
+                            } catch (MissingPermissionsException | DiscordException ex) {
+                            }
+                        });
+                    }
+                    
+                //Normal (TTS, Not Persistent)
+                    else{
+                        RequestBuffer.request(() -> {
+                            try {
+                                IMessage tempmessage = messageBuilder.withContent(userJoined + " moved to " + channelJoined.getName()).withTTS().send();
                                 tempmessage.delete();
                             } catch (MissingPermissionsException | DiscordException ex) {
-                                SirBroBot.LOGGER.error(null, ex);
                             }
                         });
                     }
+                    
+                   
+                    
                 } catch (DiscordException | MissingPermissionsException ex) {
-                    SirBroBot.LOGGER.error(null, ex);
+                   
                 }
-            });
-        }
 
+        }
     }
 
     
     @EventSubscriber
     public void handleVoiceLeave(UserVoiceChannelLeaveEvent event) {
-        IVoiceChannel channelJoined = event.getVoiceChannel();
-        if (LAD.containsKey(event.getVoiceChannel().getGuild().getID())) {
+        
+        ArrayList<String> results = queries.voiceMoveQuery(event.getGuild().getStringID());
+        if (results.get(0).contains("true")) {
+            IVoiceChannel channelJoined = event.getVoiceChannel();
             String userJoined = event.getUser().getName();
 
-            RequestBuffer.request(() -> {
                 try {
                     MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
-                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(LADdata.get(event.getVoiceChannel().getGuild().getID())));
-                    IMessage tempmessage = messageBuilder.withContent(userJoined + " left " + channelJoined.getName()).withTTS().send();
+                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(results.get(1)));
+                    
 
-                    if (LAD.get(event.getVoiceChannel().getGuild().getID()).equals("true save")) {
+                //Silence
+                    if (results.get(0).equals("true silent")) {
+                        
                         RequestBuffer.request(() -> {
                             try {
-                                tempmessage.edit("**" + userJoined + "**" + " left " + channelJoined.getName());
+                                 messageBuilder.withContent(userJoined + " left " + channelJoined.getName()).send();
                             } catch (MissingPermissionsException | DiscordException ex) {
-                                SirBroBot.LOGGER.error(null, ex);
                             }
                         });
                     }
-                    if (LAD.get(event.getVoiceChannel().getGuild().getID()).equals("true")) {
+                    
+                    else if (results.get(0).equals("true silent persist")) {
                         RequestBuffer.request(() -> {
                             try {
+                                messageBuilder.withContent(userJoined + " left " + channelJoined.getName()).send();
+                            } catch (MissingPermissionsException | DiscordException ex) {
+                            }
+                        });
+                    }
+                     
+                //Persistence
+                    else if (results.get(0).equals("true persist")) {
+                        RequestBuffer.request(() -> {
+                            try {
+                                messageBuilder.withContent(userJoined + " left " + channelJoined.getName()).withTTS().send();
+                            } catch (MissingPermissionsException | DiscordException ex) {
+                            }
+                        });
+                    }
+                    
+                //Normal (TTS, Not Persistent)
+                    else{
+                        RequestBuffer.request(() -> {
+                            try {
+                                IMessage tempmessage = messageBuilder.withContent(userJoined + " left " + channelJoined.getName()).withTTS().send();
                                 tempmessage.delete();
                             } catch (MissingPermissionsException | DiscordException ex) {
-                                SirBroBot.LOGGER.error(null, ex);
                             }
                         });
                     }
+                    
+                   
+                    
                 } catch (DiscordException | MissingPermissionsException ex) {
-                    SirBroBot.LOGGER.error(null, ex);
+                   
                 }
-            });
+
         }
     }
 
@@ -1236,106 +1292,187 @@ public class DiscordListener {
 
                     usageCounter++;
 
-                } //TTS Message Announcements
-                else if (Mcontent.startsWith("?vjaon")) {
-
-//                    if(VADdata.get(message.getGuild().getID())!=message.getChannel().getID()){
-//                        message.reply("I currently only support announcing in one channel, and I already am set to announce in **"
-//                                +message.getGuild().getChannelByID(VADdata.get(message.getGuild().getID()).toString()).getName()+"** ");
-//                    }
-
-                    if (Mcontent.equals("?vjaon announce")) {
-
-                        VAD.remove(message.getGuild().getID());
-                        VAD.put(message.getGuild().getID(), "true save");
-                        message.reply("**Voice Join Announce** has been turned **ON** and will announce in THIS text channel (" + message.getChannel().getName() + "). Announcements will not be deleted");
-                    }
-                    if (Mcontent.equals("?vjaon")) {
-                        VAD.remove(message.getGuild().getID());
-                        VAD.put(message.getGuild().getID(), "true");
-                        message.reply("**Voice Join Announce** has been turned **ON** and will announce in THIS text channel (" + message.getChannel().getName() + "). Announcements will be deleted");
-                    }
-                    VADdata.put(message.getGuild().getID(), message.getChannel().getID());
-                    System.out.println("VAD set to true in " + message.getGuild().getName());
-                    fileIO.saveHash(VAD, "VAD");
-                    fileIO.saveHash(VADdata, "VADdata");
-                    updateChannel.sendMessage("VAD set to **TRUE** in " + message.getGuild().getName());
-                    usageCounter++;
-
-                } else if (Mcontent.startsWith("?vjaoff")) {
-                    message.reply("**Voice Join Announce** has been turned **OFF** and will no longer announce in this channel");
-                    VAD.remove(message.getGuild().getID());
-                    VADdata.remove(message.getGuild().getID());
-                    System.out.println("VAD set to false in " + message.getGuild().getName());
-                    fileIO.saveHash(VAD, "VAD");
-                    fileIO.saveHash(VADdata, "VADdata");
-                    updateChannel.sendMessage("VAD set to **FALSE** in " + message.getGuild().getName());
-                    usageCounter++;
-                } else if (Mcontent.startsWith("?vlaon")) {
-
-                    if (Mcontent.equals("?vlaon announce")) {
-                        LAD.remove(message.getGuild().getID());
-                        LAD.put(message.getGuild().getID(), "true save");
-                        message.reply("**Voice LEAVE Announce** has been turned **ON** and will announce in this channel (" + message.getChannel().getName() + "). Announcements will not be deleted");
-                    }
-                    if (Mcontent.equals("?vlaon")) {
-                        LAD.remove(message.getGuild().getID());
-                        LAD.put(message.getGuild().getID(), "true");
-                        message.reply("**Voice LEAVE Announce** has been turned **ON** and will announce in this channel (" + message.getChannel().getName() + "). Anouncements will be deleted");
-                    }
-                    LADdata.put(message.getGuild().getID(), message.getChannel().getID());
-                    System.out.println("LAD set to true in " + message.getGuild().getName());
-                    fileIO.saveHash(LAD, "LAD");
-                    fileIO.saveHash(LADdata, "LADdata");
-
-                    usageCounter++;
-                } else if (Mcontent.equals("?vlaoff")) {
-                    message.reply("**Voice LEAVE Announce** has been turned **OFF** and will announce in this channel (" + message.getChannel().getName() + ")");
-                    LAD.remove(message.getGuild().getID());
-                    LADdata.remove(message.getGuild().getID());
-                    System.out.println("LAD set to false in " + message.getGuild().getName());
-                    fileIO.saveHash(LAD, "LAD");
-                    fileIO.saveHash(LADdata, "LADdata");
-
-                    usageCounter++;
-                } else if (Mcontent.startsWith("?welcomeon")) {
-                    message.reply("New User welcome message initiated to: \n"
-                            + message.getContent().replace("?welcomeon ", ""));
-                    WAD.put(message.getGuild().getID(), message.getContent().replace("?welcomeon ", ""));
-                    WADdata.put(message.getGuild().getID(), message.getChannel().getID());
-                    fileIO.saveHash(WAD, "WAD");
-                    fileIO.saveHash(WADdata, "WADdata");
-
-                    usageCounter++;
-                } else if (Mcontent.startsWith("?welcomeoff")) {
-                    message.reply("New User welcome message removed");
-                    WAD.remove(message.getGuild().getID());
-                    WADdata.remove(message.getGuild().getID());
-                    fileIO.saveHash(WAD, "WAD");
-                    fileIO.saveHash(WADdata, "WADdata");
-
-                    usageCounter++;
-                } else if (Mcontent.startsWith("?welcomeedit")) { 
-                   
-                    WAD.put(message.getGuild().getID(), message.getContent().replace("?welcomeedit ", ""));
-                    WADdata.put(message.getGuild().getID(), message.getChannel().getID());
-                    message.reply("New User welcome message edited");
-                    
-                    fileIO.saveHash(WAD, "WAD");
-                    fileIO.saveHash(WADdata, "WADdata");
-
-                    usageCounter++;
-                } else if (Mcontent.equals("?welcomeview")) {
-                    if (WAD.containsKey(message.getGuild().getID())) {
-                        try {
-                            event.getMessage().getChannel().sendMessage(WAD.get(message.getGuild().getID()));
-                        } catch (NullPointerException ignored) {
-                            message.reply("I dont have a Welcome message stored");
-                        }
-                    } else {
-                        message.reply("Welcome message is currently turned off. Use `?welcomeon Message Content` to activate");
-                    }
                 } 
+
+//TTS Message Announcements
+    //Voice Join
+                else if (Mcontent.startsWith("vjaon")){
+ 
+                String messageResult = null;
+                String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be sent via `audio` in (" + message.getChannel().getName() + "). Announcements will be deleted";
+
+
+                    if (Mcontent.contains("silent")&& Mcontent.contains("persist")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true silent persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be sent via `text` in (" + message.getChannel().getName() + "). Announcements will not be deleted";        
+                    } 
+
+                    else if (Mcontent.equals("vjaon persist")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be sent via `audio and text` in (" + message.getChannel().getName() + "). Announcements will not be deleted";     
+                    }
+                    
+
+                    else if (Mcontent.equals("vjaon silent")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true silent' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be send via `text` in (" + message.getChannel().getName() + "). Announcements will  be deleted";        
+                    }
+                    
+                try {
+                    queries.sendDBWithMessage(queryResult, event.getMessage(), messageResult);
+                } catch (Exception ex) {
+                    message.reply("Message NOT set, I have ecperienced an error :(");
+                }
+
+                    usageCounter++;
+
+                }
+                
+                else if (Mcontent.startsWith("?vjaoff")) {
+                String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='false' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+
+                try {
+                    String results = queries.sendDataDB(queryResult);
+                    if(results.equals("Success!")){
+                        message.reply("**Voice JOIN Announce** has been turned **OFF**");
+                    }
+                } catch (Exception ex) {
+                    message.reply("Message NOT set, I have ecperienced an error :(");
+                }
+                    usageCounter++;
+                } 
+                
+                
+    //Voice Leave
+                else if (Mcontent.startsWith("vlaon")){
+ 
+                String messageResult = null;
+                String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be sent via `audio` in (" + message.getChannel().getName() + "). Announcements will not remain in chat";
+
+
+                    if (Mcontent.contains("silent")&& Mcontent.contains("persist")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true silent persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be sent via `text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";        
+                    } 
+
+                    else if (Mcontent.equals("vlaon persist")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be sent via `audio and text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";     
+                    }
+                    
+
+                    else if (Mcontent.equals("vlaon silent")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true silent' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be send via `text` in (" + message.getChannel().getName() + "). Announcements will not remain in chat";        
+                    }
+                    
+                try {
+                    queries.sendDBWithMessage(queryResult, event.getMessage(), messageResult);
+                } catch (Exception ex) {
+                    message.reply("Message NOT set, I have ecperienced an error :(");
+                }
+                    usageCounter++;
+                }
+                
+                else if (Mcontent.equals("?vlaoff")) {
+                    String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='false' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                try {
+                    String results = queries.sendDataDB(queryResult);
+                    if(results.equals("Success!")){
+                        message.reply("**Voice LEAVE Announce** has been turned **OFF**");
+                    }
+                } catch (Exception ex) {
+                    message.reply("Message NOT set, I have ecperienced an error :(");
+                }
+      
+                    usageCounter++;
+                }
+                
+                
+    //Voice Move
+                else if (Mcontent.startsWith("vmaon")){
+ 
+                String messageResult = null;
+                String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be sent via `audio` in (" + message.getChannel().getName() + "). Announcements will not remain in chat";
+
+
+                    if (Mcontent.contains("silent")&& Mcontent.contains("persist")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true silent persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be sent via `text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";        
+                    } 
+
+                    else if (Mcontent.equals("vmaon persist")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be sent via `audio and text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";     
+                    }
+                    
+
+                    else if (Mcontent.equals("vmaon silent")) {
+                        queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true silent' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                        messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be send via `text` in (" + message.getChannel().getName() + "). Announcements will not remain in chat";        
+                    }
+                    
+                try {
+                    queries.sendDBWithMessage(queryResult, event.getMessage(), messageResult);
+                } catch (Exception ex) {
+                    message.reply("Message NOT set, I have ecperienced an error :(");
+                }
+                    usageCounter++;
+                }
+                
+                
+                
+                
+                else if (Mcontent.startsWith("?welcomeon")) {
+                    try {
+                        queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "") + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
+                                , event.getMessage(), "New User welcome message initiated to: \n\n"
+                                        + message.getContent().replace("welcomeon ", ""));
+                    } catch (SQLException ex) {
+                updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeon command");
+                updateChannel.sendMessage(ex.getMessage());
+            }
+                     
+                    usageCounter++; 
+
+                    usageCounter++;
+                } 
+                
+                else if (Mcontent.startsWith("?welcomeoff")) {
+                    message.reply("New User welcome message disabled");
+                    try {
+                        queries.sendDBWithMessage("update guilds set welcome_status = 'false' Where guild_id='" + message.getGuild().getID() + "';", event.getMessage(), "Welcome message disabled");
+                    } catch (SQLException ex) {
+                updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeoff command");
+                updateChannel.sendMessage(ex.getMessage());
+            }
+                    usageCounter++;
+                } 
+                
+                else if (Mcontent.startsWith("?welcomeedit")) { 
+                   
+                    message.reply("New User welcome message edited");
+                    try {
+                        queries.sendDBWithMessage("update guilds set welcome_status = 'true', welcome_channel_message='"+message.getContent().replace("?welcomeedit", "")+"',welcome_channel_id = '"+message.getChannel().getStringID()+"' Where guild_id='" + message.getGuild().getID() + "';", event.getMessage(), "Welcome message disabled");
+                    } catch (SQLException ex) {
+                updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeedit command");
+                updateChannel.sendMessage(ex.getMessage());
+            }
+                    usageCounter++;
+                } 
+                
+                else if (Mcontent.equals("?welcomeview")) {
+                    ArrayList<String> welcomeView = queries.welcomeView(message.getGuild().getID());
+                     System.out.println(welcomeView.get(1));
+                     message.reply("Welcome Status is: `"+welcomeView.get(0)+"`\n"
+                             + "Welcome Message Set to: \n"+welcomeView.get(1)+"\n\n"
+                                     + "`USERMENTION` Will be replaces with a mention to the new user, `USERNAME` will be their name");
+                     usageCounter++;
+                } 
+                
                 
                 else if (Mcontent.startsWith("?purgechannel")) {
                     message.reply("This command is undergoing maintenance. Trust me, youll thank me -" + root.mention());
