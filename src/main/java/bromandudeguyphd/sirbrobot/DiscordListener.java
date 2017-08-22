@@ -118,44 +118,40 @@ public class DiscordListener {
 
     @EventSubscriber
     public void onGuildCreate(GuildCreateEvent event) {
-        ResultSet results = DatabaseConnections.queries.getDataDB("select guild_id from guilds where guild_id = '"+event.getGuild().getID()+"';");
-        
+        ResultSet results = DatabaseConnections.queries.getDataDB("select guild_id from guilds where guild_id = '" + event.getGuild().getID() + "';");
+
         try {
-            if(!results.first()){
-                queries.sendDataDB("insert into guilds (guild_id) values ('"+event.getGuild().getID()+"');");
+            if (!results.first()) {
+                queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getID() + "');");
                 System.out.println("NEW GUILD");
-            }
-            
-            else{
+            } else {
                 System.out.println("old guild");
             }
-            
+
         } catch (SQLException ex) {
-                updateChannel.sendMessage(root.mention()+" sql ERROR on GuildJoin event");
-                updateChannel.sendMessage(ex.getMessage());
-            }
+            updateChannel.sendMessage(root.mention() + " sql ERROR on GuildJoin event");
+            updateChannel.sendMessage(ex.getMessage());
+        }
     }
 
     @EventSubscriber
     public void onGuildLeave(GuildLeaveEvent event) {
-        
-        
-            try {
-                queries.sendDataDB("delete from guilds where guild_id = '"+event.getGuild().getStringID()+"' ");
-                updateChannel.sendMessage("Left guild " + event.getGuild().getName() + " | Members: " + event.getGuild().getUsers().size() + "  :::  Server Count: " + event.getClient().getGuilds().size() + " User Count: " + getUsers());
-            } catch (MissingPermissionsException | RateLimitException | DiscordException ex) {
-                SirBroBot.LOGGER.error(null, ex);
-            } catch (SQLException ex) {
-                updateChannel.sendMessage(root.mention()+" sql ERROR on GuildLeave event");
-                updateChannel.sendMessage(ex.getMessage());
-            }
-        
+
+        try {
+            queries.sendDataDB("delete from guilds where guild_id = '" + event.getGuild().getStringID() + "' ");
+            updateChannel.sendMessage("Left guild " + event.getGuild().getName() + " | Members: " + event.getGuild().getUsers().size() + "  :::  Server Count: " + event.getClient().getGuilds().size() + " User Count: " + getUsers());
+        } catch (MissingPermissionsException | RateLimitException | DiscordException ex) {
+            SirBroBot.LOGGER.error(null, ex);
+        } catch (SQLException ex) {
+            updateChannel.sendMessage(root.mention() + " sql ERROR on GuildLeave event");
+            updateChannel.sendMessage(ex.getMessage());
+        }
+
     }
 
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
         sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("?commands", "https://www.twitch.tv/SirBroBot/profile");
-        //sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.game("Boot in progress");
         event.getClient().changeStatus(status);
         
 //        try {
@@ -350,7 +346,7 @@ public class DiscordListener {
     @EventSubscriber
     public void handleVoiceLeave(UserVoiceChannelLeaveEvent event) {
         
-        ArrayList<String> results = queries.voiceMoveQuery(event.getGuild().getStringID());
+        ArrayList<String> results = queries.voiceLeaveQuery(event.getGuild().getStringID());
         if (results.get(0).contains("true")) {
             IVoiceChannel channelJoined = event.getVoiceChannel();
             String userJoined = event.getUser().getName();
@@ -410,6 +406,7 @@ public class DiscordListener {
         }
     }
 
+    
 //    @EventSubscriber
 //    public void onDiscordDisconnectedEvent(DiscordDisconnectedEvent event) throws HTTP429Exception, ChatNotFoundException {
 //        try {
