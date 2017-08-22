@@ -123,10 +123,7 @@ public class DiscordListener {
             String guildID = DatabaseConnections.queries.GuildCreateQuery(event.getGuild().getID());
             if (guildID.equals("None")) {
                 queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getID() + "');");
-                System.out.println(guildID);
                 System.out.println("NEW GUILD");
-            } else {
-                System.out.println("old guild");
             }
 
         } catch(NullPointerException er){
@@ -196,13 +193,16 @@ public class DiscordListener {
 
     @EventSubscriber
     public void handleJoin(UserJoinEvent event) {
-        
+        try{
         String results = queries.UserJoinQuery("select welcome_status from guilds where guild_id = '" + event.getGuild().getLongID() + "';");
+        
         if (results.contains("true")) {
             ArrayList<String> welcomeData = queries.userJoinQuery(event.getGuild().getStringID());
             
             event.getGuild().getChannelByID(welcomeData.get(0)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
             
+        }
+        }catch (NullPointerException ex){ 
         }
 
     }
