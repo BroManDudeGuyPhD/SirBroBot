@@ -6,10 +6,14 @@
 package DatabaseConnections;
 
 import bromandudeguyphd.sirbrobot.tokens;
+import com.mysql.fabric.xmlrpc.base.Data;
+import com.sun.rowset.CachedRowSetImpl;
 import java.sql.*;  
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.rowset.CachedRowSet;
 import sx.blah.discord.handle.obj.IMessage;
 
 
@@ -22,25 +26,23 @@ import sx.blah.discord.handle.obj.IMessage;
 
 public class queries {
 
-    
-    public static String sendDataDB(String query) throws SQLException {
-        Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );  
+    static Connection con;
+    public static void sendDataDB(String query) throws SQLException {
+        Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
+        Statement stmt = con.createStatement();  
         try{
         Class.forName("com.mysql.jdbc.Driver"); 
-        Statement stmt = con.createStatement();  
         stmt.executeUpdate(query);
-        
+        stmt.close();
+        con.close();
         
        
-
          }
          catch(ClassNotFoundException | SQLException err){
              System.out.println(err.getMessage());
-             return "ERROR";
              
     }
-        con.close();
-        return "Success!";
+
     }
         
         
@@ -69,27 +71,81 @@ public class queries {
         
         public static ResultSet getDataDB(String query) {
         Statement stmt = null;
+        ResultSet results = null;
+        CachedRowSet rowset = null;
         try{
-        Class.forName("com.mysql.jdbc.Driver"); 
-        Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );  
+        Class.forName("com.mysql.jdbc.Driver");
+
+          
         stmt = con.createStatement();  
         
-        return stmt.executeQuery(query);
-       
+        results = stmt.executeQuery(query);
+        
+        rowset = new CachedRowSetImpl();
+        rowset.populate(results);
+        con.close();
+        
          }
          catch(SQLException err){
-             System.out.println(err.getMessage());
-    }       catch (ClassNotFoundException ex) {
-                Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                return stmt.executeQuery(query);
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
+             System.out.println("ERROR IN GETDB QUERY"+err.getMessage());
+    }   catch (ClassNotFoundException ex) {
+            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+        }
+           
             
-            return null;
+            return rowset;
+            
     }
+        
+public static String GuildCreateQuery(String guildID){
+    Connection connection = null;
+    PreparedStatement statement = null;
+    ResultSet resultSet = null;
+    String list = "None";
+
+    try {
+        connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
+        statement = connection.prepareStatement("select guild_id from guilds where guild_id ='"+guildID+"';");
+        resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            list = resultSet.getString("guild_id");
+        }
+    }   catch (SQLException ex) {
+            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+        if (resultSet != null) try { resultSet.close(); } catch (SQLException logOrIgnore) {}
+        if (statement != null) try { statement.close(); } catch (SQLException logOrIgnore) {}
+        if (connection != null) try { connection.close(); } catch (SQLException logOrIgnore) {}
+    }
+
+    return list;
+
+}
+
+public static String UserJoinQuery(String guildID){
+    Connection connection = null;
+    PreparedStatement statement = null;
+    ResultSet resultSet = null;
+    String list = null;
+
+    try {
+        connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
+        statement = connection.prepareStatement("select welcome_status from guilds where guild_id='"+guildID+"';");
+        resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            list = resultSet.getString("welcome_status");
+        }
+    }   catch (SQLException ex) {
+            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+        if (resultSet != null) try { resultSet.close(); } catch (SQLException logOrIgnore) {}
+        if (statement != null) try { statement.close(); } catch (SQLException logOrIgnore) {}
+        if (connection != null) try { connection.close(); } catch (SQLException logOrIgnore) {}
+    }
+
+    return list;
+
+}
 
     
 public static ArrayList userJoinQuery(String guildID){
@@ -137,7 +193,6 @@ public static ArrayList userJoinQuery(String guildID){
 
 
 public static ArrayList voiceJoinQuery(String guildID){
-    System.out.println("Event Reached");
         Connection con = null;
         try {
             con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );

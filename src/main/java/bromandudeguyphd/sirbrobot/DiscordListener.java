@@ -118,19 +118,21 @@ public class DiscordListener {
 
     @EventSubscriber
     public void onGuildCreate(GuildCreateEvent event) {
-        ResultSet results = DatabaseConnections.queries.getDataDB("select guild_id from guilds where guild_id = '" + event.getGuild().getID() + "';");
-
+       
         try {
-            if (!results.first()) {
+            String guildID = DatabaseConnections.queries.GuildCreateQuery(event.getGuild().getID());
+            if (guildID.equals("None")) {
                 queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getID() + "');");
+                System.out.println(guildID);
                 System.out.println("NEW GUILD");
             } else {
                 System.out.println("old guild");
             }
 
-        } catch (SQLException ex) {
-            updateChannel.sendMessage(root.mention() + " sql ERROR on GuildJoin event");
-            updateChannel.sendMessage(ex.getMessage());
+        } catch(NullPointerException er){
+            System.out.println("Null  Pointer");
+         } catch (SQLException ex) {
+            System.out.println("SQL Error");
         }
     }
 
@@ -195,21 +197,13 @@ public class DiscordListener {
     @EventSubscriber
     public void handleJoin(UserJoinEvent event) {
         
-        ResultSet results = queries.getDataDB("select welcome_status from guilds where guild_id = '" + event.getGuild().getLongID() + "';");
-        try {
-            results.next();
-            if (!"none".equals(results.getString("welcome_status"))) {
-                ArrayList<String> welcomeData = queries.userJoinQuery(event.getGuild().getStringID());
-
-                event.getGuild().getChannelByID(welcomeData.get(0)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
-
-            } else {
-            }
-
-        } catch (SQLException ex) {
-                updateChannel.sendMessage(root.mention()+" sql ERROR on UserJoin event");
-                updateChannel.sendMessage(ex.getMessage());
-            }
+        String results = queries.UserJoinQuery("select welcome_status from guilds where guild_id = '" + event.getGuild().getLongID() + "';");
+        if (results.contains("true")) {
+            ArrayList<String> welcomeData = queries.userJoinQuery(event.getGuild().getStringID());
+            
+            event.getGuild().getChannelByID(welcomeData.get(0)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
+            
+        }
 
     }
     
@@ -217,7 +211,7 @@ public class DiscordListener {
 
     @EventSubscriber
     public void handleVoiceJoin(UserVoiceChannelJoinEvent event) {
-        
+        try{
         ArrayList<String> results = queries.voiceJoinQuery(event.getGuild().getStringID());
         if (results.get(0).contains("true")) {
             IVoiceChannel channelJoined = event.getVoiceChannel();
@@ -274,7 +268,9 @@ public class DiscordListener {
                 } catch (DiscordException | MissingPermissionsException ex) {
                    
                 }
-
+        }
+        
+        }catch (NullPointerException ex){ 
         }
     }
 
@@ -282,7 +278,9 @@ public class DiscordListener {
     @EventSubscriber
     public void handleVoiceMove(UserVoiceChannelMoveEvent event) {
         
+        try{
         ArrayList<String> results = queries.voiceMoveQuery(event.getGuild().getStringID());
+        
         if (results.get(0).contains("true")) {
             IVoiceChannel channelJoined = event.getVoiceChannel();
             String userJoined = event.getUser().getName();
@@ -340,12 +338,16 @@ public class DiscordListener {
                 }
 
         }
+        }catch (NullPointerException ex){ 
+        }
     }
+    
 
     
     @EventSubscriber
     public void handleVoiceLeave(UserVoiceChannelLeaveEvent event) {
         
+        try{
         ArrayList<String> results = queries.voiceLeaveQuery(event.getGuild().getStringID());
         if (results.get(0).contains("true")) {
             IVoiceChannel channelJoined = event.getVoiceChannel();
@@ -403,6 +405,8 @@ public class DiscordListener {
                    
                 }
 
+        }
+        }catch (NullPointerException ex){ 
         }
     }
 
@@ -1355,10 +1359,9 @@ public class DiscordListener {
                 String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='false' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
 
                 try {
-                    String results = queries.sendDataDB(queryResult);
-                    if(results.equals("Success!")){
+                    queries.sendDataDB(queryResult);
                         message.reply("**Voice JOIN Announce** has been turned **OFF**");
-                    }
+                    
                 } catch (Exception ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
@@ -1401,10 +1404,9 @@ public class DiscordListener {
                 else if (Mcontent.equals("?vlaoff")) {
                     String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='false' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                 try {
-                    String results = queries.sendDataDB(queryResult);
-                    if(results.equals("Success!")){
+                    queries.sendDataDB(queryResult);
                         message.reply("**Voice LEAVE Announce** has been turned **OFF**");
-                    }
+                    
                 } catch (Exception ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
@@ -2486,6 +2488,7 @@ public class DiscordListener {
         }
     }
 
+    
     
     //LAVAPLAYER
               
