@@ -48,6 +48,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
@@ -1475,98 +1476,109 @@ public class DiscordListener {
                 
                 
                 else if (Mcontent.startsWith("?purgechannel")) {
-                    message.reply("This command is undergoing maintenance. Trust me, youll thank me -" + root.mention());
-//                    try{message.delete();} catch(MissingPermissionsException e){};
-//                    int timer = 10;
-//                    message.getChannel().toggleTypingStatus();
-//                    IChannel purgeChannel = message.getChannel();
-//
-//                    IMessage tempmessage = messageBuilder.withContent("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")").send();
-//
-//                    boolean purge = true;
-//
-//                    IUser someDude = message.getAuthor();
-//
-//                    for (int i = 10; i > -1; i--) {
-//                        tempmessage.edit("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")");
-//                        timer--;
-//                        try {
-//                            Thread.sleep(1100);                 //1000 milliseconds is one second.
-//                        } catch (InterruptedException ex) {
-//                            Thread.currentThread().interrupt();
-//                        }
-//
-//                        MessageList history = purgeChannel.getMessages();
-//                        List<IMessage> list = history.stream().filter(messageHistory -> messageHistory.getAuthor() == someDude).limit(5).collect(Collectors.toList());
-//
-//                        if (list.toString().contains("abort")) {
-//                            purge = false;
-//                        }
-//                    }
-//
-//                    String name = purgeChannel.getName();
-//                    String topic = purgeChannel.getTopic();
-//
-//                        if (topic.contains("-")) {
-//                            String[] topicText = topic.split("-");
-//                            topic = "";
-//                            for (int i = 0; i < topicText.length; i++) {
-//                                if (topicText[i].contains("Last Purge") == false) {
-//                                    topic += topicText[i];
-//                                }
-//                            }
-//                        }
-//                    IChannel newChannel = null;
-//                    try{
-//                    newChannel = message.getGuild().createChannel(name);
-//                    newChannel.changeTopic(topic+" - Last Purge: "+String.format(GetCurrentDateTime()));
-//                    newChannel.changePosition(purgeChannel.getPosition());
-//                    }catch(DiscordException e){
-//
-//                    }catch(MissingPermissionsException e){
-//                        message.reply("Check my permissions! I cant do that.");
-//                    }
-//
-//                    for(int i = 0; i < message.getGuild().getRoles().size(); i++){
-//                            try{
-//                                    newChannel.overrideRolePermissions(newChannel.getGuild().getRoles().get(i),
-//                                    purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getID()).allow(),
-//                                    purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getID()).deny());
-//                            }catch(NullPointerException e){
-////                                System.out.println("No Roles for "+newChannel.getGuild().getRoles().get(i).getName());
-////                                System.out.println("Failed for "+purgeChannel.getGuild().getRoles().get(i).getName());
-////                                System.out.println("======================================================================\n");
-//                            }
-//                            catch (MissingPermissionsException p) {
-//                            message.reply("Are you kidding? I dont have permission. I need Manage Roles permissions.");
-//                        }
-//                    }
-//
-//
-//                    for(int i = 0; i < message.getGuild().getUsers().size(); i++){
-//                            try{
-//                                    newChannel.overrideUserPermissions(newChannel.getGuild().getUsers().get(i),
-//                                    purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(i).getID()).allow(),
-//                                    purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(i).getID()).deny());
-//
-//                            }catch(NullPointerException e){
-//
-//                            }
-//                            catch (MissingPermissionsException p) {
-//                            message.reply("Are you kidding? I dont have permission. I need Manage Roles permissions.");
-//                        }
-//                    }
-//                    System.out.println(purgeChannel.getName()+" channel purged on "+purgeChannel.getGuild().getName());
-//                    event.getClient().getOrCreatePMChannel(purgeChannel.getGuild().getOwner()).sendMessage(purgeChannel.getName()+" channel purged");
-//
-//                    try {
-//                            purgeChannel.delete();
-//                        } catch (MissingPermissionsException p) {
-//                            message.reply("I dont have permission. I need Manage Channels Permission.");
-//                        }
-//
-//                    usageCounter++;
-                } //                else if (Mcontent.startsWith("?purgeuser")) {
+                    MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+                    messageBuilder.withChannel(event.getMessage().getChannel());
+
+                    int timer = 10;
+
+                    message.getChannel().toggleTypingStatus();
+                    IChannel purgeChannel = message.getChannel();
+                    IMessage warningMessage = message.reply("This will delete **ALL** messages and re-create the channel with appropriate permissions for users and roles. `NO MESSAGES WILL PERSIST`");
+                    IMessage tempmessage = messageBuilder.withContent("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")").send();
+
+                    boolean purge = true;
+
+                    IUser someDude = message.getAuthor();
+
+                    for (int i = 10; i > -1; i--) {
+                        if (purge == false) {
+                            tempmessage.edit("Channel Purge aborted with " + timer + " seconds to spare");
+                            break;
+                        }
+
+                        tempmessage.edit("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")");
+                        timer--;
+                        try {
+                            Thread.sleep(1200);                 //1000 milliseconds is one second.
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
+
+                        MessageHistory history = purgeChannel.getMessageHistory();
+                        List<IMessage> list = history.stream().filter(messageHistory -> messageHistory.getAuthor() == someDude).limit(2).collect(Collectors.toList());
+
+                        for (int j = 0; j < list.size(); j++) {
+                            if (list.get(j).getContent().contains("abort")) {
+                                purge = false;
+                                list.get(j).delete();
+                                warningMessage.delete();
+                            }
+                        }
+                    }
+
+                    if (purge == true) {
+                        String name = purgeChannel.getName();
+                        String topic = null;
+
+                        try {
+                            topic = purgeChannel.getTopic();
+                            if (topic.contains("-")) {
+                                String[] topicText = topic.split("-");
+                                topic = "";
+                                for (int i = 0; i < topicText.length; i++) {
+                                    if (topicText[i].contains("Last Purge") == false) {
+                                        topic += topicText[i];
+                                    }
+                                }
+                            }
+
+                            IChannel newChannel = null;
+
+                            newChannel = message.getGuild().createChannel(name);
+                            newChannel.changeTopic(topic + " - Last Purge: " + String.format(GetCurrentDateTime()));
+                            newChannel.changePosition(purgeChannel.getPosition());
+
+                            for (int i = 0; i < message.getGuild().getRoles().size(); i++) {
+                                try {
+                                    newChannel.overrideRolePermissions(newChannel.getGuild().getRoles().get(i),
+                                            purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getID()).allow(),
+                                            purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getID()).deny());
+                                } catch (NullPointerException e) {
+
+                                }
+                            }
+
+                            for (int j = 0; j < message.getGuild().getUsers().size(); j++) {
+
+                                try {
+                                    newChannel.overrideUserPermissions(newChannel.getGuild().getUsers().get(j),
+                                            purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(j).getID()).allow(),
+                                            purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(j).getID()).deny());
+                                } catch (NullPointerException e) {
+
+                                }
+
+                            }
+
+                            System.out.println(purgeChannel.getName() + " channel purged on " + purgeChannel.getGuild().getName());
+                            event.getClient().getOrCreatePMChannel(purgeChannel.getGuild().getOwner()).sendMessage("`" + purgeChannel.getName() + "` channel purged on `" + event.getGuild().getName() + "`");
+
+                            purgeChannel.delete();
+
+                            usageCounter++;
+
+                        } catch (MissingPermissionsException p) {
+                            message.reply("I dont have permission. I need Manage Channels Permission and Mannage Roles permission  (`It's much easier to make me an  Administrator`)");
+                        } catch (NullPointerException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+
+                    messagesSeen++;
+                }  
+
+
+//                else if (Mcontent.startsWith("?purgeuser")) {
                 //                    String[] temp = message.getContent().split(" ");
                 //
                 //                    IUser purgeUser = message.getMentions().get(0);
