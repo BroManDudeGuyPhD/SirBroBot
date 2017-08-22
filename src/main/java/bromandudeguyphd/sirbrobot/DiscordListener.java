@@ -514,7 +514,7 @@ public class DiscordListener {
             }
 
             usageCounter++;
-        } else if (mcontent.contains("who is the fairest of them all")) {
+        } else if (mcontent.contains("fairest of them all")) {
             try {
                 event.getMessage().getChannel().sendFile(fairest);
             } catch (IOException | MissingPermissionsException | RateLimitException | DiscordException ex) {
@@ -620,7 +620,7 @@ public class DiscordListener {
 
             //ADDING a tag
             //@SirBroBot(mention) tag <name> <action> <url>
-            if (saveArray.length == 5 && action != null && action.toLowerCase().equals("add")) {
+            if (saveArray.length == 5 && action != null && action.toLowerCase().equals("add")&&event.getAuthor().getStringID().equals(root.getStringID())) {
                 if (TAG.containsKey(tagName)) {
                     try {
                         message.reply("A tag exists with this name already. Your unoriginallity amazes me.");
@@ -673,7 +673,7 @@ public class DiscordListener {
                     }
                 }
                 //REMOVING a tag
-            } else if (saveArray.length == 4 && action != null && action.toLowerCase().equals("remove") && TAG.containsKey(tagName)) {
+            } else if (saveArray.length == 4 && action != null && action.toLowerCase().equals("remove") && TAG.containsKey(tagName)&&event.getAuthor().getStringID().equals(root.getStringID())) {
                 Path path = null;
 
                 fileIO.saveHash(TAG, "TAG");
@@ -728,7 +728,7 @@ public class DiscordListener {
 
     @EventSubscriber
     @SuppressWarnings("SleepWhileInLoop")
-    public void onMessageReceived(MessageReceivedEvent event) throws InterruptedException{
+    public void onMessageReceived(MessageReceivedEvent event) throws InterruptedException, SQLException{
 
 
         root = event.getClient().getUserByID(tokens.rootID());
@@ -1178,6 +1178,30 @@ public class DiscordListener {
                     }
                     message.reply("Carbonitex updated!");
                 }
+                
+                
+                if(Mcontent.equals("purgedb")){
+               
+                ArrayList<String> clientGuilds = new ArrayList<>();
+                
+                for(int i = 0; i < SirBroBot.client.getGuilds().size(); i++){
+                    clientGuilds.add(SirBroBot.client.getGuilds().get(i).getStringID());
+                }
+                
+                ArrayList<String> databaseGuilds = new ArrayList<String>(); 
+                ResultSet results = queries.getDataDB("select guild_id from guilds;");
+                while (results.next()){
+                    
+                        databaseGuilds.add(results.getString(1));
+                    
+                
+                    for (int i = 0; i < databaseGuilds.size(); i++){
+                        if(!clientGuilds.contains(databaseGuilds.get(i))){
+                          queries.sendDataDB("delete from guilds where guild_id = '"+databaseGuilds.get(i)+"' ");  
+                        }
+                    }
+            }
+            }
             }
 
 //OWNER ONLY COMMANDS
@@ -1423,7 +1447,7 @@ public class DiscordListener {
                 
                 
                 
-                
+    //Welcome Message controlls  
                 else if (Mcontent.startsWith("?welcomeon")) {
                     try {
                         queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "") + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
@@ -1471,7 +1495,8 @@ public class DiscordListener {
                      usageCounter++;
                 } 
                 
-                
+             
+    //Purge Channel            
                 else if (Mcontent.startsWith("?purgechannel")) {
                     MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
                     messageBuilder.withChannel(event.getMessage().getChannel());
