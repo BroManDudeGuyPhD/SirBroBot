@@ -145,7 +145,7 @@ public class DiscordListener {
     public void onGuildLeave(GuildLeaveEvent event) {
 
         try {
-            queries.sendDataDB("delete from guilds where guild_id = '" + event.getGuild().getStringID() + "' ");
+            queries.sendDataDB("delete from guilds where guild_id = '" + event.getGuild().getStringID() + "';");
             updateChannel.sendMessage("Left guild " + event.getGuild().getName() + " | Members: " + event.getGuild().getUsers().size() + "  :::  Server Count: " + event.getClient().getGuilds().size() + " User Count: " + getUsers());
         } catch (MissingPermissionsException | RateLimitException | DiscordException ex) {
             SirBroBot.LOGGER.error(null, ex);
@@ -2226,8 +2226,11 @@ public class DiscordListener {
                     
                 boolean OwnerStatus = false;
                 
-                for(int i = 0; i < SirBroBot.client.getGuilds().size(); i++){
-                  if(SirBroBot.client.getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())){
+                int servers = SirBroBot.client.getGuilds().size();
+                String authorID = message.getAuthor().getStringID();
+                
+                for(int i = 1; i < servers; i++){
+                  if(SirBroBot.client.getGuilds().get(i).getOwner().getStringID().equals(authorID)){
                       OwnerStatus = true;
                   }
 
