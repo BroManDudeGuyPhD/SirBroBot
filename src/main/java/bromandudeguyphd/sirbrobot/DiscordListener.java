@@ -124,7 +124,15 @@ public class DiscordListener {
             if (guildID.equals("None")) {
                 queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getID() + "');");
                 System.out.println("NEW GUILD");
-            }
+                RequestBuffer.request(() -> {
+                event.getGuild().getOwner().getOrCreatePMChannel().sendMessage("```Hello " + event.getGuild().getOwner().getName() + "!```\n"
+                        + "This is a one time update message to all 9,430 server owners about an update I recieved! `I am now running off of a database, and any settings I had were lost in the changeover`. This includes welcome messages, and voice join announce settings. The good news is I now am scalable, and this wont happen again!\n"
+                        + "\n"
+                        + "Thank you so much for using me, it means so much to my owner!\n"
+                        + "`Join my Test Server`: http://discord.gg/0wCCISzMcKMkfX88 to report bugs and stay updated! When you join, use the ?owner command and recieve a special role on the server!");
+            });
+                }
+                        
 
         } catch(NullPointerException er){
             System.out.println("Null  Pointer");
@@ -172,17 +180,6 @@ public class DiscordListener {
             Thread.currentThread().interrupt();
         }
 
-        fileIO.readHash(VAD, "VAD");
-        fileIO.readHash(VADdata, "VADdata");
-        fileIO.readHash(WAD, "WAD");
-        fileIO.readHash(WADdata, "WADdata");
-        fileIO.readHash(TAG, "TAG");
-        fileIO.readHash(LAD, "LAD");
-        fileIO.readHash(LADdata, "LADdata");
-        fileIO.readHash(PMD, "PMD");
-
-
-
         updateDispatcher = true;
         
         System.out.println("Booted!");
@@ -194,10 +191,10 @@ public class DiscordListener {
     @EventSubscriber
     public void handleJoin(UserJoinEvent event) {
         try{
-        String results = queries.UserJoinQuery("select welcome_status from guilds where guild_id = '" + event.getGuild().getLongID() + "';");
+        String results = queries.UserJoinQuery(event.getGuild().getStringID());
         
         if (results.contains("true")) {
-            ArrayList<String> welcomeData = queries.userJoinQuery(event.getGuild().getStringID());
+            ArrayList<String> welcomeData = queries.welcomeView(event.getGuild().getStringID());
             
             event.getGuild().getChannelByID(welcomeData.get(0)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
             
@@ -1322,7 +1319,7 @@ public class DiscordListener {
 
 //TTS Message Announcements
     //Voice Join
-                else if (Mcontent.startsWith("vjaon")){
+                else if (Mcontent.startsWith("?vjaon")){
  
                 String messageResult = null;
                 String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
@@ -1334,13 +1331,13 @@ public class DiscordListener {
                         messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be sent via `text` in (" + message.getChannel().getName() + "). Announcements will not be deleted";        
                     } 
 
-                    else if (Mcontent.equals("vjaon persist")) {
+                    else if (Mcontent.equals("?vjaon persist")) {
                         queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                         messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be sent via `audio and text` in (" + message.getChannel().getName() + "). Announcements will not be deleted";     
                     }
                     
 
-                    else if (Mcontent.equals("vjaon silent")) {
+                    else if (Mcontent.equals("?vjaon silent")) {
                         queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicejoin_status='true silent' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                         messageResult = "**Voice JOIN Announce** has been turned **ON**. Join announce will be send via `text` in (" + message.getChannel().getName() + "). Announcements will  be deleted";        
                     }
@@ -1370,7 +1367,7 @@ public class DiscordListener {
                 
                 
     //Voice Leave
-                else if (Mcontent.startsWith("vlaon")){
+                else if (Mcontent.startsWith("?vlaon")){
  
                 String messageResult = null;
                 String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
@@ -1382,13 +1379,13 @@ public class DiscordListener {
                         messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be sent via `text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";        
                     } 
 
-                    else if (Mcontent.equals("vlaon persist")) {
+                    else if (Mcontent.equals("?vlaon persist")) {
                         queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                         messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be sent via `audio and text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";     
                     }
                     
 
-                    else if (Mcontent.equals("vlaon silent")) {
+                    else if (Mcontent.equals("?vlaon silent")) {
                         queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voiceleave_status='true silent' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                         messageResult = "**Voice LEAVE Announce** has been turned **ON**. Leave announce will be send via `text` in (" + message.getChannel().getName() + "). Announcements will not remain in chat";        
                     }
@@ -1416,7 +1413,7 @@ public class DiscordListener {
                 
                 
     //Voice Move
-                else if (Mcontent.startsWith("vmaon")){
+                else if (Mcontent.startsWith("?vmaon")){
  
                 String messageResult = null;
                 String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
@@ -1428,13 +1425,13 @@ public class DiscordListener {
                         messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be sent via `text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";        
                     } 
 
-                    else if (Mcontent.equals("vmaon persist")) {
+                    else if (Mcontent.equals("?vmaon persist")) {
                         queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true persist' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                         messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be sent via `audio and text` in (" + message.getChannel().getName() + "). Announcements will remain in chat";     
                     }
                     
 
-                    else if (Mcontent.equals("vmaon silent")) {
+                    else if (Mcontent.equals("?vmaon silent")) {
                         queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "' , voicemove_status='true silent' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
                         messageResult = "**Voice MOVE Announce** has been turned **ON**. Move announce will be send via `text` in (" + message.getChannel().getName() + "). Announcements will not remain in chat";        
                     }
@@ -1448,13 +1445,27 @@ public class DiscordListener {
                 }
                 
                 
+                else if (Mcontent.equals("?vmaoff")) {
+                    String queryResult = "UPDATE guilds set voice_announce_channel_id = '" + message.getChannel().getStringID() + "', voicemove_status='false' WHERE guild_id = '"+message.getGuild().getStringID()+"';";
+                try {
+                    queries.sendDataDB(queryResult);
+                        message.reply("**Voice MOVE Announce** has been turned **OFF**");
+                    
+                } catch (Exception ex) {
+                    message.reply("Message NOT set, I have ecperienced an error :(");
+                }
+      
+                    usageCounter++;
+                }
+                
+                
                 
     //Welcome Message controlls  
                 else if (Mcontent.startsWith("?welcomeon")) {
                     try {
                         queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "") + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
                                 , event.getMessage(), "New User welcome message initiated to: \n\n"
-                                        + message.getContent().replace("welcomeon ", ""));
+                                        + message.getContent().replace("?welcomeon ", ""));
                     } catch (SQLException ex) {
                 updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeon command");
                 updateChannel.sendMessage(ex.getMessage());
@@ -2202,8 +2213,54 @@ public class DiscordListener {
                 Messages.send("```"+execYTcmd("figlet "+event.getMessage().getContent().replace("?ascii", "")).toString()+"```", event.getChannel());
                 usageCounter++;
             }
+            
+            
+            else if(Mcontent.startsWith("?owner")&& event.getGuild().getLongID() == 168043804790751232L){
+                
+                IRole userRole = event.getGuild().getRolesByName("SirBroBot-user").get(0);
+                
+                try {
+                        message.delete();
+                    } catch (MissingPermissionsException ignored) {
+                    }
+                    
+                boolean OwnerStatus = false;
+                
+                for(int i = 0; i < SirBroBot.client.getGuilds().size(); i++){
+                  if(SirBroBot.client.getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())){
+                      OwnerStatus = true;
+                  }
 
-        } 
+                }
+                    
+                if(OwnerStatus == true){
+                    IUser user = event.getAuthor();
+
+                    IRole[] roles = new IRole[user.getRolesForGuild(message.getGuild()).size() + 1];
+
+                    for (int i = 0; i < user.getRolesForGuild(message.getGuild()).size(); i++) {
+                        roles[i] = user.getRolesForGuild(message.getGuild()).get(i);
+
+                    }
+
+                    
+
+                    roles[user.getRolesForGuild(message.getGuild()).size()] = userRole;
+
+                    message.getGuild().editUserRoles(user, roles);
+
+                    Messages.send("Operation successful: " + userRole.getName() + " role added to " + message.getAuthor() + "\n", event.getChannel());
+                }
+                
+                else
+                    message.reply("SirBroBot isnt on a Server you're the owner of").addReaction(":frowning2:");
+            }
+    
+
+    }
+    
+
+        
 
 
 //Music and streaming commands ahead

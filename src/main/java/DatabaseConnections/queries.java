@@ -137,7 +137,9 @@ public static String UserJoinQuery(String guildID){
         }
     }   catch (SQLException ex) {
             Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        } 
+    catch (NullPointerException e){}
+    finally {
         if (resultSet != null) try { resultSet.close(); } catch (SQLException logOrIgnore) {}
         if (statement != null) try { statement.close(); } catch (SQLException logOrIgnore) {}
         if (connection != null) try { connection.close(); } catch (SQLException logOrIgnore) {}
@@ -145,50 +147,6 @@ public static String UserJoinQuery(String guildID){
 
     return list;
 
-}
-
-    
-public static ArrayList userJoinQuery(String guildID){
-    Connection con = null;
-        try {
-            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-        
-        Statement stmt = null;
-        String query = "SELECT guild_id, welcome_channel_id, welcome_channel_message "
-                + "from guilds "
-                + "where guild_id = '" + guildID + "';";
-        
-        try {
-            stmt = (Statement) con.createStatement();
-
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                
-                String channelID = rs.getString("welcome_channel_id");
-                String message = rs.getString("welcome_channel_message");
-                
-                ArrayList<String> data = new ArrayList<>(4);
-                data.add(channelID);
-                data.add(message);
-                
-                return data;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException ex) {
-                    System.out.println(ex.getMessage());
-                }
-            }
-        }
-        return null;
-        
 }
 
 
@@ -343,7 +301,7 @@ public static ArrayList welcomeView(String guildID){
         }
         
         Statement stmt = null;
-        String query = "SELECT welcome_status, welcome_channel_message "
+        String query = "SELECT welcome_channel_id, welcome_channel_message "
                 + "from guilds "
                 + "where guild_id = '" + guildID + "';";
         
@@ -353,7 +311,7 @@ public static ArrayList welcomeView(String guildID){
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 
-                String welcomeStatus = rs.getString("welcome_status");
+                String welcomeStatus = rs.getString("welcome_channel_id");
                 String message = rs.getString("welcome_channel_message");
                 
                 ArrayList<String> data = new ArrayList<>();
