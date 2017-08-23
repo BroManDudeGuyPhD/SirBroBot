@@ -126,8 +126,7 @@ public class DiscordListener {
                 System.out.println("NEW GUILD");
                 RequestBuffer.request(() -> {
                 event.getGuild().getOwner().getOrCreatePMChannel().sendMessage("```Hello " + event.getGuild().getOwner().getName() + "!```\n"
-                        + "This is a one time update message to all 9,430 server owners about an update I recieved! `I am now running off of a database, and any settings I had were lost in the changeover`. This includes welcome messages, and voice join announce settings. The good news is I now am scalable, and this wont happen again!\n"
-                        + "\n"
+                        + "My name is SirBroBot. I have been added to a server you're the Owner of\n"
                         + "Thank you so much for using me, it means so much to my owner!\n"
                         + "`Join my Test Server`: http://discord.gg/0wCCISzMcKMkfX88 to report bugs and stay updated! When you join, use the ?owner command and recieve a special role on the server!");
             });
@@ -2215,7 +2214,7 @@ public class DiscordListener {
             }
             
             
-            else if(Mcontent.startsWith("?owner")&& event.getGuild().getLongID() == 168043804790751232L){
+            else if(Mcontent.startsWith("?owner")&& event.getGuild().getStringID().equals("168043804790751232")){
                 
                 IRole userRole = event.getGuild().getRolesByName("SirBroBot-user").get(0);
                 
@@ -2224,19 +2223,20 @@ public class DiscordListener {
                     } catch (MissingPermissionsException ignored) {
                     }
                     
-                boolean OwnerStatus = false;
+                String OwnerStatus = "false";
                 
                 int servers = SirBroBot.client.getGuilds().size();
                 String authorID = message.getAuthor().getStringID();
                 
                 for(int i = 1; i < servers; i++){
-                  if(SirBroBot.client.getGuilds().get(i).getOwner().getStringID().equals(authorID)){
-                      OwnerStatus = true;
+                    String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
+                  if(OwnerID.equals(authorID)){
+                      OwnerStatus = "true";
                   }
 
                 }
                     
-                if(OwnerStatus == true){
+                if(OwnerStatus.equals("true")){
                     IUser user = event.getAuthor();
 
                     IRole[] roles = new IRole[user.getRolesForGuild(message.getGuild()).size() + 1];
@@ -2255,8 +2255,9 @@ public class DiscordListener {
                     Messages.send("Operation successful: " + userRole.getName() + " role added to " + message.getAuthor() + "\n", event.getChannel());
                 }
                 
-                else
+                else{
                     message.reply("SirBroBot isnt on a Server you're the owner of").addReaction(":frowning2:");
+        }
             }
     
 
