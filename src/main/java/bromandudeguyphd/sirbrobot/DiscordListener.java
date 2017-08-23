@@ -2233,7 +2233,7 @@ public class DiscordListener {
                         String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
                         if (OwnerID.equals(authorID)) {
                             root.getOrCreatePMChannel().sendMessage(OwnerID +", "+authorID);
-                            OwnerStatus = "false";
+                            OwnerStatus = "true";
                             break;
                         }
                     }
@@ -2260,7 +2260,7 @@ public class DiscordListener {
                 }
                 
                 else{
-                    message.reply("SirBroBot isnt on a Server you're the owner of").addReaction(":frowning2:");
+                    message.reply("SirBroBot isnt on a Server you're the owner of").addReaction(":(");
         }
             }
     
