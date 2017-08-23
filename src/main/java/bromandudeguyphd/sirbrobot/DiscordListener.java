@@ -2231,8 +2231,9 @@ public class DiscordListener {
                 for (int i = 0; i < servers; i++) {
                     if (continueStatus.equals("true")) {
                         String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
+                        root.getOrCreatePMChannel().sendMessage(OwnerID +", "+authorID);
                         if (OwnerID.equals(authorID)) {
-                            OwnerStatus = "true";
+                            OwnerStatus = "false";
                             break;
                         }
                     }
