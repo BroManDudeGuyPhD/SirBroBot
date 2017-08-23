@@ -122,7 +122,7 @@ public class DiscordListener {
         try {
             String guildID = DatabaseConnections.queries.GuildCreateQuery(event.getGuild().getID());
             if (guildID.equals("None")) {
-                queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getID() + "');");
+                queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getStringID() + "');");
                 System.out.println("NEW GUILD");
                 RequestBuffer.request(() -> {
                 event.getGuild().getOwner().getOrCreatePMChannel().sendMessage("```Hello " + event.getGuild().getOwner().getName() + "!```\n"
@@ -145,7 +145,6 @@ public class DiscordListener {
 
         try {
             queries.sendDataDB("delete from guilds where guild_id = '" + event.getGuild().getStringID() + "';");
-            updateChannel.sendMessage("Left guild " + event.getGuild().getName() + " | Members: " + event.getGuild().getUsers().size() + "  :::  Server Count: " + event.getClient().getGuilds().size() + " User Count: " + getUsers());
         } catch (MissingPermissionsException | RateLimitException | DiscordException ex) {
             SirBroBot.LOGGER.error(null, ex);
         } catch (SQLException ex) {
@@ -2227,12 +2226,16 @@ public class DiscordListener {
                 
                 int servers = SirBroBot.client.getGuilds().size();
                 String authorID = message.getAuthor().getStringID();
+                String continueStatus = "true";
                 
-                for(int i = 1; i < servers; i++){
-                    String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
-                  if(OwnerID.equals(authorID)){
-                      OwnerStatus = "true";
-                  }
+                for (int i = 0; i < servers; i++) {
+                    if (continueStatus.equals("true")) {
+                        String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
+                        if (OwnerID.equals(authorID)) {
+                            OwnerStatus = "true";
+                            break;
+                        }
+                    }
 
                 }
                     
