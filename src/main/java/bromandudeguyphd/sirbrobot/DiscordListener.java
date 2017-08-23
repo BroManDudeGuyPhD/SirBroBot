@@ -1462,7 +1462,7 @@ public class DiscordListener {
     //Welcome Message controlls  
                 else if (Mcontent.startsWith("?welcomeon")) {
                     try {
-                        queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "") + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
+                        queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "").replace("'", "\\'") + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
                                 , event.getMessage(), "New User welcome message initiated to: \n\n"
                                         + message.getContent().replace("?welcomeon ", ""));
                     } catch (SQLException ex) {
@@ -1490,7 +1490,7 @@ public class DiscordListener {
                    
                     message.reply("New User welcome message edited");
                     try {
-                        queries.sendDBWithMessage("update guilds set welcome_status = 'true', welcome_channel_message='"+message.getContent().replace("?welcomeedit", "")+"',welcome_channel_id = '"+message.getChannel().getStringID()+"' Where guild_id='" + message.getGuild().getID() + "';", event.getMessage(), "Welcome message disabled");
+                        queries.sendDBWithMessage("update guilds set welcome_status = 'true', welcome_channel_message='"+message.getContent().replace("?welcomeedit", "").replace("'", "\\'")+"',welcome_channel_id = '"+message.getChannel().getStringID()+"' Where guild_id='" + message.getGuild().getID() + "';", event.getMessage(), "Welcome message disabled");
                     } catch (SQLException ex) {
                 updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeedit command");
                 updateChannel.sendMessage(ex.getMessage());
