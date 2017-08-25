@@ -134,7 +134,7 @@ public class DiscordListener {
                         
 
         } catch(NullPointerException er){
-            System.out.println("Null  Pointer");
+            System.out.println("Null Pointer");
          } catch (SQLException ex) {
             System.out.println("SQL Error");
         }
@@ -672,7 +672,9 @@ public class DiscordListener {
                     }
                 }
                 //REMOVING a tag
-            } else if (saveArray.length == 4 && action != null && action.toLowerCase().equals("remove") && TAG.containsKey(tagName)&&event.getAuthor().getStringID().equals(root.getStringID())) {
+            } 
+            
+            else if (saveArray.length == 4 && action != null && action.toLowerCase().equals("remove") && TAG.containsKey(tagName)&&event.getAuthor().getStringID().equals(root.getStringID())) {
                 Path path = null;
 
                 fileIO.saveHash(TAG, "TAG");
@@ -1191,7 +1193,7 @@ public class DiscordListener {
                 ResultSet results = queries.getDataDB("select guild_id from guilds;");
                 while (results.next()){
                     
-                        databaseGuilds.add(results.getString(1));
+                        databaseGuilds.add(results.getString("guild_id"));
                     
                 
                     for (int i = 0; i < databaseGuilds.size(); i++){
@@ -1609,85 +1611,6 @@ public class DiscordListener {
 
                     messagesSeen++;
                 }  
-
-
-//                else if (Mcontent.startsWith("?purgeuser")) {
-                //                    String[] temp = message.getContent().split(" ");
-                //
-                //                    IUser purgeUser = message.getMentions().get(0);
-                //                    IChannel targetChannel = message.getChannel();
-                //                    int timer = 10;
-                //                    boolean purge = true;
-                //                    IMessage tempmessage = messageBuilder.withContent("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")").send();
-                //
-                //                    for (int i = 10; i > -1; i--) {
-                //                        tempmessage.edit("**USER PURGE IMMINENT** in **" + timer + "** seconds (**" + purgeUser.getName() + "**)");
-                //                        timer--;
-                //                        try {
-                //                            Thread.sleep(1100);                 //1000 milliseconds is one second.
-                //                        } catch (InterruptedException ex) {
-                //                            Thread.currentThread().interrupt();
-                //                        }
-                //
-                //                        MessageList callerHistory = targetChannel.getMessages();
-                //                        List<IMessage> list = callerHistory.stream().filter(messageHistory -> messageHistory.getAuthor() == message.getAuthor()).limit(5).collect(Collectors.toList());
-                //
-                //                        if (list.toString().contains("abort")) {
-                //                            purge = false;
-                //                        }
-                //                    }
-                //
-                //                    if (purge) {
-                //                        List<IMessage> messages100 = new ArrayList<>();
-                //                        if (temp[2].toLowerCase().equals("all")) {
-                //                            MessageList userHistory = targetChannel.getMessages();
-                //                            List<IMessage> purgeList = userHistory.stream().filter(messageHistory -> messageHistory.getAuthor() == purgeUser).collect(Collectors.toList());
-                //
-                //                            try {
-                //                                while (purgeList.size() > 0) {
-                //
-                //                                        for (int j = 0; j < 99; j++) {
-                //                                            messages100.add(targetChannel.getMessages().get(j));
-                //                                        }
-                //                                        targetChannel.getMessages().bulkDelete(messages100);
-                //                                        messages100.clear();
-                //
-                //                                        try {
-                //                                            Thread.sleep(1100);                 //1000 milliseconds is one second.
-                //                                        } catch (InterruptedException ex) {
-                //                                            Thread.currentThread().interrupt();
-                //                                        }
-                //
-                //                                    if (purgeList.size() <= 98) {
-                //                                        for (int j = 0; j < targetChannel.getMessages().size(); j++) {
-                //                                            messages100.add(targetChannel.getMessages().get(j));
-                //                                        }
-                //
-                //                                        targetChannel.getMessages().bulkDelete(messages100);
-                //                                        messages100.clear();
-                //                                    }
-                //                                }
-                //                            } catch (MissingPermissionsException p) {
-                //                                message.reply("Are you kidding? I dont have permission. I need Manage Messages Permission.");
-                //                            }
-                //                        } else if(!"all".equals(temp[2].toLowerCase())) {
-                //                            char messagesToDelete = 0;
-                //                            for (int i = 0; i < temp[2].length(); i++) {
-                //                                messagesToDelete = temp[2].charAt(i);
-                //                            }
-                //                            int messageAmount = Character.getNumericValue(messagesToDelete);
-                //
-                //                            MessageList userHistory = targetChannel.getMessages();
-                //                            List<IMessage> purgeList = userHistory.stream().filter(messageHistory -> messageHistory.getAuthor() == purgeUser).limit(messageAmount).collect(Collectors.toList());
-                //
-                //                            for (int i = 0; i < purgeList.size(); i++) {
-                //                                purgeList.get(i).delete();
-                //                            }
-                //                        }
-                //                    } else {
-                //                        tempmessage.edit("User was spared");
-                //                    }
-                //                }
                 
                 
                 else if (Mcontent.startsWith("?broadcaston")) {

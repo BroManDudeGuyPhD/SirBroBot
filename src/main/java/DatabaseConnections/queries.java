@@ -68,7 +68,7 @@ public class queries {
     }
         
         
-        public static ResultSet getDataDB(String query) {
+        public static CachedRowSet getDataDB(String query) {
         Statement stmt = null;
         ResultSet results = null;
         CachedRowSet rowset = null;
