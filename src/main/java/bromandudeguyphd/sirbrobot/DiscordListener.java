@@ -1203,6 +1203,11 @@ public class DiscordListener {
                     }
             }
             }
+                
+                
+                else if(Mcontent.equals("?updateweb")){
+                    postWebStats();
+                }
             }
 
 //OWNER ONLY COMMANDS
@@ -2820,7 +2825,34 @@ private StringBuffer execYTcmd(String command) {
         }
         return totalUsers;
     }
+    
+    
+    public static void postWebStats(){
+        int totalChannels = SirBroBot.client.getVoiceChannels().size()+SirBroBot.client.getChannels(false).size();
+        
+        
+        String stats = "Discord Servers: " + SirBroBot.client.getGuilds().size() + "\n"
+                                        + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size() + "\n"
+                                                + "Text Channels: " + SirBroBot.client.getChannels(false).size() + "\n"
+                                                        + "Total Users: " + getUsers() + "\n"
+                                                                + "Messages Seen: " + messagesSeen + "\n" + "Uptime: " + getUptime() + "\n";
+        
+        
+        
+        File fileOne = new File(tokens.webhookLink());
+        
+        try (PrintWriter writer = new PrintWriter(fileOne)) {
+            
+            writer.println(stats);
+            writer.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("File Not Found");
+            Logger.getLogger(fileIO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 
+    
     public String GetCurrentDateTime() {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); 
