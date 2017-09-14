@@ -1181,7 +1181,7 @@ public class DiscordListener {
                 }
                 
                 
-                if(Mcontent.equals("purgedb")){
+                if(Mcontent.equals("?purgedb")){
                
                 ArrayList<String> clientGuilds = new ArrayList<>();
                 
