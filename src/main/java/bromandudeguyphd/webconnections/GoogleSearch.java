@@ -1,4 +1,4 @@
-package bromandudeguyphd.htmlparsing;
+package bromandudeguyphd.webconnections;
 /**
  * @author BroManDudeGuyPhD
  */

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bromandudeguyphd.htmlparsing;
+package bromandudeguyphd.webconnections;
 
 import bromandudeguyphd.sirbrobot.fileIO;
 import java.io.BufferedReader;

@@ -1,16 +1,18 @@
 package bromandudeguyphd.sirbrobot;
 
+import bromandudeguyphd.webconnections.TextParser;
+import bromandudeguyphd.webconnections.HTMLUnit;
 import DatabaseConnections.queries;
-import bromandudeguyphd.htmlparsing.GoogleSearch;
+import bromandudeguyphd.webconnections.GoogleSearch;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
-import bromandudeguyphd.htmlparsing.PostingHTMLData;
-import bromandudeguyphd.htmlparsing.*;
+import bromandudeguyphd.webconnections.PostingHTMLData;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
 import bromandudeguyphd.sirbrobot.music.GuildMusicManager;
+import bromandudeguyphd.webconnections.StatisticsUpdate;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -183,6 +185,9 @@ public class DiscordListener {
         System.out.println("Booted!");
         
         
+        //Begins the Statistics update for webhook requests
+        Timer timer = new Timer();
+        timer.schedule(new StatisticsUpdate(), 0, 60000);
 
     }
 
@@ -2190,6 +2195,7 @@ public class DiscordListener {
                 else{
                     message.reply("SirBroBot isnt on a Server you're the owner of").addReaction(":(");
         }
+                usageCounter++;
             }
     
 
@@ -2226,6 +2232,7 @@ public class DiscordListener {
                     }
 
                 }
+                usageCounter++;
 
             }
 
@@ -2258,10 +2265,12 @@ public class DiscordListener {
                     
                                  
                 }
+                usageCounter++;
             }
 
             if (Mcontent.equals(">count")) {
                 event.getMessage().getChannel().sendMessage("" + event.getClient().getConnectedVoiceChannels().size());
+                usageCounter++;
             } 
             
             else if (Mcontent.equals(">leaveall") && message.getAuthor().equals(root)) {
@@ -2294,15 +2303,18 @@ public class DiscordListener {
                 statusStopUpdate = sx.blah.discord.handle.obj.Status.stream("?commands", "https://www.twitch.tv/sirbrobot/profile");
                 SirBroBot.client.changeStatus(statusStopUpdate);
 
+                usageCounter++;
             }
             
 
             if (Mcontent.startsWith(">pause")) {
                 musicManager.player.setPaused(true);
+                usageCounter++;
             } 
             
             else if (Mcontent.startsWith(">resume")) {
                 musicManager.player.setPaused(false);
+                usageCounter++;
             } 
             
             else if (Mcontent.equals(">play")) {
@@ -2343,10 +2355,12 @@ public class DiscordListener {
 //                audio.queue(new File("src/songs/leaguesongs/The Glory (James Egbert Remix).mp3"));
 //                audio.queue(new File("src/songs/leaguesongs/Welcome to Planet Urf (Jauz Remix).mp3"));
 //                audio.queue(new File("src/songs/leaguesongs/Worlds Collide (Arty Remix).mp3"));
+usageCounter++;
             } 
             else if (Mcontent.startsWith(">leave")) {
                 SirBroBot.client.getConnectedVoiceChannels().stream().filter((IVoiceChannel Vchannel) -> Vchannel.getGuild().equals(message.getGuild())).findFirst().ifPresent(IVoiceChannel::leave);
-                            
+                    
+                usageCounter++;
             }  
             
 //            IVoiceChannel voiceChannel = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
@@ -2369,7 +2383,7 @@ public class DiscordListener {
                     
                 }
                 
-                
+                usageCounter++;
             } 
             
             else if (Mcontent.startsWith(">stop")) {
@@ -2381,6 +2395,7 @@ public class DiscordListener {
                 catch(NullPointerException E){
                     System.out.println("Music Stopped on: "+event.getMessage().getGuild().getName());
                 }
+            usageCounter++;
             } 
             
             else if (Mcontent.startsWith(">playlist")) {
@@ -2458,7 +2473,7 @@ public class DiscordListener {
                     temp = null;
                     message.reply("Command error. Syntax is `>search keywords`");
                 }
-
+                usageCounter++;
             } 
             
             else if (Mcontent.startsWith(">stream")) {
@@ -2477,8 +2492,10 @@ public class DiscordListener {
                 } else {
                     loadAndPlay(message.getChannel(), urlContent[1].trim(), message.getAuthor());
                 }
+                usageCounter++;
             }
         }
+        
     }
 
     
@@ -2827,29 +2844,36 @@ private StringBuffer execYTcmd(String command) {
     }
     
     
-    public static void postWebStats(){
-        int totalChannels = SirBroBot.client.getVoiceChannels().size()+SirBroBot.client.getChannels(false).size();
-        
-        
-        String stats = "Discord Servers: " + SirBroBot.client.getGuilds().size() + "\n"
-                                        + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size() + "\n"
-                                                + "Text Channels: " + SirBroBot.client.getChannels(false).size() + "\n"
-                                                        + "Total Users: " + getUsers() + "\n"
-                                                                + "Messages Seen: " + messagesSeen + "\n" + "Uptime: " + getUptime() + "\n";
-        
-        
-        
+    public static void postWebStats() {
+
+        String stats = "<!DOCTYPE html>"
+                + "<html>"
+                + "<head>"
+                + "  <title>Stats data</title>"
+                + "  <meta name=\"google-site-verification\" content=\"DO2kB7uoA7gkpKZHDIQRuGhrTd6etVY5ZDf7QhQh0fk\" />"
+                + "  <link rel=\"shortcut icon\" type=\"image/png\" href=\"/favicon.png\"/>"
+                + "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/styling/main_style.css\">"
+                + "</head>"
+                + "<body>"
+                + "Discord Servers: " + SirBroBot.client.getGuilds().size() + "<br>"
+                + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size() + "<br>"
+                + "Text Channels: " + SirBroBot.client.getChannels(false).size() + "<br>"
+                + "Total Users: " + getUsers() + "<br>"
+                + "Messages Seen: " + messagesSeen + "\n" + "Uptime: " + getUptime() + "<br>"
+                + "</body>"
+                + "</html> ";
+
         File fileOne = new File(tokens.webhookLink());
-        
+
         try (PrintWriter writer = new PrintWriter(fileOne)) {
-            
+
             writer.println(stats);
             writer.close();
         } catch (FileNotFoundException ex) {
             System.out.println("File Not Found");
             Logger.getLogger(fileIO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     
