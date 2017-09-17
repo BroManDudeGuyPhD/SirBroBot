@@ -37,7 +37,7 @@ public class About implements Command {
                 embed.appendField("Messages Seen: ", "" + DiscordListener.getMessagesSeen(), false);
                 embed.appendField("Uptime: ", "" + SirBroBot.getUptime(), false);
                 embed.appendField("Programmer: ",  DiscordListener.root.mention(), false);
-                embed.appendField("Links: ", "" + "Twitter: https://twitter.com/SirBroBotThe1st \n Website: http://bootswithdefer.tumblr.com/SirBroBot ", false);
+                embed.appendField("Links: ", "" + "YouTube https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ \n Twitter: https://twitter.com/SirBroBotThe1st \n Website: http://bootswithdefer.tumblr.com/SirBroBot ", false);
                 embed.withFooterText(" ?about ");
                 embed.withFooterIcon(sender.getAvatarURL());
                 embed.withColor(Color.red);

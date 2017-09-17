@@ -1179,10 +1179,12 @@ public class DiscordListener {
                     PostingHTMLData post = new PostingHTMLData();
                     try {
                         post.sendReq(SirBroBot.client.getGuilds().size());
+                        message.reply("Carbonitex updated!");
                     } catch (IOException ex) {
                         SirBroBot.LOGGER.error(null, ex);
+                        message.reply("Update Failed");
                     }
-                    message.reply("Carbonitex updated!");
+                    
                 }
                 
                 
