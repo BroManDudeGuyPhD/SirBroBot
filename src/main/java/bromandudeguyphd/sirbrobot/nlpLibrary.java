@@ -34,10 +34,14 @@ public class nlpLibrary {
                         String returnedMessage = response.getResult().getFulfillment().getSpeech();
                         
                    
-                        //What are you Intent
-//                        if(response.getResult().getMetadata().getIntentId().equals("8dc8beee-1503-4973-aec9-40994541c896")){
-//                            
-//                        }
+                        //SocialMedia intent
+                        if (response.getResult().getMetadata().getIntentId().equals("073a0783-dca4-437c-9255-7d4877783ad5")) {
+                            returnedMessage = "**These are my social media links and website**   \n"
+                                    + "`Twitter`: <https://twitter.com/sirbrobotthe1st?lang=en>\n"
+                                    + "`Facebook`: <https://www.facebook.com/sirbrobot/>\n"
+                                    + "`YouTube`:<https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n"
+                                    + "`Website`: <http://bootswithdefer.tumblr.com/SirBroBot>";
+                        }
                         
                         if(returnedMessage.contains("USERMENTION")){
                             returnedMessage = returnedMessage.replace("USERMENTION", message.getAuthor().mention());
