@@ -2149,7 +2149,8 @@ public class DiscordListener {
             }
             
             
-            else if(Mcontent.startsWith("?owner")&& event.getGuild().getStringID().equals("168043804790751232")){
+            else if(Mcontent.startsWith("?owner")){
+                if(event.getGuild().getStringID().equals("168043804790751232")){
                 
                 IRole userRole = event.getGuild().getRolesByName("SirBroBot-user").get(0);
                 
@@ -2162,37 +2163,35 @@ public class DiscordListener {
                 
                 int servers = SirBroBot.client.getGuilds().size();
                 String authorID = message.getAuthor().getStringID();
-                String continueStatus = "true";
                 
                 for (int i = 0; i < servers; i++) {
-                    if (continueStatus.equals("true")) {
                         String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
                         if (OwnerID.equals(authorID)) {
                             root.getOrCreatePMChannel().sendMessage(OwnerID +", "+authorID);
                             OwnerStatus = "true";
                             break;
                         }
-                    }
+                    
 
                 }
                     
                 if(OwnerStatus.equals("true")){
                     IUser user = event.getAuthor();
-
+                    
+                    try{
                     IRole[] roles = new IRole[user.getRolesForGuild(message.getGuild()).size() + 1];
-
+                    
                     for (int i = 0; i < user.getRolesForGuild(message.getGuild()).size(); i++) {
                         roles[i] = user.getRolesForGuild(message.getGuild()).get(i);
 
                     }
-
-                    
-
                     roles[user.getRolesForGuild(message.getGuild()).size()] = userRole;
-
                     message.getGuild().editUserRoles(user, roles);
-
                     Messages.send("Operation successful: " + userRole.getName() + " role added to " + message.getAuthor() + "\n", event.getChannel());
+                    
+                    } catch (MissingPermissionsException ignored) {
+                        message.reply("Seems to be an error with my permissions. "+root.mention() +" fix me please");
+                    }
                 }
                 
                 else{
@@ -2200,7 +2199,10 @@ public class DiscordListener {
         }
                 usageCounter++;
             }
-    
+            }
+            else{
+                message.reply("Use this if you are a `server owner` on `SirBroBot's server` for a special permission: http://discord.gg/0wCCISzMcKMkfX88");
+            }
 
     }
     
