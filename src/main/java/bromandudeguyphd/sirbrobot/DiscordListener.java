@@ -1515,7 +1515,7 @@ public class DiscordListener {
                 else if (Mcontent.equals("?welcomeview")) {
                     ArrayList<String> welcomeView = queries.welcomeView(message.getGuild().getID());
                      System.out.println(welcomeView.get(1));
-                     message.reply("Welcome Status is: `"+welcomeView.get(0)+"`\n"
+                     message.reply("Welcome Status is: `"+welcomeView.get(2)+"`. Welcomes are in channel #"+ message.getGuild().getChannelByID(welcomeView.get(2)).getName() +"\n"
                              + "Welcome Message Set to: \n"+welcomeView.get(1)+"\n\n"
                                      + "`USERMENTION` Will be replaces with a mention to the new user, `USERNAME` will be their name");
                      usageCounter++;
@@ -2149,34 +2149,49 @@ public class DiscordListener {
             }
             
             
-            else if(Mcontent.startsWith("?owner")){
-                if(event.getGuild().getStringID().equals("168043804790751232")){
-                
-                IRole userRole = event.getGuild().getRolesByName("SirBroBot-user").get(0);
-                
-                try {
-                        message.delete();
-                    } catch (MissingPermissionsException ignored) {
-                    }
-                    
+            else if(Mcontent.startsWith("owner")){
                 String OwnerStatus = "false";
+                IGuild SBBServer = SirBroBot.client.getGuildByID(168043804790751232L);
                 
-                int servers = SirBroBot.client.getGuilds().size();
-                String authorID = message.getAuthor().getStringID();
-                
-                for (int i = 0; i < servers; i++) {
-                        String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
-                        if (OwnerID.equals(authorID)) {
-                            root.getOrCreatePMChannel().sendMessage(OwnerID +", "+authorID);
-                            OwnerStatus = "true";
-                            break;
-                        }
-                    
+                //Command occurs on SirBroBot's server
+                if (event.getGuild().getStringID().equals(168043804790751232L)) {
 
+                    int servers = SirBroBot.client.getGuilds().size();
+                    String authorID = message.getAuthor().getStringID();
+
+                    try {
+                        for (int i = 0; i < servers; i++) {
+                            String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
+                            if (OwnerID.equals(authorID)) {
+                                OwnerStatus = "true";
+                                break;
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        message.reply("Database Issue.");
+                    }
+
+                } 
+                
+                //Commands Occurs on another server
+                else {
+                    
+                    if(message.getGuild().getOwner().getStringID().equals(message.getAuthor().getStringID())){ //Checks if user is owner of current server
+                        if(SBBServer.getUsers().contains(message.getGuild().getUserByID(message.getAuthor().getStringID()))){ //Assures they are on SBB Server
+                            OwnerStatus = "true";
+                            
+                        }
+                        else
+                            message.reply("You arent a memeber of SirBroBot's server. Join and use the `?owner` command https://discord.gg/0wCCISzMcKMkfX88");
+                    }
+                    else
+                        message.reply("You arent the owner of `"+message.getGuild().getName()+"`, **"+message.getGuild().getOwner().getName()+"** is");
                 }
                     
                 if(OwnerStatus.equals("true")){
                     IUser user = event.getAuthor();
+                    IRole userRole = SBBServer.getRolesByName("SirBroBot-user").get(0);
                     
                     try{
                     IRole[] roles = new IRole[user.getRolesForGuild(message.getGuild()).size() + 1];
@@ -2195,16 +2210,19 @@ public class DiscordListener {
                 }
                 
                 else{
-                    message.reply("SirBroBot isnt on a Server you're the owner of").addReaction(":(");
+                    message.reply("SirBroBot isnt on a Server you're the owner of :frowning2:");
         }
                 usageCounter++;
+            
+                
+//                else{
+//                message.reply("Use this if you are a `server owner` on `SirBroBot's server` for a special permission: http://discord.gg/0wCCISzMcKMkfX88");
             }
             }
-            else{
-                message.reply("Use this if you are a `server owner` on `SirBroBot's server` for a special permission: http://discord.gg/0wCCISzMcKMkfX88");
-            }
+            
+            
 
-    }
+    
     
 
         

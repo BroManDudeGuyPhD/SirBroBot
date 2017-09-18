@@ -34,8 +34,8 @@ public class nlpLibrary {
                         String returnedMessage = response.getResult().getFulfillment().getSpeech();
                         
                    
-                        //SocialMedia intent
-                        if (response.getResult().getMetadata().getIntentId().equals("073a0783-dca4-437c-9255-7d4877783ad5")) {
+                        //SocialMedia intent                                         6b5a215a-f980-48b5-a97f-3e66690fe6e9                                     
+                        if (response.getResult().getMetadata().getIntentId().equals("6b5a215a-f980-48b5-a97f-3e66690fe6e9")) {
                             returnedMessage = "**These are my social media links and website**   \n"
                                     + "`Twitter`: <https://twitter.com/sirbrobotthe1st?lang=en>\n"
                                     + "`Facebook`: <https://www.facebook.com/sirbrobot/>\n"

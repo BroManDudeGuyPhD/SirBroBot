@@ -300,7 +300,7 @@ public static ArrayList welcomeView(String guildID){
         }
         
         Statement stmt = null;
-        String query = "SELECT welcome_channel_id, welcome_channel_message "
+        String query = "SELECT welcome_channel_id, welcome_channel_message, welcome_status "
                 + "from guilds "
                 + "where guild_id = '" + guildID + "';";
         
