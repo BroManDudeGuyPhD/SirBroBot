@@ -42,7 +42,7 @@ public class nlpLibrary {
                                     + "`YouTube`:<https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n"
                                     + "`Website`: <http://bootswithdefer.tumblr.com/SirBroBot>";
                         }
-                        
+                       
                         if(returnedMessage.contains("USERMENTION")){
                             returnedMessage = returnedMessage.replace("USERMENTION", message.getAuthor().mention());
                         }
