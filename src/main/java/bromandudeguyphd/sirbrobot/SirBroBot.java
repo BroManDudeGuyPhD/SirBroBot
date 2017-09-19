@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class SirBroBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SirBroBot.class);
-    private static final int SHARD_COUNT = 6;
+    private static final int SHARD_COUNT = 8;
     public static IDiscordClient client;
     public static Skype skype;
     public static IUser root;

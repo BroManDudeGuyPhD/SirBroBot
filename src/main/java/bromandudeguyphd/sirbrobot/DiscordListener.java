@@ -117,10 +117,10 @@ public class DiscordListener {
     
     
     nlpLibrary nlp = new nlpLibrary();
-
+    int guilds = 0;
     @EventSubscriber
     public void onGuildCreate(GuildCreateEvent event) {
-       
+       System.out.print(guilds++ +", ");
         try {
             String guildID = DatabaseConnections.queries.GuildCreateQuery(event.getGuild().getID());
             if (guildID.equals("None")) {
@@ -200,7 +200,7 @@ public class DiscordListener {
         if (results.contains("true")) {
             ArrayList<String> welcomeData = queries.welcomeView(event.getGuild().getStringID());
             
-            event.getGuild().getChannelByID(welcomeData.get(0)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
+            event.getGuild().getChannelByID(welcomeData.get(2)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
             
         }
         }catch (NullPointerException ex){ 
@@ -1514,8 +1514,8 @@ public class DiscordListener {
                 
                 else if (Mcontent.equals("?welcomeview")) {
                     ArrayList<String> welcomeView = queries.welcomeView(message.getGuild().getID());
-                     System.out.println(welcomeView.get(1));
-                     message.reply("Welcome Status is: `"+welcomeView.get(2)+"`. Welcomes are in channel #"+ message.getGuild().getChannelByID(welcomeView.get(2)).getName() +"\n"
+                     
+                     message.reply("Welcome Status is: `"+welcomeView.get(0)+"`. Welcomes are in channel #"+ message.getGuild().getChannelByID(welcomeView.get(2)).getName() +"\n"
                              + "Welcome Message Set to: \n"+welcomeView.get(1)+"\n\n"
                                      + "`USERMENTION` Will be replaces with a mention to the new user, `USERNAME` will be their name");
                      usageCounter++;
@@ -2149,12 +2149,12 @@ public class DiscordListener {
             }
             
             
-            else if(Mcontent.startsWith("owner")){
+            else if(Mcontent.equals("?owner")){
                 String OwnerStatus = "false";
                 IGuild SBBServer = SirBroBot.client.getGuildByID(168043804790751232L);
                 
                 //Command occurs on SirBroBot's server
-                if (event.getGuild().getStringID().equals(168043804790751232L)) {
+                if (event.getGuild().getStringID().equals(SBBServer.getStringID())) {
 
                     int servers = SirBroBot.client.getGuilds().size();
                     String authorID = message.getAuthor().getStringID();
@@ -2175,7 +2175,7 @@ public class DiscordListener {
                 } 
                 
                 //Commands Occurs on another server
-                else {
+                else if(!message.getGuild().getStringID().equals(SBBServer.getStringID())) {
                     
                     if(message.getGuild().getOwner().getStringID().equals(message.getAuthor().getStringID())){ //Checks if user is owner of current server
                         if(SBBServer.getUsers().contains(message.getGuild().getUserByID(message.getAuthor().getStringID()))){ //Assures they are on SBB Server
@@ -2194,17 +2194,18 @@ public class DiscordListener {
                     IRole userRole = SBBServer.getRolesByName("SirBroBot-user").get(0);
                     
                     try{
-                    IRole[] roles = new IRole[user.getRolesForGuild(message.getGuild()).size() + 1];
+                    IRole[] roles = new IRole[user.getRolesForGuild(SBBServer).size() + 1];
                     
-                    for (int i = 0; i < user.getRolesForGuild(message.getGuild()).size(); i++) {
-                        roles[i] = user.getRolesForGuild(message.getGuild()).get(i);
+                    for (int i = 0; i < user.getRolesForGuild(SBBServer).size(); i++) {
+                        roles[i] = user.getRolesForGuild(SBBServer).get(i);
 
                     }
-                    roles[user.getRolesForGuild(message.getGuild()).size()] = userRole;
-                    message.getGuild().editUserRoles(user, roles);
+                    roles[user.getRolesForGuild(SBBServer).size()] = userRole;
+                    SBBServer.editUserRoles(user, roles);
                     Messages.send("Operation successful: " + userRole.getName() + " role added to " + message.getAuthor() + "\n", event.getChannel());
                     
-                    } catch (MissingPermissionsException ignored) {
+                    } catch (MissingPermissionsException e) {
+                        e.printStackTrace();
                         message.reply("Seems to be an error with my permissions. "+root.mention() +" fix me please");
                     }
                 }

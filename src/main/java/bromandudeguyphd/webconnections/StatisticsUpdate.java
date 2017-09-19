@@ -36,7 +36,7 @@ public class StatisticsUpdate extends TimerTask {
                 + "<body>"
                 + "Discord Servers: " + SirBroBot.client.getGuilds().size() + "<br>"
                 + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size() + "<br>"
-                + "Text Channels: " + SirBroBot.client.getChannels(false).size() + "<br>"
+                + "Text Channels: " + SirBroBot.client.getChannels(true).size() + "<br>"
                 + "Total Users: " + getUsers() + "<br>"
                 + "Messages Seen: " + DiscordListener.getMessagesSeen()+ "<br>" + "Uptime: " + getUptime() + "<br>"
                 + "</body>"

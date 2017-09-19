@@ -310,12 +310,14 @@ public static ArrayList welcomeView(String guildID){
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 
-                String welcomeStatus = rs.getString("welcome_channel_id");
+                String channelID = rs.getString("welcome_channel_id");
                 String message = rs.getString("welcome_channel_message");
+                String welcomeStatus = rs.getString("welcome_status");
                 
                 ArrayList<String> data = new ArrayList<>();
                 data.add(welcomeStatus);
                 data.add(message);
+                data.add(channelID);
                 
                 return data;
             
@@ -327,6 +329,7 @@ public static ArrayList welcomeView(String guildID){
             if (stmt != null) {
                 try {
                     stmt.close();
+                    con.close();
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                 }
