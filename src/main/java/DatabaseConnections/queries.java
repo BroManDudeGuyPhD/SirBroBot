@@ -26,158 +26,174 @@ import sx.blah.discord.handle.obj.IMessage;
 public class queries {
 
     static Connection con;
+
     public static void sendDataDB(String query) throws SQLException {
-        Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
-        Statement stmt = con.createStatement();  
-        try{
-        Class.forName("com.mysql.jdbc.Driver"); 
-        stmt.executeUpdate(query);
-        stmt.close();
-        con.close();
-        
-       
-         }
-         catch(ClassNotFoundException | SQLException err){
-             System.out.println(err.getMessage());
-             
-    }
+        Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+        Statement stmt = con.createStatement();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            stmt.executeUpdate(query);
+            stmt.close();
+            con.close();
+
+        } catch (ClassNotFoundException | SQLException err) {
+            System.out.println(err.getMessage());
+
+        }
 
     }
-        
-        
-        
-        
-        public static void sendDBWithMessage(String query, IMessage messageEvent, String messageContent) throws SQLException {
 
-        try{
-        Class.forName("com.mysql.jdbc.Driver"); 
-        Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );  
-        Statement stmt = con.createStatement();  
-        stmt.executeUpdate(query);
-        
-        messageEvent.reply(messageContent);
-       
-        con.close();
-         }
-         catch(ClassNotFoundException | SQLException err){
-             messageEvent.reply("Error communicatring with database");
-             System.out.println(err.getMessage());
-             
+    public static void sendDBWithMessage(String query, IMessage messageEvent, String messageContent) throws SQLException {
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+            Statement stmt = con.createStatement();
+            stmt.executeUpdate(query);
+
+            messageEvent.reply(messageContent);
+
+            con.close();
+        } catch (ClassNotFoundException | SQLException err) {
+            messageEvent.reply("Error communicatring with database");
+            System.out.println(err.getMessage());
+
+        }
+
     }
-        
-    }
-        
-        
-        public static CachedRowSet getDataDB(String query) {
+
+    public static CachedRowSet getDataDB(String query) {
         Statement stmt = null;
         ResultSet results = null;
         CachedRowSet rowset = null;
-        try{
-        Class.forName("com.mysql.jdbc.Driver");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
 
-          
-        stmt = con.createStatement();  
-        
-        results = stmt.executeQuery(query);
-        
-        rowset = new CachedRowSetImpl();
-        rowset.populate(results);
-        con.close();
-        
-         }
-         catch(SQLException err){
-             System.out.println("ERROR IN GETDB QUERY"+err.getMessage());
-    }   catch (ClassNotFoundException ex) {
+            stmt = con.createStatement();
+
+            results = stmt.executeQuery(query);
+
+            rowset = new CachedRowSetImpl();
+            rowset.populate(results);
+            con.close();
+
+        } catch (SQLException err) {
+            System.out.println("ERROR IN GETDB QUERY" + err.getMessage());
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
         }
-           
-            
-            return rowset;
-            
-    }
-        
-public static String GuildCreateQuery(String guildID){
-    Connection connection = null;
-    PreparedStatement statement = null;
-    ResultSet resultSet = null;
-    String list = "None";
 
-    try {
-        connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
-        statement = connection.prepareStatement("select guild_id from guilds where guild_id ='"+guildID+"';");
-        resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            list = resultSet.getString("guild_id");
-        }
-    }   catch (SQLException ex) {
+        return rowset;
+
+    }
+
+    public static String GuildCreateQuery(String guildID) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        String list = "None";
+
+        try {
+            connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+            statement = connection.prepareStatement("select guild_id from guilds where guild_id ='" + guildID + "';");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                list = resultSet.getString("guild_id");
+            }
+        } catch (SQLException ex) {
             Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-        if (resultSet != null) try { resultSet.close(); } catch (SQLException logOrIgnore) {}
-        if (statement != null) try { statement.close(); } catch (SQLException logOrIgnore) {}
-        if (connection != null) try { connection.close(); } catch (SQLException logOrIgnore) {}
-    }
-
-    return list;
-
-}
-
-public static String UserJoinQuery(String guildID){
-    Connection connection = null;
-    PreparedStatement statement = null;
-    ResultSet resultSet = null;
-    String list = null;
-
-    try {
-        connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
-        statement = connection.prepareStatement("select welcome_status from guilds where guild_id='"+guildID+"';");
-        resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            list = resultSet.getString("welcome_status");
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
         }
-    }   catch (SQLException ex) {
-            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    catch (NullPointerException e){}
-    finally {
-        if (resultSet != null) try { resultSet.close(); } catch (SQLException logOrIgnore) {}
-        if (statement != null) try { statement.close(); } catch (SQLException logOrIgnore) {}
-        if (connection != null) try { connection.close(); } catch (SQLException logOrIgnore) {}
+
+        return list;
+
     }
 
-    return list;
+    public static String UserJoinQuery(String guildID) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        String list = null;
 
-}
+        try {
+            connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+            statement = connection.prepareStatement("select welcome_status from guilds where guild_id='" + guildID + "';");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                list = resultSet.getString("welcome_status");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException e) {
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+        }
 
+        return list;
 
-public static ArrayList voiceJoinQuery(String guildID){
+    }
+
+    public static ArrayList voiceJoinQuery(String guildID) {
         Connection con = null;
         try {
-            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword() );
+            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-        
 
-        
-        
         Statement stmt = null;
         String query = "select guild_id, voice_announce_channel_id, voicejoin_status "
                 + "from guilds "
                 + "where guild_id = '" + guildID + "';";
-        
+
         try {
             stmt = (Statement) con.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                
+
                 String channelID = rs.getString("voice_announce_channel_id");
                 String status = rs.getString("voicejoin_status");
-                
+
                 ArrayList<String> data = new ArrayList<>(4);
                 data.add(status);
                 data.add(channelID);
-                
+
                 return data;
             }
         } catch (SQLException e) {
@@ -192,10 +208,10 @@ public static ArrayList voiceJoinQuery(String guildID){
             }
         }
         return null;
-        
+
     }
 
-public static ArrayList voiceLeaveQuery(String guildID){
+    public static ArrayList voiceLeaveQuery(String guildID) {
 
         Connection con = null;
         try {
@@ -203,28 +219,25 @@ public static ArrayList voiceLeaveQuery(String guildID){
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-        
 
-        
-        
         Statement stmt = null;
         String query = "select guild_id, voice_announce_channel_id, voiceleave_status "
                 + "from guilds "
                 + "where guild_id = '" + guildID + "';";
-        
+
         try {
             stmt = (Statement) con.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                
+
                 String channelID = rs.getString("voice_announce_channel_id");
                 String status = rs.getString("voiceleave_status");
-                
+
                 ArrayList<String> data = new ArrayList<>(4);
                 data.add(status);
                 data.add(channelID);
-                
+
                 return data;
             }
         } catch (SQLException e) {
@@ -239,11 +252,10 @@ public static ArrayList voiceLeaveQuery(String guildID){
             }
         }
         return null;
-        
+
     }
 
-
-public static ArrayList voiceMoveQuery(String guildID){
+    public static ArrayList voiceMoveQuery(String guildID) {
 
         Connection con = null;
         try {
@@ -251,28 +263,25 @@ public static ArrayList voiceMoveQuery(String guildID){
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-        
 
-        
-        
         Statement stmt = null;
         String query = "select guild_id, voice_announce_channel_id, voicemove_status "
                 + "from guilds "
                 + "where guild_id = '" + guildID + "';";
-        
+
         try {
             stmt = (Statement) con.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                
+
                 String channelID = rs.getString("voice_announce_channel_id");
                 String status = rs.getString("voicemove_status");
-                
+
                 ArrayList<String> data = new ArrayList<>(4);
                 data.add(status);
                 data.add(channelID);
-                
+
                 return data;
             }
         } catch (SQLException e) {
@@ -287,42 +296,41 @@ public static ArrayList voiceMoveQuery(String guildID){
             }
         }
         return null;
-        
+
     }
 
-
-public static ArrayList welcomeView(String guildID){
-    Connection con = null;
+    public static ArrayList welcomeView(String guildID) {
+        Connection con = null;
         try {
             con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-        
+
         Statement stmt = null;
         String query = "SELECT welcome_channel_id, welcome_channel_message, welcome_status "
                 + "from guilds "
                 + "where guild_id = '" + guildID + "';";
-        
+
         try {
             stmt = (Statement) con.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                
+
                 String channelID = rs.getString("welcome_channel_id");
                 String message = rs.getString("welcome_channel_message");
                 String welcomeStatus = rs.getString("welcome_status");
-                
+
                 ArrayList<String> data = new ArrayList<>();
                 data.add(welcomeStatus);
                 data.add(message);
                 data.add(channelID);
-                
+
                 return data;
-            
+
             }
-            
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -336,8 +344,8 @@ public static ArrayList welcomeView(String guildID){
             }
         }
         return null;
-        
-}
+
+    }
 
 
 }

@@ -25,6 +25,7 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 //import sx.blah.discord.util.RateLimitException;
 
@@ -121,6 +122,16 @@ public class SirBroBot {
         return String.format("%02dh:%02dm:%02ds", hrs, min, sec);
     }
         
+    public static Integer getRand() {
+        int Low = 0;
+        int High = 10;
+
+        int Result;
+        Random r = new Random();
+        Result = r.nextInt(High - Low) + Low;
+        return Result;
+    }
+
     }
 
 

@@ -34,6 +34,8 @@ public class commandsList {
             + "16. ?google <term>       :Search Google for term\n"
             + "17. ?ping                :Pings Google\n"
             + "18. ?ascii <message>     :Replies with ASCII message\n"
+            + "19. ?steamstats <name>   :Shows stats\n"
+            + "20. ?ivan                :Random Ivan meme\n"
             + ""
             + "```"
             + "\nThings I will respond to with an @SirBroBot mention behind it: \n"

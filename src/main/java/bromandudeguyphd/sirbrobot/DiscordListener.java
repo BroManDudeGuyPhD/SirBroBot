@@ -101,7 +101,7 @@ public class DiscordListener {
     boolean updateDispatcher = false;
     boolean messageStatus = false;
     int usageCounter = 0;
-    IChannel updateChannel = SirBroBot.client.getChannelByID("197567480439373824");
+    IChannel updateChannel = SirBroBot.client.getChannelByID(197567480439373824L);
 
     File dance = new File("src/images/dancingKnight.gif");
     //File joust = new File("src/images/joust.gif");
@@ -122,7 +122,7 @@ public class DiscordListener {
     public void onGuildCreate(GuildCreateEvent event) {
        System.out.print(guilds++ +", ");
         try {
-            String guildID = DatabaseConnections.queries.GuildCreateQuery(event.getGuild().getID());
+            String guildID = DatabaseConnections.queries.GuildCreateQuery(event.getGuild().getStringID());
             if (guildID.equals("None")) {
                 queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getStringID() + "');");
                 System.out.println("NEW GUILD");
@@ -159,15 +159,9 @@ public class DiscordListener {
 
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
-        sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream("?commands", "https://www.twitch.tv/SirBroBot/profile");
-        event.getClient().changeStatus(status);
-        
-//        try {
-//            fileIO.readFile(curseWords, "bannedWords.txt");
-//        } catch (IOException ex) {
-//            Logger.getLogger(DiscordListener.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
+          
+        SirBroBot.client.streaming("Say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+       
 
         try {
             fileIO.readFile(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
@@ -200,7 +194,7 @@ public class DiscordListener {
         if (results.contains("true")) {
             ArrayList<String> welcomeData = queries.welcomeView(event.getGuild().getStringID());
             
-            event.getGuild().getChannelByID(welcomeData.get(2)).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
+            event.getGuild().getChannelByID(Long.parseLong(welcomeData.get(2))).sendMessage(welcomeData.get(1).replace("USERMENTION", event.getUser().mention()).replace("USERNAME", "**" + event.getUser().getName() + "**"));
             
         }
         }catch (NullPointerException ex){ 
@@ -220,7 +214,7 @@ public class DiscordListener {
 
                 try {
                     MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
-                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(results.get(1)));
+                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(Long.parseLong(results.get(1))));
                     
 
                 //Silence
@@ -288,7 +282,7 @@ public class DiscordListener {
 
                 try {
                     MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
-                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(results.get(1)));
+                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(Long.parseLong(results.get(1))));
                     
 
                 //Silence
@@ -356,7 +350,7 @@ public class DiscordListener {
 
                 try {
                     MessageBuilder messageBuilder = new MessageBuilder(SirBroBot.client);
-                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(results.get(1)));
+                    messageBuilder.withChannel(event.getVoiceChannel().getGuild().getChannelByID(Long.parseLong(results.get(1))));
                     
 
                 //Silence
@@ -464,7 +458,7 @@ public class DiscordListener {
         String mcontent = message.getContent().replace("<@166913295457058817>", "").toLowerCase();
         MessageBuilder messageBuilder = new MessageBuilder(event.getClient()).withChannel(event.getMessage().getChannel());
 
-        root = event.getClient().getUserByID(tokens.rootID());
+        root = event.getClient().getUserByID(Long.parseLong(tokens.rootID()));
         String mention = message.getAuthor().mention();
         IChannel channel = message.getChannel();
         boolean tag = false;
@@ -718,7 +712,18 @@ public class DiscordListener {
 
         //NLP Starts here ONLY IN SBB TEST SERVER FOR NOW
         else if (tag == false && !event.getMessage().mentionsEveryone() && !event.getMessage().mentionsHere()){
-                Messages.send(nlp.processMessageWithMentions(message), message.getChannel());
+            if(nlp.processMessage(message).contains("USEEIVAN")){
+                final File dir = new File(tokens.ivanDirectory());
+                File[] files = dir.listFiles();
+                Random rand = new Random();
+                File file = files[rand.nextInt(files.length)];
+                Messages.sendWithImage(nlp.processMessage(message), message.getChannel(), file);
+            }
+            
+            else{
+            Messages.send(nlp.processMessage(message), message.getChannel());
+            }
+            
             }
             
             
@@ -738,8 +743,8 @@ public class DiscordListener {
     public void onMessageReceived(MessageReceivedEvent event) throws InterruptedException, SQLException{
 
 
-        root = event.getClient().getUserByID(tokens.rootID());
-        IChannel updateChannel = event.getClient().getChannelByID("197567480439373824");
+        root = event.getClient().getUserByID(Long.parseLong(tokens.rootID()));
+        IChannel updateChannel = event.getClient().getChannelByID(197567480439373824L);
         IChannel channel = event.getMessage().getChannel();
 
         messagesSeen++;
@@ -784,7 +789,7 @@ public class DiscordListener {
 
                 int placeholder = 0;
                 for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
-                    if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
+                    if (event.getClient().getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())) {
                         serverOwner = true;
                         placeholder = i;
                     }
@@ -809,17 +814,17 @@ public class DiscordListener {
                 }
             } else if (Mcontent.startsWith("?broadcaston")) {
                 for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
-                    if (event.getClient().getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
+                    if (event.getClient().getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())) {
                         serverOwner = true;
                     }
                 }
-                if (PMD.containsKey(message.getAuthor().getID())) {
-                    PMD.replace(message.getAuthor().getID(), "ON");
+                if (PMD.containsKey(message.getAuthor().getStringID())) {
+                    PMD.replace(message.getAuthor().getStringID(), "ON");
                     fileIO.saveHash(PMD, "PMD");
                     updateChannel.sendMessage("Broadcast turned ON for Owner **" + message.getAuthor().getName() + "**");
                     message.reply("Broadcast recieve status set to **TRUE**");
                 } else {
-                    PMD.put(message.getAuthor().getID(), "ON");
+                    PMD.put(message.getAuthor().getStringID(), "ON");
                     fileIO.saveHash(PMD, "PMD");
                     updateChannel.sendMessage("Broadcast turned ON for Owner **" + message.getAuthor().getName() + "**");
                     message.reply("Broadcast recieve status set to **TRUE**");
@@ -827,17 +832,17 @@ public class DiscordListener {
             } 
             
             else if (Mcontent.startsWith("?broadcastoff")) {
-                if (PMD.containsKey(message.getAuthor().getID())) {
-                    PMD.replace(message.getAuthor().getID(), "OFF");
+                if (PMD.containsKey(message.getAuthor().getStringID())) {
+                    PMD.replace(message.getAuthor().getStringID(), "OFF");
                     fileIO.saveHash(PMD, "PMD");
                     updateChannel.sendMessage("Broadcast turned OFF for Owner **" + message.getAuthor().getName() + "**");
                     message.reply("Broadcast recieve status set to **FALSE**");
                 } else {
-                    PMD.put(message.getAuthor().getID(), "OFF");
+                    PMD.put(message.getAuthor().getStringID(), "OFF");
                     fileIO.saveHash(PMD, "PMD");
                     updateChannel.sendMessage("Broadcast turned OFF for Owner **" + message.getAuthor().getName() + "**");
                     message.reply("Broadcast recieve status set to **FALSE**");
-                }
+                } 
             } 
             else if (message.getContent().startsWith("?") || message.getContent().startsWith(">")) {
                 
@@ -851,8 +856,19 @@ public class DiscordListener {
             }
             
             //NLP for private messages
-            else{
-                person.sendMessage(nlp.processMessage(message));
+            else {
+                if (nlp.processMessage(message).contains("USEEIVAN")) {
+                    System.out.println("You SEE Ivan PM");
+                    
+                    final File dir = new File(tokens.ivanDirectory());
+                    File[] files = dir.listFiles();
+                    Random rand = new Random();
+                    File file = files[rand.nextInt(files.length)];
+                    Messages.sendWithImage(nlp.processMessage(message), message.getChannel(), file);
+                }
+                
+                else
+                    person.sendMessage(nlp.processMessage(message));
             }
                     
         } 
@@ -949,8 +965,7 @@ public class DiscordListener {
                         message.delete();
                     } catch (MissingPermissionsException ignored) {
                     }
-                    sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.game(message.getContent().replace("?updatestatus ", ""));
-                    event.getClient().changeStatus(status);
+                    event.getClient().changePlayingText(message.getContent().replace("?updatestatus ", ""));
                     usageCounter++;
 
                 } 
@@ -961,19 +976,19 @@ public class DiscordListener {
                         message.delete();
                     } catch (MissingPermissionsException ignored) {
                     }
-                    sx.blah.discord.handle.obj.Status status = sx.blah.discord.handle.obj.Status.stream(message.getContent().replace("?updatestream ", ""), "https://www.twitch.tv/SirBroBot/profile");
-                    event.getClient().changeStatus(status);
+                    SirBroBot.client.streaming(message.getContent().replace("?updatestream ", ""), "https://www.twitch.tv/SirBroBot/profile");
+
                     usageCounter++;
 
                 } 
                 
                 else if (Mcontent.startsWith("?guildid")) {
-                    updateChannel.sendMessage("**Guild** " + message.getGuild().getName() + " **ID:** " + message.getGuild().getID());
+                    updateChannel.sendMessage("**Guild** " + message.getGuild().getName() + " **ID:** " + message.getGuild().getStringID());
                     usageCounter++;
                 } 
                 
                 else if (Mcontent.startsWith("?channelid")) {
-                    updateChannel.sendMessage("**Guild** " + message.getGuild().getName() + " **Channel** " + message.getChannel().getName() + " **ID:** " + message.getChannel().getID());
+                    updateChannel.sendMessage("**Guild** " + message.getGuild().getName() + " **Channel** " + message.getChannel().getName() + " **ID:** " + message.getChannel().getStringID());
                     usageCounter++;
                 } 
                 
@@ -981,7 +996,7 @@ public class DiscordListener {
                     message.delete();
                     IUser user;
                     user = message.getMentions().get(0);
-                    Messages.send(user.getName() + "'s ID is: " + user.getID(), channel);
+                    Messages.send(user.getName() + "'s ID is: " + user.getStringID(), channel);
                     usageCounter++;
                 } //Broadcasts message to server owners
                 
@@ -994,20 +1009,20 @@ public class DiscordListener {
                     for (int i = 0; i < servers; i++) {
                         IUser user = event.getClient().getGuilds().get(i).getOwner();
                         boolean broadcastStatus = true;
-                        if (event.getClient().getGuilds().get(i).getID().equals("153315968091684865") | event.getClient().getGuilds().get(i).getID().equals("81384788765712384") | event.getClient().getGuilds().get(i).getID().equals("110373943822540800")) {
+                        if (event.getClient().getGuilds().get(i).getStringID().equals("153315968091684865") | event.getClient().getGuilds().get(i).getStringID().equals("81384788765712384") | event.getClient().getGuilds().get(i).getStringID().equals("110373943822540800")) {
                             broadcastStatus = false;
                         }
 
-                        if (PMD.containsKey(user.getID())) {
-                            if (PMD.get(user.getID()).equals("ON")) {
+                        if (PMD.containsKey(user.getStringID())) {
+                            if (PMD.get(user.getStringID()).equals("ON")) {
                                 broadcastStatus = true;
                             }
-                            if (PMD.get(user.getID()).equals("OFF")) {
+                            if (PMD.get(user.getStringID()).equals("OFF")) {
                                 broadcastStatus = false;
                             }
                         }
 
-                        if (event.getClient().getGuilds().get(i).getID() == null) {
+                        if (event.getClient().getGuilds().get(i).getStringID() == null) {
                             broadcastStatus = false;
                             System.out.println("Error found on: " + i);
                         }
@@ -1033,14 +1048,14 @@ public class DiscordListener {
                         }
 
                         if (!broadcastStatus) {
-                            if (event.getClient().getGuilds().get(i).getID().equals("153315968091684865") | event.getClient().getGuilds().get(i).getID().equals("81384788765712384") | event.getClient().getGuilds().get(i).getID().equals("110373943822540800")) {
+                            if (event.getClient().getGuilds().get(i).getStringID().equals("153315968091684865") | event.getClient().getGuilds().get(i).getStringID().equals("81384788765712384") | event.getClient().getGuilds().get(i).getStringID().equals("110373943822540800")) {
                                 event.getMessage().getChannel().sendMessage(i + " ::Broadcast **EXPECTED FAILURE** to: " + event.getClient().getGuilds().get(i).getName());
                             } else {
                                 event.getMessage().getChannel().sendMessage(i + " ::Broadcast **FAILED** to: " + event.getClient().getGuilds().get(i).getName());
                             }
 
-                            if (PMD.containsKey(user.getID())) {
-                                if (PMD.get(user.getID()).equals("OFF")) {
+                            if (PMD.containsKey(user.getStringID())) {
+                                if (PMD.get(user.getStringID()).equals("OFF")) {
                                     event.getMessage().getChannel().sendMessage("BROADCAST DENIED:: Server: " + event.getClient().getGuilds().get(i).getName() + "Owner: " + user.getName());
                                 }
                             }
@@ -1153,26 +1168,7 @@ public class DiscordListener {
                     message.reply("Updates " + (updateDispatcher ? "ON" : "OFF"));
                 } 
                 
-                else if (Mcontent.contains("?guildwithchannel")) {
-                    String channelName = message.getContent().replace("?guildwithchannnel", "");
-                    for (int i = 0; i < event.getClient().getGuilds().size(); i++) {
-                        for (int j = 0; j < event.getClient().getGuilds().get(i).getChannels().size(); j++) {
-                            if (event.getClient().getGuilds().get(i).getChannels().get(j).getName().equals(channelName)) {
-                                message.reply(event.getClient().getGuilds().get(i).getName());
-                            }
-                        }
-                    }
-                } 
-                
-                else if (Mcontent.contains("?leaveguild")) {
-                    String guildName = message.getContent().replace("?leaveguild", "");
-                    for (int i = 0; i < event.getClient().getGuilds().size(); i++) {
-                        if (event.getClient().getGuilds().get(i).getName().equals(guildName)) {
-                            event.getClient().getGuildByID(event.getClient().getGuilds().get(i).getID()).leaveGuild();
-                        }
-
-                    }
-                } else if (Mcontent.equals("?purge")) {
+                else if (Mcontent.equals("?purge")) {
                     FileChecker.purge();
                 }
                 
@@ -1197,7 +1193,7 @@ public class DiscordListener {
                     clientGuilds.add(SirBroBot.client.getGuilds().get(i).getStringID());
                 }
                 
-                ArrayList<String> databaseGuilds = new ArrayList<String>(); 
+                ArrayList<String> databaseGuilds = new ArrayList<>(); 
                 ResultSet results = queries.getDataDB("select guild_id from guilds;");
                 while (results.next()){
                     
@@ -1219,7 +1215,7 @@ public class DiscordListener {
             }
 
 //OWNER ONLY COMMANDS
-            if (message.getAuthor().getID().equals(message.getGuild().getOwnerID())) {
+            if (message.getAuthor().getStringID().equals(message.getGuild().getOwner().getStringID())) {
 
                 //Returns text file with roles
                 if (message.getContent().equals("?rolestxt")) {
@@ -1357,7 +1353,7 @@ public class DiscordListener {
                     
                 try {
                     queries.sendDBWithMessage(queryResult, event.getMessage(), messageResult);
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
 
@@ -1372,7 +1368,7 @@ public class DiscordListener {
                     queries.sendDataDB(queryResult);
                         message.reply("**Voice JOIN Announce** has been turned **OFF**");
                     
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
                     usageCounter++;
@@ -1405,7 +1401,7 @@ public class DiscordListener {
                     
                 try {
                     queries.sendDBWithMessage(queryResult, event.getMessage(), messageResult);
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
                     usageCounter++;
@@ -1417,7 +1413,7 @@ public class DiscordListener {
                     queries.sendDataDB(queryResult);
                         message.reply("**Voice LEAVE Announce** has been turned **OFF**");
                     
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
       
@@ -1451,7 +1447,7 @@ public class DiscordListener {
                     
                 try {
                     queries.sendDBWithMessage(queryResult, event.getMessage(), messageResult);
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
                     usageCounter++;
@@ -1464,7 +1460,7 @@ public class DiscordListener {
                     queries.sendDataDB(queryResult);
                         message.reply("**Voice MOVE Announce** has been turned **OFF**");
                     
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     message.reply("Message NOT set, I have ecperienced an error :(");
                 }
       
@@ -1476,7 +1472,8 @@ public class DiscordListener {
     //Welcome Message controlls  
                 else if (Mcontent.startsWith("?welcomeon")) {
                     try {
-                        queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "").replace("'", "\\'") + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
+                        queries.sendDBWithMessage("update guilds set welcome_channel_message= '" + message.getContent().replace("?welcomeon", "").replace("'", "\\'").replace("?welcomeON", "") 
+                                + "', welcome_channel_id = '"+message.getChannel().getStringID()+"', welcome_status = 'true' Where guild_id='" + message.getGuild().getStringID() + "';"
                                 , event.getMessage(), "New User welcome message initiated to: \n\n"
                                         + message.getContent().replace("?welcomeon ", ""));
                     } catch (SQLException ex) {
@@ -1492,7 +1489,7 @@ public class DiscordListener {
                 else if (Mcontent.startsWith("?welcomeoff")) {
                     message.reply("New User welcome message disabled");
                     try {
-                        queries.sendDBWithMessage("update guilds set welcome_status = 'false' Where guild_id='" + message.getGuild().getID() + "';", event.getMessage(), "Welcome message disabled");
+                        queries.sendDBWithMessage("update guilds set welcome_status = 'false' Where guild_id='" + message.getGuild().getStringID() + "';", event.getMessage(), "Welcome message disabled");
                     } catch (SQLException ex) {
                 updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeoff command");
                 updateChannel.sendMessage(ex.getMessage());
@@ -1504,7 +1501,8 @@ public class DiscordListener {
                    
                     message.reply("New User welcome message edited");
                     try {
-                        queries.sendDBWithMessage("update guilds set welcome_status = 'true', welcome_channel_message='"+message.getContent().replace("?welcomeedit", "").replace("'", "\\'")+"',welcome_channel_id = '"+message.getChannel().getStringID()+"' Where guild_id='" + message.getGuild().getID() + "';", event.getMessage(), "Welcome message edited");
+                        queries.sendDBWithMessage("update guilds set welcome_status = 'true', welcome_channel_message='"+message.getContent().replace("?welcomeedit", "").replace("'", "\\'").replace("?welcomeEDIT", "")
+                                +"',welcome_channel_id = '"+message.getChannel().getStringID()+"' Where guild_id='" + message.getGuild().getStringID() + "';", event.getMessage(), "Welcome message edited");
                     } catch (SQLException ex) {
                 updateChannel.sendMessage(root.mention()+" sql ERROR on ?welcomeedit command");
                 updateChannel.sendMessage(ex.getMessage());
@@ -1513,9 +1511,9 @@ public class DiscordListener {
                 } 
                 
                 else if (Mcontent.equals("?welcomeview")) {
-                    ArrayList<String> welcomeView = queries.welcomeView(message.getGuild().getID());
+                    ArrayList<String> welcomeView = queries.welcomeView(message.getGuild().getStringID());
                      
-                     message.reply("Welcome Status is: `"+welcomeView.get(0)+"`. Welcomes are in channel #"+ message.getGuild().getChannelByID(welcomeView.get(2)).getName() +"\n"
+                     message.reply("Welcome Status is: `"+welcomeView.get(0)+"`. Welcomes are in channel #"+ message.getGuild().getChannelByID(Long.parseLong(welcomeView.get(2))).getName() +"\n"
                              + "Welcome Message Set to: \n"+welcomeView.get(1)+"\n\n"
                                      + "`USERMENTION` Will be replaces with a mention to the new user, `USERNAME` will be their name");
                      usageCounter++;
@@ -1524,125 +1522,126 @@ public class DiscordListener {
              
     //Purge Channel            
                 else if (Mcontent.startsWith("?purgechannel")) {
-                    MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
-                    messageBuilder.withChannel(event.getMessage().getChannel());
-
-                    int timer = 10;
-
-                    message.getChannel().toggleTypingStatus();
-                    IChannel purgeChannel = message.getChannel();
-                    IMessage warningMessage = message.reply("This will delete **ALL** messages and re-create the channel with appropriate permissions for users and roles. `NO MESSAGES WILL PERSIST`");
-                    IMessage tempmessage = messageBuilder.withContent("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")").send();
-
-                    boolean purge = true;
-
-                    IUser someDude = message.getAuthor();
-
-                    for (int i = 10; i > -1; i--) {
-                        if (purge == false) {
-                            tempmessage.edit("Channel Purge aborted with " + timer + " seconds to spare");
-                            break;
-                        }
-
-                        tempmessage.edit("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")");
-                        timer--;
-                        try {
-                            Thread.sleep(1200);                 //1000 milliseconds is one second.
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-
-                        MessageHistory history = purgeChannel.getMessageHistory();
-                        List<IMessage> list = history.stream().filter(messageHistory -> messageHistory.getAuthor() == someDude).limit(2).collect(Collectors.toList());
-
-                        for (int j = 0; j < list.size(); j++) {
-                            if (list.get(j).getContent().contains("abort")) {
-                                purge = false;
-                                list.get(j).delete();
-                                warningMessage.delete();
-                            }
-                        }
-                    }
-
-                    if (purge == true) {
-                        String name = purgeChannel.getName();
-                        String topic = null;
-
-                        try {
-                            topic = purgeChannel.getTopic();
-                            if (topic.contains("-")) {
-                                String[] topicText = topic.split("-");
-                                topic = "";
-                                for (int i = 0; i < topicText.length; i++) {
-                                    if (topicText[i].contains("Last Purge") == false) {
-                                        topic += topicText[i];
-                                    }
-                                }
-                            }
-
-                            IChannel newChannel = null;
-
-                            newChannel = message.getGuild().createChannel(name);
-                            newChannel.changeTopic(topic + " - Last Purge: " + String.format(GetCurrentDateTime()));
-                            newChannel.changePosition(purgeChannel.getPosition());
-
-                            for (int i = 0; i < message.getGuild().getRoles().size(); i++) {
-                                try {
-                                    newChannel.overrideRolePermissions(newChannel.getGuild().getRoles().get(i),
-                                            purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getID()).allow(),
-                                            purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getID()).deny());
-                                } catch (NullPointerException e) {
-
-                                }
-                            }
-
-                            for (int j = 0; j < message.getGuild().getUsers().size(); j++) {
-
-                                try {
-                                    newChannel.overrideUserPermissions(newChannel.getGuild().getUsers().get(j),
-                                            purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(j).getID()).allow(),
-                                            purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(j).getID()).deny());
-                                } catch (NullPointerException e) {
-
-                                }
-
-                            }
-
-                            System.out.println(purgeChannel.getName() + " channel purged on " + purgeChannel.getGuild().getName());
-                            event.getClient().getOrCreatePMChannel(purgeChannel.getGuild().getOwner()).sendMessage("`" + purgeChannel.getName() + "` channel purged on `" + event.getGuild().getName() + "`");
-
-                            purgeChannel.delete();
-
-                            usageCounter++;
-
-                        } catch (MissingPermissionsException p) {
-                            message.reply("I dont have permission. I need Manage Channels Permission and Mannage Roles permission  (`It's much easier to make me an  Administrator`)");
-                        } catch (NullPointerException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
-
-                    messagesSeen++;
+                    message.reply("Undergoing maintenance due to Discord API update (channel categories). Will be pathed soon -"+root.mention());
+//                    MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+//                    messageBuilder.withChannel(event.getMessage().getChannel());
+//
+//                    int timer = 10;
+//
+//                    message.getChannel().toggleTypingStatus();
+//                    IChannel purgeChannel = message.getChannel();
+//                    IMessage warningMessage = message.reply("This will delete **ALL** messages and re-create the channel with appropriate permissions for users and roles. `NO MESSAGES WILL PERSIST`");
+//                    IMessage tempmessage = messageBuilder.withContent("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")").send();
+//
+//                    boolean purge = true;
+//
+//                    IUser someDude = message.getAuthor();
+//
+//                    for (int i = 10; i > -1; i--) {
+//                        if (purge == false) {
+//                            tempmessage.edit("Channel Purge aborted with " + timer + " seconds to spare");
+//                            break;
+//                        }
+//
+//                        tempmessage.edit("**CHANNEL PURGE IMMINENT** in **" + timer + "** seconds (" + message.getChannel().getName() + ")");
+//                        timer--;
+//                        try {
+//                            Thread.sleep(1200);                 //1000 milliseconds is one second.
+//                        } catch (InterruptedException ex) {
+//                            Thread.currentThread().interrupt();
+//                        }
+//
+//                        MessageHistory history = purgeChannel.getMessageHistory();
+//                        List<IMessage> list = history.stream().filter(messageHistory -> messageHistory.getAuthor() == someDude).limit(2).collect(Collectors.toList());
+//
+//                        for (int j = 0; j < list.size(); j++) {
+//                            if (list.get(j).getContent().contains("abort")) {
+//                                purge = false;
+//                                list.get(j).delete();
+//                                warningMessage.delete();
+//                            }
+//                        }
+//                    }
+//
+//                    if (purge == true) {
+//                        String name = purgeChannel.getName();
+//                        String topic = null;
+//
+//                        try {
+//                            topic = purgeChannel.getTopic();
+//                            if (topic.contains("-")) {
+//                                String[] topicText = topic.split("-");
+//                                topic = "";
+//                                for (int i = 0; i < topicText.length; i++) {
+//                                    if (topicText[i].contains("Last Purge") == false) {
+//                                        topic += topicText[i];
+//                                    }
+//                                }
+//                            }
+//
+//                            IChannel newChannel = null;
+//
+//                            newChannel = message.getGuild().createChannel(name);
+//                            newChannel.changeTopic(topic + " - Last Purge: " + String.format(GetCurrentDateTime()));
+//                            newChannel.changePosition(purgeChannel.getPosition());
+//
+//                            for (int i = 0; i < message.getGuild().getRoles().size(); i++) {
+//                                try {
+//                                    newChannel.overrideRolePermissions(newChannel.getGuild().getRoles().get(i),
+//                                            purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getStringID()).allow(),
+//                                            purgeChannel.getRoleOverrides().get(purgeChannel.getGuild().getRoles().get(i).getStringID()).deny());
+//                                } catch (NullPointerException e) {
+//
+//                                }
+//                            }
+//
+//                            for (int j = 0; j < message.getGuild().getUsers().size(); j++) {
+//
+//                                try {
+//                                    newChannel.overrideUserPermissions(newChannel.getGuild().getUsers().get(j),
+//                                            purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(j).getID()).allow(),
+//                                            purgeChannel.getUserOverrides().get(purgeChannel.getGuild().getUsers().get(j).getID()).deny());
+//                                } catch (NullPointerException e) {
+//
+//                                }
+//
+//                            }
+//
+//                            System.out.println(purgeChannel.getName() + " channel purged on " + purgeChannel.getGuild().getName());
+//                            event.getClient().getOrCreatePMChannel(purgeChannel.getGuild().getOwner()).sendMessage("`" + purgeChannel.getName() + "` channel purged on `" + event.getGuild().getName() + "`");
+//
+//                            purgeChannel.delete();
+//
+//                            usageCounter++;
+//
+//                        } catch (MissingPermissionsException p) {
+//                            message.reply("I dont have permission. I need Manage Channels Permission and Mannage Roles permission  (`It's much easier to make me an  Administrator`)");
+//                        } catch (NullPointerException e) {
+//                            System.out.println(e.getMessage());
+//                        }
+//                    }
+//
+//                    messagesSeen++;
                 }  
                 
                 
                 else if (Mcontent.startsWith("?broadcaston")) {
-                    if (PMD.containsKey(message.getAuthor().getID())) {
-                        PMD.replace(message.getAuthor().getID(), "ON");
+                    if (PMD.containsKey(message.getAuthor().getStringID())) {
+                        PMD.replace(message.getAuthor().getStringID(), "ON");
                         fileIO.saveHash(PMD, "PMD");
                         updateChannel.sendMessage("Broadcast turned ON for Owner **" + message.getAuthor().getName() + "**");
                     } else {
-                        PMD.put(message.getAuthor().getID(), "ON");
+                        PMD.put(message.getAuthor().getStringID(), "ON");
                         fileIO.saveHash(PMD, "PMD");
                         updateChannel.sendMessage("Broadcast turned ON for Owner **" + message.getAuthor().getName() + "**");
                     }
                 } else if (Mcontent.startsWith("?broadcastoff")) {
-                    if (PMD.containsKey(message.getAuthor().getID())) {
-                        PMD.replace(message.getAuthor().getID(), "OFF");
+                    if (PMD.containsKey(message.getAuthor().getStringID())) {
+                        PMD.replace(message.getAuthor().getStringID(), "OFF");
                         fileIO.saveHash(PMD, "PMD");
                         updateChannel.sendMessage("Broadcast turned OFF for Owner **" + message.getAuthor().getName() + "**");
                     } else {
-                        PMD.put(message.getAuthor().getID(), "OFF");
+                        PMD.put(message.getAuthor().getStringID(), "OFF");
                         fileIO.saveHash(PMD, "PMD");
                         updateChannel.sendMessage("Broadcast turned OFF for Owner **" + message.getAuthor().getName() + "**");
                     }
@@ -1705,7 +1704,7 @@ public class DiscordListener {
 
                 int placeholder2 = 0;
                 for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
-                    if (SirBroBot.client.getGuilds().get(i).getOwner().getID().equals(message.getAuthor().getID())) {
+                    if (SirBroBot.client.getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())) {
                         serverOwnerPM = true;
                         placeholder2 = i;
                     }
@@ -1736,11 +1735,11 @@ public class DiscordListener {
             } 
             
             else if (Mcontent.startsWith("?ocommands")) {
-                if (message.getAuthor().getID().equals(message.getGuild().getOwner().getID())) {
+                if (message.getAuthor().getStringID().equals(message.getGuild().getOwner().getStringID())) {
                     Messages.send(commands.commandListOwner, channel);
                 }
 
-                if (!Objects.equals(message.getAuthor().getID(), message.getGuild().getOwner().getID())) {
+                if (!Objects.equals(message.getAuthor().getStringID(), message.getGuild().getOwner().getStringID())) {
                     message.reply("You arent the server Owner of **" + message.getGuild().getName() + "**, " + message.getGuild().getOwner().getName() + " is. \n"
                             + "But here are the commands anyway. **THEY WONT WORK HERE**");
                     message.getChannel().sendMessage(commands.commandListOwner);
@@ -1818,7 +1817,7 @@ public class DiscordListener {
                 }
                 event.getClient().getOrCreatePMChannel(message.getAuthor())
                         .sendMessage("Info for user " + message.getAuthor().getName() + " #" + message.getAuthor().getDiscriminator() + "\n"
-                                + "ID: " + message.getAuthor().getID() + "\n"
+                                + "ID: " + message.getAuthor().getStringID() + "\n"
                                 + "Account created: " + message.getAuthor().getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
                                 + "Connected Voice Channel: " + message.getAuthor().getClient().getConnectedVoiceChannels().get(0).getName() + "/n```"
                                 + "IconURL: " + message.getAuthor().getAvatarURL());
@@ -1836,11 +1835,11 @@ public class DiscordListener {
                     rolesForWho += who.getRolesForGuild(message.getGuild()).get(i).getName() + ", ";
                 }
 
-                if (!who.getStatus().isEmpty()) {
-                    game = who.getStatus().toString();
+                if (who.getPresence().getPlayingText().isPresent()) {
+                    game = who.getPresence().getPlayingText().toString();
                 }
 
-                if (who.getStatus().isEmpty()) {
+                if (!who.getPresence().getPlayingText().isPresent()) {
                     game = "None";
                 }
 
@@ -1858,10 +1857,12 @@ public class DiscordListener {
                                 + "Presence: " + who.getPresence() + "\n"
                                 + "```", channel);
                     } catch (FileNotFoundException | DiscordException | RateLimitException | MissingPermissionsException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
 
-                } else {
+                } 
+                
+                else {
                     try {
                         fileIO.saveImage(who.getAvatarURL(), who.getName() + ".jpg", "src/images/discordUserIcons/");
                         File discordUserIconSingle = new File("src/images/discordUserIcons/" + who.getName() + ".jpg");
@@ -1876,7 +1877,7 @@ public class DiscordListener {
                                 + "Presence: " + who.getPresence() + "\n"
                                 + "```", channel);
                     } catch (IOException | DiscordException | RateLimitException | MissingPermissionsException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
                 }
                 usageCounter++;
@@ -1898,7 +1899,7 @@ public class DiscordListener {
                         File reversedImage = new File("src/images/imageWriting/reversedImages/reversed" + message.getAttachments().get(0).getFilename());
                         event.getMessage().getChannel().sendFile(reversedImage);
                     } catch (IOException | DiscordException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                         message.reply("You must attach an image to your message! I cant reverse 'nothing'");
                     }
                     update.edit("DONE!");
@@ -1918,7 +1919,7 @@ public class DiscordListener {
                         File reversedImage = new File("src/images/imageWriting/reversedImages/reversed" + "imagetomanipulate.jpg");
                         event.getMessage().getChannel().sendFile(reversedImage);
                     } catch (IOException | DiscordException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
 
                     }
                     update.edit("DONE!");
@@ -1964,7 +1965,7 @@ public class DiscordListener {
                         event.getMessage().getChannel().sendFile(reversedImage);
 
                     } catch (IOException | DiscordException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
 
                     }
                     update.edit("DONE!");
@@ -1988,6 +1989,7 @@ public class DiscordListener {
                         try {
                             message.delete();
                         } catch (MissingPermissionsException ignored) {
+                            System.out.println(ignored.getMessage());
                             event.getMessage().getChannel().sendMessage("Well I tried and failed to delete your message...");
                         }
                     }
@@ -2178,15 +2180,15 @@ public class DiscordListener {
                 else if(!message.getGuild().getStringID().equals(SBBServer.getStringID())) {
                     
                     if(message.getGuild().getOwner().getStringID().equals(message.getAuthor().getStringID())){ //Checks if user is owner of current server
-                        if(SBBServer.getUsers().contains(message.getGuild().getUserByID(message.getAuthor().getStringID()))){ //Assures they are on SBB Server
+                        if(SBBServer.getUsers().contains(message.getGuild().getUserByID(message.getAuthor().getLongID()))){ //Assures they are on SBB Server
                             OwnerStatus = "true";
                             
                         }
                         else
-                            message.reply("You arent a memeber of SirBroBot's server. Join and use the `?owner` command https://discord.gg/0wCCISzMcKMkfX88");
+                            message.reply("You aren't a memeber of SirBroBot's server. Join and use the `?owner` command https://discord.gg/0wCCISzMcKMkfX88");
                     }
                     else
-                        message.reply("You arent the owner of `"+message.getGuild().getName()+"`, **"+message.getGuild().getOwner().getName()+"** is");
+                        message.reply("You aren't the owner of `"+message.getGuild().getName()+"`, **"+message.getGuild().getOwner().getName()+"** is");
                 }
                     
                 if(OwnerStatus.equals("true")){
@@ -2202,7 +2204,7 @@ public class DiscordListener {
                     }
                     roles[user.getRolesForGuild(SBBServer).size()] = userRole;
                     SBBServer.editUserRoles(user, roles);
-                    Messages.send("Operation successful: " + userRole.getName() + " role added to " + message.getAuthor() + "\n", event.getChannel());
+                    Messages.send("Operation successful: " + userRole.getName() + " role added to " + message.getAuthor() + " on SirBroBot's server \n", event.getChannel());
                     
                     } catch (MissingPermissionsException e) {
                         e.printStackTrace();
@@ -2247,7 +2249,7 @@ public class DiscordListener {
 
                 }
                 IVoiceChannel voiceChannel = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
-                textChannel.add(message.getChannel().getID());
+                textChannel.add(message.getChannel().getStringID());
                 if (voiceChannel != null) {
                     try {
                         voiceChannel.join();
@@ -2272,12 +2274,12 @@ public class DiscordListener {
                         message.reply("I dont have permission to join this voice channel. ");
                     }
 
-                    if(!autoJoinChannels.contains(voiceChannel.getID())){
-                        autoJoinChannels.add(voiceChannel.getID());
+                    if(!autoJoinChannels.contains(voiceChannel.getStringID())){
+                        autoJoinChannels.add(voiceChannel.getStringID());
                         fileIO.save(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
                     }
                     
-                    else if(autoJoinChannels.contains(voiceChannel.getID())){
+                    else if(autoJoinChannels.contains(voiceChannel.getStringID())){
                         message.reply("Im already set to autojoin this channel.");
                     }
                     
@@ -2299,8 +2301,7 @@ public class DiscordListener {
             
             else if (Mcontent.equals(">leaveall") && message.getAuthor().equals(root)) {
 
-                sx.blah.discord.handle.obj.Status statusStopUpdate = sx.blah.discord.handle.obj.Status.game("Rebooting Audio");
-                SirBroBot.client.changeStatus(statusStopUpdate);
+                SirBroBot.client.changePlayingText("Rebooting Audio");
 
                 List<IVoiceChannel> leaveList = SirBroBot.client.getConnectedVoiceChannels();
 
@@ -2308,7 +2309,7 @@ public class DiscordListener {
 
                     leaveList.get(i).leave();
                     try {
-                        musicManager = getGuildAudioPlayer(SirBroBot.client.getGuildByID(leaveList.get(i).getID()));
+                        musicManager = getGuildAudioPlayer(SirBroBot.client.getGuildByID(leaveList.get(i).getLongID()));
                         while (musicManager.player.getPlayingTrack().isSeekable()) {
                             musicManager.scheduler.nextTrack();
                         }
@@ -2324,8 +2325,8 @@ public class DiscordListener {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                statusStopUpdate = sx.blah.discord.handle.obj.Status.stream("?commands", "https://www.twitch.tv/sirbrobot/profile");
-                SirBroBot.client.changeStatus(statusStopUpdate);
+                SirBroBot.client.streaming("?commands", "https://www.twitch.tv/sirbrobot/profile");
+                
 
                 usageCounter++;
             }
@@ -2527,7 +2528,7 @@ usageCounter++;
     //LAVAPLAYER
               
         private synchronized GuildMusicManager getGuildAudioPlayer(IGuild guild) {
-        long guildId = Long.parseLong(guild.getID());
+        long guildId = Long.parseLong(guild.getStringID());
         GuildMusicManager musicManager = musicManagers.get(guildId);
 
         if (musicManager == null) {

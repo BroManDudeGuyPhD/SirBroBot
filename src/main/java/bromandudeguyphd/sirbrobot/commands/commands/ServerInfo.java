@@ -29,7 +29,7 @@ public class ServerInfo implements Command {
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
 
-        EmbedBuilder embed = new EmbedBuilder().ignoreNullEmptyFields();
+        EmbedBuilder embed = new EmbedBuilder().setLenient(true);
         embed.withTitle(channel.getGuild().getName());
         embed.withDescription("Owner: " + channel.getGuild().getOwner().mention() + "\n");
         embed.appendField("Created on: ", channel.getGuild().getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE), false);

@@ -17,7 +17,7 @@ public enum CommandTypes {
     MENTION(null, (guild, user) -> true){
         @Override
         public String getTrigger() {
-            return SirBroBot.client.getOurUser().getID();
+            return SirBroBot.client.getOurUser().getStringID();
         }
     };
 

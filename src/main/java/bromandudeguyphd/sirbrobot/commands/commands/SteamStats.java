@@ -72,7 +72,7 @@ public class SteamStats implements Command{
         }
 
         if (failStatus == false) {
-            EmbedBuilder embed = new EmbedBuilder().ignoreNullEmptyFields();
+            EmbedBuilder embed = new EmbedBuilder().setLenient(true);
             String accountInfo = null;
             
             

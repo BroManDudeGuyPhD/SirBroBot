@@ -1,5 +1,7 @@
 package bromandudeguyphd.sirbrobot;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
@@ -8,6 +10,8 @@ import sx.blah.discord.util.RequestBuffer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IMessage;
 
@@ -29,6 +33,23 @@ public class Messages {
                 new MessageBuilder(chan.getClient()).appendContent(msg.substring(0, Math.min(msg.length(), 1999))).withChannel(chan).send();
             } catch (DiscordException | MissingPermissionsException e) {
                 sendException("Could not send message! ", e, chan);
+            }
+        });
+    }
+    
+    /**
+     * Sends a message, respecting the RequestBuffer
+     * @param msg The message to send
+     * @param chan Tha channel receiving the message
+     */
+    public static void sendWithImage(String msg, IChannel chan, File file){
+        RequestBuffer.request(() -> {
+            try {
+                new MessageBuilder(chan.getClient()).appendContent(msg.substring(0, Math.min(msg.length(), 1999))).withChannel(chan).withFile(file).send();
+            } catch (DiscordException | MissingPermissionsException e) {
+                sendException("Could not send message! ", e, chan);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Messages.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }

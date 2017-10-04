@@ -4,11 +4,11 @@ import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.commands.*;
 import sx.blah.discord.api.events.IListener;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 /**
  * New and revised SirBroBot command framework
@@ -24,6 +24,7 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
         registerCommand(new About());
         registerCommand(new ServerInfo());
         registerCommand(new SteamStats());
+        registerCommand(new Ivan());
     }
 
     /**

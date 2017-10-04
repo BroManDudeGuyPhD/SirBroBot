@@ -18,7 +18,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class About implements Command {
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
-        EmbedBuilder embed = new EmbedBuilder().ignoreNullEmptyFields();
+        EmbedBuilder embed = new EmbedBuilder().setLenient(true);
                 
                 embed.withTitle("About Me\n");
                 embed.withUrl("http://bootswithdefer.tumblr.com/SirBroBot");
