@@ -11,6 +11,7 @@ import ai.api.model.AIResponse;
 import bromandudeguyphd.webconnections.PostingHTMLData;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
+import bromandudeguyphd.sirbrobot.commands.CommandDispatcher;
 import bromandudeguyphd.sirbrobot.music.GuildMusicManager;
 import bromandudeguyphd.webconnections.StatisticsUpdate;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -100,7 +101,7 @@ public class DiscordListener {
     
     boolean updateDispatcher = false;
     boolean messageStatus = false;
-    int usageCounter = 0;
+    long usageCounter = 0;
     IChannel updateChannel = SirBroBot.client.getChannelByID(197567480439373824L);
 
     File dance = new File("src/images/dancingKnight.gif");
@@ -712,7 +713,7 @@ public class DiscordListener {
 
         //NLP Starts here ONLY IN SBB TEST SERVER FOR NOW
         else if (tag == false && !event.getMessage().mentionsEveryone() && !event.getMessage().mentionsHere()){
-            if(nlp.processMessage(message).contains("USEEIVAN")){
+            if(event.getMessage().getContent().toLowerCase().contains("ivan")){
                 final File dir = new File(tokens.ivanDirectory());
                 File[] files = dir.listFiles();
                 Random rand = new Random();
@@ -720,7 +721,7 @@ public class DiscordListener {
                 Messages.sendWithImage(nlp.processMessage(message), message.getChannel(), file);
             }
             
-            else{
+            else if(!event.getMessage().getContent().toLowerCase().contains("ivan")){
             Messages.send(nlp.processMessage(message), message.getChannel());
             }
             
@@ -789,7 +790,7 @@ public class DiscordListener {
 
                 int placeholder = 0;
                 for (int i = 0; i < SirBroBot.client.getGuilds().size(); i++) {
-                    if (event.getClient().getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())) {
+                    if (SirBroBot.client.getGuilds().get(i).getOwner().getStringID().equals(message.getAuthor().getStringID())) {
                         serverOwner = true;
                         placeholder = i;
                     }
@@ -857,7 +858,7 @@ public class DiscordListener {
             
             //NLP for private messages
             else {
-                if (nlp.processMessage(message).contains("USEEIVAN")) {
+                if(event.getMessage().getContent().toLowerCase().contains("ivan")){
                     System.out.println("You SEE Ivan PM");
                     
                     final File dir = new File(tokens.ivanDirectory());
@@ -867,8 +868,9 @@ public class DiscordListener {
                     Messages.sendWithImage(nlp.processMessage(message), message.getChannel(), file);
                 }
                 
-                else
+                else if(!event.getMessage().getContent().toLowerCase().contains("ivan")){
                     person.sendMessage(nlp.processMessage(message));
+                }
             }
                     
         } 
@@ -1754,6 +1756,8 @@ public class DiscordListener {
                     message.delete();
                 } catch (MissingPermissionsException ignored) {
                 }
+                long totalCount = usageCounter + CommandDispatcher.getUsageCounter();
+                
                 Messages.send("I've issued " + usageCounter + " commands since my last upgrade.", channel);
                 usageCounter++;
             } 
@@ -2156,13 +2160,13 @@ public class DiscordListener {
                 IGuild SBBServer = SirBroBot.client.getGuildByID(168043804790751232L);
                 
                 //Command occurs on SirBroBot's server
-                if (event.getGuild().getStringID().equals(SBBServer.getStringID())) {
+                if (message.getGuild().getLongID() == SBBServer.getLongID()) {
 
                     int servers = SirBroBot.client.getGuilds().size();
                     String authorID = message.getAuthor().getStringID();
 
                     try {
-                        for (int i = 0; i < servers; i++) {
+                        for (int i = 1; i < servers; i++) {
                             String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
                             if (OwnerID.equals(authorID)) {
                                 OwnerStatus = "true";
@@ -2212,8 +2216,8 @@ public class DiscordListener {
                     }
                 }
                 
-                else{
-                    message.reply("SirBroBot isnt on a Server you're the owner of :frowning2:");
+                else if(OwnerStatus.equals("false")){
+                    message.reply("SirBroBot isnt on a Server you're the owner of :frowning2: Add him to one <https://discordapp.com/oauth2/authorize?&client_id=171691699263766529&scope=bot&permissions=473168957 >");
         }
                 usageCounter++;
             

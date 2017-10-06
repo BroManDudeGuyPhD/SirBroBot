@@ -15,7 +15,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
  */
 public class CommandDispatcher implements IListener<MessageReceivedEvent> {
     private Set<Command> commands = new HashSet<>();
-    private long usageCounter = 0;
+    private static long usageCounter = 0;
 
     public CommandDispatcher() {
         //registerCommand(new Commands());
@@ -25,6 +25,7 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
         registerCommand(new ServerInfo());
         registerCommand(new SteamStats());
         registerCommand(new Ivan());
+        registerCommand(new Flashback());
     }
 
     /**
@@ -81,7 +82,7 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
      *
      * @return Usage counter, number of commands ran since boot
      */
-    public long getUsageCounter() {
+    public static long getUsageCounter() {
         return usageCounter;
     }
 }

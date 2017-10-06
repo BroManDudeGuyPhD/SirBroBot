@@ -25,6 +25,10 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 //import sx.blah.discord.util.RateLimitException;
@@ -121,6 +125,13 @@ public class SirBroBot {
 
         return String.format("%02dh:%02dm:%02ds", hrs, min, sec);
     }
+        
+        public static String getDateTime(){
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            
+            return dtf.format(now);
+        }
         
     public static Integer getRand() {
         int Low = 0;

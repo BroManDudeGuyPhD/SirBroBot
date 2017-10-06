@@ -43,18 +43,11 @@ public class nlpLibrary {
                             returnedMessage = "**These are my social media links and website**   \n"
                                     + "`Twitter`: <https://twitter.com/sirbrobotthe1st?lang=en>\n"
                                     + "`Facebook`: <https://www.facebook.com/sirbrobot/>\n"
-                                    + "`YouTube`:<https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n"
+                                    + "`YouTube`: <https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n"
                                     + "`Website`: <http://bootswithdefer.tumblr.com/SirBroBot>";
                         }
                         
-                        if(response.getResult().getMetadata().getIntentId().equals("16c6b488-0630-4205-bbc2-6b2727a03fb5")){
-                            
-                            System.out.println("You SEE Ivan");
-                            
-                            
-                            returnedMessage = "USEEIVAN";
                         
-                        }
                        
                         if(returnedMessage.contains("USERMENTION")){
                             returnedMessage = returnedMessage.replace("USERMENTION", message.getAuthor().mention());
