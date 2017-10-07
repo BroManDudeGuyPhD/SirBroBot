@@ -8,7 +8,7 @@ import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
-import bromandudeguyphd.webconnections.PostingHTMLData;
+import bromandudeguyphd.webconnections.PostingHTMLData; 
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
 import bromandudeguyphd.sirbrobot.commands.CommandDispatcher;
