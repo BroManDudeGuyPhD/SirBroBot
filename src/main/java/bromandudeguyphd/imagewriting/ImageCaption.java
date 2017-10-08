@@ -1,37 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bromandudeguyphd.imagewriting;
 
-/**
- *
- * @author Andrew
- */
-import bromandudeguyphd.sirbrobot.SirBroBot;
-import bromandudeguyphd.sirbrobot.tokens;
+
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
 
 /**
  * A simple class that adds subtitle to an image 
- * @author BroManDudeGuyPhD
+ * @author BroManDudeGuyPhD on 10.3.2017
  */
 public class ImageCaption{
 static BufferedImage bi;
@@ -46,9 +31,11 @@ public ImageCaption(){
 }
 
     
-    public static File create(String directory, String message, IGuild guild) {
-        bi = null;
+    public static File create(String directory, String message, IUser sender) {
 
+        workingDirectory = directory;
+        caption = message;
+        
         try {
             //Randomly choose image from directory
             File dir = new File(directory);
@@ -67,7 +54,7 @@ public ImageCaption(){
         
 
         //Message
-        String quotedMessage = "\""+message+" \"";
+        String quotedMessage = "\""+message+" \" -"+sender.getName()+" ";
         
         //Breaks message into words and keeps words together on new lines with wrapText class
         String ParsedMessage = wrapText(bi.getWidth()/11, quotedMessage).replaceAll("  +"," ").trim();
@@ -77,9 +64,9 @@ public ImageCaption(){
         
         
         //Adds white space for longer messages
-        drawTextOnImage(ParsedMessage, bi, 30*lines.length, lines);
         
-        return output;
+        
+        return drawTextOnImage(ParsedMessage, bi, 30*lines.length, lines);
         
 
     }
@@ -110,16 +97,18 @@ public ImageCaption(){
 
     }
     
-    private static void drawTextOnImage(String text, BufferedImage image, int space, String[] lines) {
+    private static File drawTextOnImage(String text, BufferedImage image, int space, String[] lines) {
         BufferedImage Image = new BufferedImage(image.getWidth(), image.getHeight() + space, BufferedImage.TRANSLUCENT);
         Graphics2D g2d = (Graphics2D) Image.createGraphics();
         g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
         g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
         g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setColor(Color.black);
         g2d.drawImage(image, 0, 0, null);
         
-        g2d.setColor(Color.BLACK);
+        
+        g2d.setColor(Color.RED);
         g2d.setFont(new Font("Calibri", Font.BOLD, 25));
         FontMetrics fm = g2d.getFontMetrics();
         int lineHeight = g2d.getFontMetrics().getHeight();
@@ -133,7 +122,7 @@ public ImageCaption(){
         }
         g2d.dispose();
 
-        output = saveImageActionPerformed(Image);
+        return saveImageActionPerformed(Image);
         
         
     }

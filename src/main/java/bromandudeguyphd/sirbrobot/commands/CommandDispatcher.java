@@ -1,5 +1,6 @@
 package bromandudeguyphd.sirbrobot.commands;
 
+import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.commands.*;
@@ -15,7 +16,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
  */
 public class CommandDispatcher implements IListener<MessageReceivedEvent> {
     private Set<Command> commands = new HashSet<>();
-    private static long usageCounter = 0;
+    
 
     public CommandDispatcher() {
         //registerCommand(new Commands());
@@ -68,7 +69,7 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
                     SirBroBot.LOGGER.error("Dispatching command '" + comm.getType().getTrigger() +
                             comm.getName() + "'! Sender: " + chatEvent.getMessage().getAuthor() + "! Split: '" +
                             toSplit + "', " + Arrays.toString(args));
-                    usageCounter++;
+                    DiscordListener.addToUseCounter();
                     try {
                         comm.execute(args, chatEvent.getMessage().getAuthor(), chatEvent.getMessage().getChannel());
                     } catch (Exception e) {
@@ -82,7 +83,5 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
      *
      * @return Usage counter, number of commands ran since boot
      */
-    public static long getUsageCounter() {
-        return usageCounter;
-    }
+    
 }

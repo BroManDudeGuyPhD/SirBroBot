@@ -101,7 +101,7 @@ public class DiscordListener {
     
     boolean updateDispatcher = false;
     boolean messageStatus = false;
-    long usageCounter = 0;
+    static long usageCounter = 0;
     IChannel updateChannel = SirBroBot.client.getChannelByID(197567480439373824L);
 
     File dance = new File("src/images/dancingKnight.gif");
@@ -114,7 +114,7 @@ public class DiscordListener {
     File enemy = new File("src/images/enemy.png");
 
     long twitterID = 0;
-    static int messagesSeen = 0;
+    static long messagesSeen = 0;
     
     
     nlpLibrary nlp = new nlpLibrary();
@@ -1756,7 +1756,7 @@ public class DiscordListener {
                     message.delete();
                 } catch (MissingPermissionsException ignored) {
                 }
-                long totalCount = usageCounter + CommandDispatcher.getUsageCounter();
+                
                 
                 Messages.send("I've issued " + usageCounter + " commands since my last upgrade.", channel);
                 usageCounter++;
@@ -2858,7 +2858,7 @@ private StringBuffer execYTcmd(String command) {
         return SirBroBot.getUptime();
     }
     
-    public static int getMessagesSeen() {
+    public static long getMessagesSeen() {
         return messagesSeen;
     }
     
@@ -2914,6 +2914,10 @@ private StringBuffer execYTcmd(String command) {
         Calendar cal = Calendar.getInstance();
         return dateFormat.format(cal.getTime());
 
+    }
+    
+    public static void addToUseCounter(){
+        usageCounter++;
     }
 
 //    public void deleteLastMessage(String ChannelID) throws InterruptedException{

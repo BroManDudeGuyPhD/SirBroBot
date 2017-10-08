@@ -1,24 +1,16 @@
 package bromandudeguyphd.sirbrobot.commands.commands;
 import bromandudeguyphd.imagewriting.ImageCaption;
-import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
-import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.Command;
 import bromandudeguyphd.sirbrobot.commands.CommandTypes;
-import bromandudeguyphd.sirbrobot.nlpLibrary;
 import bromandudeguyphd.sirbrobot.tokens;
-import java.awt.Color;
 import java.io.File;
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.util.Random;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
 
 /**
- * <br>
- * Created by BroManDudeGuyPhD on 10.3.2017
+ * Flashback command class
+ * @author BroManDudeGuyPhD on 10.3.2017
  */
 public class Flashback implements Command {
     @Override
@@ -26,7 +18,7 @@ public class Flashback implements Command {
         //Join message together (This is stupid I know temp solution)
         
         String message = String.join(" ", args);
-        File flashbackCaption = ImageCaption.create(tokens.flashbackDirectory(), message, channel.getGuild());
+        File flashbackCaption = ImageCaption.create(tokens.flashbackDirectory(), message, sender);
         
         Messages.sendWithImage("Flashback Memem with message text from "+sender.mention(), channel, flashbackCaption);
 
