@@ -27,6 +27,7 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
         registerCommand(new SteamStats());
         registerCommand(new Ivan());
         registerCommand(new Flashback());
+        registerCommand(new Randnum());
     }
 
     /**
