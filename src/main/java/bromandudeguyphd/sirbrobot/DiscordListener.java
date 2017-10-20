@@ -2858,6 +2858,8 @@ private StringBuffer execYTcmd(String command) {
         return SirBroBot.getUptime();
     }
     
+    
+    
     public static long getMessagesSeen() {
         return messagesSeen;
     }
@@ -2918,6 +2920,10 @@ private StringBuffer execYTcmd(String command) {
     
     public static void addToUseCounter(){
         usageCounter++;
+    }
+    
+    public static Long getUseCounter(){
+        return usageCounter;
     }
 
 //    public void deleteLastMessage(String ChannelID) throws InterruptedException{

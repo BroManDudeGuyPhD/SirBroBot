@@ -36,6 +36,7 @@ public class About implements Command {
                 embed.appendField("Total Users: "+ DiscordListener.getUsers(), channel.getGuild().getName()+": "+ guildUsersString.replace(".0", "") + " users  |  "+decimalFormat.format(guildPercent*100)+"% of userbase", false);
                 embed.appendField("Messages Seen: ", "" + DiscordListener.getMessagesSeen(), false);
                 embed.appendField("Uptime: ", "" + SirBroBot.getUptime(), false);
+                embed.appendField("Commands Executed: ", "" + DiscordListener.getUseCounter(), false);
                 embed.appendField("Programmer: ",  DiscordListener.root.mention(), false);
                 embed.appendField("Links: ", "" + "YouTube https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ \n Twitter: https://twitter.com/SirBroBotThe1st \n Website: http://bootswithdefer.tumblr.com/SirBroBot ", false);
                 embed.withFooterText(" ?about ");
