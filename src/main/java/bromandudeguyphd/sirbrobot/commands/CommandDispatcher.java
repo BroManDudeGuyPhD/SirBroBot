@@ -28,6 +28,9 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
         registerCommand(new Ivan());
         registerCommand(new Flashback());
         registerCommand(new Randnum());
+        registerCommand(new d());
+        registerCommand(new Ping());
+        registerCommand(new ASCII());
     }
 
     /**

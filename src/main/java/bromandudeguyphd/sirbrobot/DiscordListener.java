@@ -4,14 +4,9 @@ import bromandudeguyphd.webconnections.TextParser;
 import bromandudeguyphd.webconnections.HTMLUnit;
 import DatabaseConnections.queries;
 import bromandudeguyphd.webconnections.GoogleSearch;
-import ai.api.AIConfiguration;
-import ai.api.AIDataService;
-import ai.api.model.AIRequest;
-import ai.api.model.AIResponse;
 import bromandudeguyphd.webconnections.PostingHTMLData; 
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
-import bromandudeguyphd.sirbrobot.commands.CommandDispatcher;
 import bromandudeguyphd.sirbrobot.music.GuildMusicManager;
 import bromandudeguyphd.webconnections.StatisticsUpdate;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -21,8 +16,6 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
-import com.sedmelluq.discord.lavaplayer.format.AudioPlayerInputStream;
 
 import sx.blah.discord.api.events.EventSubscriber;
 
@@ -51,7 +44,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
@@ -2027,18 +2019,7 @@ public class DiscordListener {
                 GoogleSearch.clearSearch();
                 usageCounter++;
             } 
-             
-            
-            
-            else if(Mcontent.startsWith("?ping")){
-                Messages.send("PONG \n```"+execYTcmd("ping -c 4 www.google.com").toString()+"```", event.getChannel());
-                usageCounter++;
-            }
-            
-            else if(Mcontent.startsWith("?ascii")){
-                Messages.send("```"+execYTcmd("figlet "+event.getMessage().getContent().replace("?ascii", "")).toString()+"```", event.getChannel());
-                usageCounter++;
-            }
+
             
             
             else if(Mcontent.equals("?owner")){
@@ -2699,7 +2680,7 @@ private String execCmd(String command) {
 
 	}
 
-private StringBuffer execYTcmd(String command) {
+public static StringBuffer execYTcmd(String command) {
 		StringBuffer output = new StringBuffer();
 
 		Process p;
