@@ -2027,13 +2027,14 @@ public class DiscordListener {
                 IGuild SBBServer = SirBroBot.client.getGuildByID(168043804790751232L);
                 
                 //Command occurs on SirBroBot's server
-                if (message.getGuild().getLongID() == SBBServer.getLongID()) {
-
+                if (message.getGuild().getStringID().equals(SBBServer.getStringID())) {
+                    message.delete();
+                    
                     int servers = SirBroBot.client.getGuilds().size();
-                    String authorID = message.getAuthor().getStringID();
+                    String authorID = event.getMessage().getAuthor().getStringID();
 
                     try {
-                        for (int i = 1; i < servers; i++) {
+                        for (int i = 0; i < servers; i++) {
                             String OwnerID = SirBroBot.client.getGuilds().get(i).getOwner().getStringID();
                             if (OwnerID.equals(authorID)) {
                                 OwnerStatus = "true";
