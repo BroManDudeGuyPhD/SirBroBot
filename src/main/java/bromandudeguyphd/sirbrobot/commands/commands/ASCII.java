@@ -17,13 +17,13 @@ public class ASCII implements Command{
     public void execute(String[] args, IUser sender, IChannel channel) {
         String message = String.join(" ", args);
         
-        Messages.send("```"+execYTcmd("figlet "+message.replace("?ascii", "")).toString()+"```", channel);
+        Messages.send("```"+execYTcmd("figlet "+message.replace("?ascii", "")+message.replace("?ASCII", "")).toString()+"```", channel);
         
     }
 
     @Override
     public String getName() {
-        return "ACSII";
+        return "ascii";
     }
 
     @Override
