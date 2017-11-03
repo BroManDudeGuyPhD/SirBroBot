@@ -17,7 +17,7 @@ public class ASCII implements Command{
     public void execute(String[] args, IUser sender, IChannel channel) {
         String message = String.join(" ", args);
         
-        Messages.send("```"+execYTcmd("figlet "+message.replace("?ascii", "")+message.replace("?ASCII", "")).toString()+"```", channel);
+        Messages.send("```"+execYTcmd("figlet "+message.replace("?ascii", "").replace("?ASCII", "")).toString()+"```", channel);
         
     }
 

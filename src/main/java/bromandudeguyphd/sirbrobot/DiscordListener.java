@@ -123,8 +123,10 @@ public class DiscordListener {
                 event.getGuild().getOwner().getOrCreatePMChannel().sendMessage("```Hello " + event.getGuild().getOwner().getName() + "!```\n"
                         + "My name is SirBroBot. I have been added to a server you're the Owner of\n"
                         + "Thank you so much for using me, it means so much to my owner!\n"
-                        + "`Join my Test Server`: http://discord.gg/0wCCISzMcKMkfX88 to report bugs and stay updated! When you join, use the ?owner command and recieve a special role on the server!\n\n"
-                        + "Also check my `YouTube channel` for tutorials: https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ");
+                        + "`Join my Test Server`: http://discord.gg/0wCCISzMcKMkfX88 to report bugs and stay updated!\n\n"
+                        + "Also check \n"
+                        + "`Website: https://sirbrobot.com \n"
+                        + "`YouTube channel` for tutorials: https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ");
             });
                 }
                         
@@ -1674,7 +1676,7 @@ public class DiscordListener {
             } 
             
             else if (Mcontent.startsWith("?invite")) {
-                event.getClient().getOrCreatePMChannel(message.getAuthor()).sendMessage("Invite me to a server with https://discordapp.com/oauth2/authorize?&client_id=171691699263766529&scope=bot&permissions=473168957");
+                event.getClient().getOrCreatePMChannel(message.getAuthor()).sendMessage("Invite me to a server with https://sirbrobot.com/invite \n Check out my website for more info https://sirbrobot.com");
                 usageCounter++;
             } 
             
