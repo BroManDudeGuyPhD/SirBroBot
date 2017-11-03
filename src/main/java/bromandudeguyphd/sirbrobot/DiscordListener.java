@@ -16,6 +16,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import java.awt.Color;
 
 import sx.blah.discord.api.events.EventSubscriber;
 
@@ -38,6 +39,7 @@ import java.nio.file.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -119,15 +121,26 @@ public class DiscordListener {
             if (guildID.equals("None")) {
                 queries.sendDataDB("insert into guilds (guild_id) values ('" + event.getGuild().getStringID() + "');");
                 System.out.println("NEW GUILD");
-                RequestBuffer.request(() -> {
-                event.getGuild().getOwner().getOrCreatePMChannel().sendMessage("```Hello " + event.getGuild().getOwner().getName() + "!```\n"
-                        + "My name is SirBroBot. I have been added to a server you're the Owner of\n"
-                        + "Thank you so much for using me, it means so much to my owner!\n"
-                        + "`Join my Test Server`: http://discord.gg/0wCCISzMcKMkfX88 to report bugs and stay updated!\n\n"
-                        + "Also check \n"
-                        + "`Website: https://sirbrobot.com \n"
-                        + "`YouTube channel` for tutorials: https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ");
-            });
+                EmbedBuilder embed = new EmbedBuilder().setLenient(true);
+                
+                embed.withTitle("About Me\n");
+                embed.withUrl("https://sirbrobot.com");
+                embed.appendField("Hello " + event.getGuild().getOwner().getName(), "My name is SirBroBot. I have been added to a server you're the Owner of." +
+                        "\nThank you so much for using me, it means so much to my owner! ", false);
+                embed.appendField("First Steps","Get started using me with ?commands in a server channel that I have permission to speak in. \n I can also understand some conversations, so mention me or message me here to ask questions or get to know me",false);
+                embed.appendField("Servers:  ", ""+SirBroBot.client.getGuilds().size(), false);
+               
+                embed.appendField("Programmer: ",  DiscordListener.root.mention(), false);
+                embed.appendField("Important links: ", "" + "Website: https://sirbrobot.com \nYouTube https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ \nTwitter: https://twitter.com/SirBroBotThe1st", false);
+                embed.withFooterText("I am the MOST chivalrous Discord Bot");
+                embed.withFooterIcon(event.getGuild().getOwner().getAvatarURL());
+                embed.withColor(Color.red);
+                
+                
+                Messages.sendWithEmbed("", embed.build(), false, event.getGuild().getOwner().getOrCreatePMChannel());    
+                
+                
+            
                 }
                         
 
