@@ -36,7 +36,7 @@ public class Github implements Command {
         }
         
         else{
-            Messages.send("This command is for SirBroBot's server! Join here https://sirbrobot.com/discord", channel);
+            Messages.send("This command is for SirBroBot's server! Join here https://discord.gg/0wCCISzMcKMkfX88 ", channel);
         }
 
 
