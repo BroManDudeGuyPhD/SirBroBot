@@ -31,6 +31,9 @@ public class Randnum implements Command{
                 } catch (NumberFormatException ignored) {
                     Messages.send(":warning:` I dont recognize` **" + args[0] + "** `as a valid number `:warning:", channel);
                     resultsValid = false;
+                } catch (ArrayIndexOutOfBoundsException error){
+                    Messages.send("Please make sure you entered 2 numners!", channel);
+                    resultsValid = false;
                 }
 
                 try {
@@ -38,6 +41,10 @@ public class Randnum implements Command{
                     resultsValid = true;
                 } catch (NumberFormatException ignored) {
                     Messages.send(":warning:` I dont recognize` **" + args[1] + "** `as a valid number `:warning:", channel);
+                    resultsValid = false;
+                }
+                catch (ArrayIndexOutOfBoundsException error){
+                    Messages.send("Please make sure you entered 2 numners!", channel);
                     resultsValid = false;
                 }
 
