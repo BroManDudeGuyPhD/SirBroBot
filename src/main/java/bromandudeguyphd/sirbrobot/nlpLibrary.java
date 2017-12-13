@@ -36,9 +36,34 @@ public class nlpLibrary {
                     //In case of successful response
                     if (response.getStatus().getCode() == 200) {
                         String returnedMessage = response.getResult().getFulfillment().getSpeech();
-                        
+
+                        if (response.getResult().getSource().equals("domains")) {
+                            //Domain based results do not have an ID, so must return seperately
+                            if (returnedMessage.contains("USERMENTION")) {
+                                returnedMessage = returnedMessage.replace("USERMENTION", message.getAuthor().mention());
+                            }
+
+                            if (returnedMessage.contains("#getusername.user-name")) {
+                                returnedMessage = returnedMessage.replace("#getusername.user-name", message.getAuthor().getName());
+                            }
+
+                            if (returnedMessage.contains("OWNERMENTION")) {
+                                returnedMessage = returnedMessage.replace("OWNERMENTION", root.mention());
+                            }
+
+                            if (returnedMessage.contains("SERVERS")) {
+                                returnedMessage = returnedMessage.replace("SERVERS", SirBroBot.client.getGuilds().size() + "");
+                            }
+
+                            if (returnedMessage.contains("SERVER")) {
+                                returnedMessage = returnedMessage.replace("SERVER", "https://discord.gg/0wCCISzMcKMkfX88");
+                            }
+
+                            return returnedMessage;
+                        }
                    
-                        //SocialMedia intent                                         6b5a215a-f980-48b5-a97f-3e66690fe6e9                                     
+                        
+                        //SocialMedia intent                                                                           
                         if (response.getResult().getMetadata().getIntentId().equals("6b5a215a-f980-48b5-a97f-3e66690fe6e9")) {
                             returnedMessage = "**These are my social media links and website**   \n"
                                     + "`Twitter`: <https://twitter.com/sirbrobotthe1st?lang=en>\n"

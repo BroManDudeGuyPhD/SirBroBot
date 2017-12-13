@@ -15,7 +15,7 @@ public class Github implements Command {
     public void execute(String[] args, IUser sender, IChannel channel) {
         if(channel.getGuild().getStringID().equals("168043804790751232")){
             
-            
+            try{
             IUser user;
             user = sender;
 
@@ -33,9 +33,16 @@ public class Github implements Command {
             channel.getGuild().editUserRoles(user, roles);
 
             Messages.send("Operation successful: " + role2 + " role added to " + sender.mention() + "\n", channel);
+            }
+            
+            catch (Exception ex){
+            ex.printStackTrace();
+                   
+            }
         }
         
-        else{
+        
+       else{
             Messages.send("This command is for SirBroBot's server! Join here https://discord.gg/0wCCISzMcKMkfX88 ", channel);
         }
 
