@@ -2024,15 +2024,16 @@ public class DiscordListener {
             } 
             
             else if (Mcontent.startsWith("?google")) {
-                try {
-                    //Work in progress, as it were
-                    GoogleSearch.run(message.getContent().replace("?google ", ""));
-                } catch (IOException ex) {
-                    message.reply("Error searching");
-                }
-                event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
-                GoogleSearch.clearSearch();
-                usageCounter++;
+//                try {
+//                    //Work in progress, as it were
+//                    GoogleSearch.run(message.getContent().replace("?google ", ""));
+//                } catch (IOException ex) {
+//                    message.reply("Error searching");
+//                }
+//                event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
+//                GoogleSearch.clearSearch();
+//                usageCounter++;
+            message.reply("Google search is being fixed to filter explicit content...should be fixed in a few days - BroManDudeGuyPhD 12/15/17");
             } 
 
             

@@ -30,6 +30,7 @@ public class GoogleSearch {
         int counter = 1;
         
         for (Element link : links) {
+            
             String title = link.text();
             String url = link.absUrl("href"); 
             // Google returns URLs in format "http://www.google.com/url?q=<url>&sa=U&ei=<someKey>".
