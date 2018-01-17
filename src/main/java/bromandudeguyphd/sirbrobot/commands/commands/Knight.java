@@ -15,7 +15,7 @@ import sx.blah.discord.handle.obj.IUser;
 public class Knight implements Command {
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
-        final File dir = new File(tokens.ivanDirectory());
+        final File dir = new File(tokens.knightDirectory());
         File[] files = dir.listFiles();
         Random rand = new Random();
         File file = files[rand.nextInt(files.length)];
