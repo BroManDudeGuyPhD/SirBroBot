@@ -168,7 +168,7 @@ public class DiscordListener {
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
           
-        SirBroBot.client.streaming("Say ?commands", "https://www.twitch.tv/SirBroBot/profile");
+        SirBroBot.client.streaming("sirbrobot.com | ?commands", "https://www.twitch.tv/SirBroBot/profile");
        
 
         try {
