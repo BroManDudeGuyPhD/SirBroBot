@@ -16,7 +16,7 @@ public class factor implements Command{
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
         
-        Messages.send("Factors of "+args[0]+"\n ```"+ execYTcmd("factor "+args[1]).toString()+"```", channel);
+        Messages.send("Factors of "+args[0]+"\n ```"+ execYTcmd("factor "+args[0]).toString()+"```", channel);
         
     }
 

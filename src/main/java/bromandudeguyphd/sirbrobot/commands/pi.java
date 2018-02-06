@@ -16,7 +16,7 @@ public class pi implements Command{
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
         
-        Messages.send("PI to "+args[0]+" places\n ```"+ execYTcmd("pi "+args[1]).toString()+"```", channel);
+        Messages.send("PI to "+args[0]+" places\n ```"+ execYTcmd("pi "+args[0]).toString()+"```", channel);
         
     }
 
