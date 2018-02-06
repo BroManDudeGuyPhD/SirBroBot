@@ -1,4 +1,4 @@
-package bromandudeguyphd.sirbrobot.commands;
+package bromandudeguyphd.sirbrobot.commandprep;
 
 import bromandudeguyphd.sirbrobot.SirBroBot;
 import sx.blah.discord.handle.obj.IGuild;

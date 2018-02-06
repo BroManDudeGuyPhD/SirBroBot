@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package bromandudeguyphd.sirbrobot.commands.commands;
+package bromandudeguyphd.sirbrobot.commands;
 import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
-import bromandudeguyphd.sirbrobot.commands.Command;
-import bromandudeguyphd.sirbrobot.commands.CommandTypes;
+import bromandudeguyphd.sirbrobot.commandprep.Command;
+import bromandudeguyphd.sirbrobot.commandprep.CommandTypes;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;

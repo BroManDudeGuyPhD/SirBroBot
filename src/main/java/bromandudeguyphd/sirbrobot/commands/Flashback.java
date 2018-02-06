@@ -1,8 +1,8 @@
-package bromandudeguyphd.sirbrobot.commands.commands;
+package bromandudeguyphd.sirbrobot.commands;
 import bromandudeguyphd.imagewriting.ImageCaption;
 import bromandudeguyphd.sirbrobot.Messages;
-import bromandudeguyphd.sirbrobot.commands.Command;
-import bromandudeguyphd.sirbrobot.commands.CommandTypes;
+import bromandudeguyphd.sirbrobot.commandprep.Command;
+import bromandudeguyphd.sirbrobot.commandprep.CommandTypes;
 import bromandudeguyphd.sirbrobot.tokens;
 import java.io.File;
 import sx.blah.discord.handle.obj.IChannel;

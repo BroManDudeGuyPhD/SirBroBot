@@ -1,8 +1,8 @@
-package bromandudeguyphd.sirbrobot.commands.commands;
+package bromandudeguyphd.sirbrobot.commands;
 
 import bromandudeguyphd.sirbrobot.Messages;
-import bromandudeguyphd.sirbrobot.commands.Command;
-import bromandudeguyphd.sirbrobot.commands.CommandTypes;
+import bromandudeguyphd.sirbrobot.commandprep.Command;
+import bromandudeguyphd.sirbrobot.commandprep.CommandTypes;
 import bromandudeguyphd.sirbrobot.convertDigitsToWords;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;

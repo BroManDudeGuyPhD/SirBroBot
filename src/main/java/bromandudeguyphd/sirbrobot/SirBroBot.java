@@ -7,7 +7,7 @@
  */
 package bromandudeguyphd.sirbrobot;
 
-import bromandudeguyphd.sirbrobot.commands.CommandDispatcher;
+import bromandudeguyphd.sirbrobot.commandprep.CommandDispatcher;
 import com.samczsun.skype4j.Skype;
 import com.samczsun.skype4j.SkypeBuilder;
 import com.samczsun.skype4j.events.EventHandler;

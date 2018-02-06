@@ -1,9 +1,19 @@
-package bromandudeguyphd.sirbrobot.commands;
+package bromandudeguyphd.sirbrobot.commandprep;
 
+import bromandudeguyphd.sirbrobot.commands.SteamStats;
+import bromandudeguyphd.sirbrobot.commands.About;
+import bromandudeguyphd.sirbrobot.commands.Randnum;
+import bromandudeguyphd.sirbrobot.commands.Flashback;
+import bromandudeguyphd.sirbrobot.commands.Knight;
+import bromandudeguyphd.sirbrobot.commands.Ivan;
+import bromandudeguyphd.sirbrobot.commands.d;
+import bromandudeguyphd.sirbrobot.commands.Ping;
+import bromandudeguyphd.sirbrobot.commands.Github;
+import bromandudeguyphd.sirbrobot.commands.ASCII;
+import bromandudeguyphd.sirbrobot.commands.ServerInfo;
 import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
-import bromandudeguyphd.sirbrobot.commands.commands.*;
 import sx.blah.discord.api.events.IListener;
 
 import java.util.Arrays;
@@ -73,7 +83,7 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
                     }
                     String[] args = toSplit.split("\\ ");
                     SirBroBot.LOGGER.error("Dispatching command '" + comm.getType().getTrigger() +
-                            comm.getName() + "'! Sender: " + chatEvent.getMessage().getAuthor() + "! Split: '" +
+                            comm.getName() + "'! Sender: " + chatEvent.getMessage().getAuthor().getName() + "! Split: '" +
                             toSplit + "', " + Arrays.toString(args));
                     DiscordListener.addToUseCounter();
                     try {
