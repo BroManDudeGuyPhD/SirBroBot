@@ -29,20 +29,20 @@ public class commandsList {
             
             
             + "11. ?google <term>       :Search Google for term\n"
-            + "12. ?tsearch: <username> :Searches for a Twitter user and returns their info.\n"
+            + "12. ?tsearch <username> :Searches for a Twitter user and returns their info.\n"
             + "13. ?steamstats <name>   :Shows stats\n"
-            + "14. ?d #                 :Rolls dice that sixe (ec ?d 20)\n"
+            + "14. ?d #                 :Rolls dice that size (ec ?d 20)\n"
             + "15. ?randnum <#> <#>     :Generates # between the 2 given\n"
-            + "16. ?img-negative <url>  :Accepts URL or an attatchment. Comment on the attatched image\n"
+            + "16. ?img-negative <url>  :Accepts URL or an attatchment. Creates a negative\n"
             + "17. ?img-mirror <url>    :Same as above\n"
-            + "18. ?img-id <url>        :Identify what an image is\n"
+            + "18. ?img-id <url>        :Determine contents of an image\n"
             + "19. ?ascii <message>     :Replies with ASCII message\n"
             + "20. ?ivan                :Random Ivan meme\n"
-            + "21. ?knight              :Random Knight\n"
+            + "21. ?knight              :Random Knight image\n"
             + ""
             + "```"
             + "\nMention me, I am learning more language daily \n"
-            + "```Hello, Dance, Joust, Wake up, Insult, Taunt```"
+            + "```Hello, Dance, Joust, Insult, Taunt```"
             + "";
         
     String commandListOwner = 

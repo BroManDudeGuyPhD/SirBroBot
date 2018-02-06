@@ -1781,11 +1781,11 @@ public class DiscordListener {
             } 
                        
             
-            else if (Mcontent.startsWith("?tsearch:")) {
+            else if (Mcontent.startsWith("?tsearch")) {
                 //Searches twitter for given username
                 try {
                     String[] userToSearch;
-                    userToSearch = message.getContent().trim().split(":");
+                    userToSearch = message.getContent().trim().split("?tsearch");
                     boolean iconSaveStatus = false;
 
                     String iconUrl = twitter.users().showUser(userToSearch[1].trim()).getBiggerProfileImageURL();
@@ -2024,16 +2024,16 @@ public class DiscordListener {
             } 
             
             else if (Mcontent.startsWith("?google")) {
-//                try {
-//                    //Work in progress, as it were
-//                    GoogleSearch.run(message.getContent().replace("?google ", ""));
-//                } catch (IOException ex) {
-//                    message.reply("Error searching");
-//                }
-//                event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
-//                GoogleSearch.clearSearch();
-//                usageCounter++;
-            message.reply("Google search is being fixed to filter explicit content...should be fixed in a few days - BroManDudeGuyPhD 12/15/17");
+                try {
+                    //Work in progress, as it were
+                    GoogleSearch.run(message.getContent().replace("?google ", ""));
+                } catch (IOException ex) {
+                    message.reply("Error searching");
+                }
+                event.getMessage().getChannel().sendMessage(GoogleSearch.returnResults().replace(",", "").replace("[", "").replace("]", ""));
+                GoogleSearch.clearSearch();
+                usageCounter++;
+            
             } 
 
             
