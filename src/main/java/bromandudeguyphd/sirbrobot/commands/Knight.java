@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IUser;
 
 /**
  * <br>
- * Created by BroManDudeGuyPhD on 11.7.2017
+ * Created by BroManDudeGuyPhD on Nov.7.2017
  */
 public class Knight implements Command {
     @Override

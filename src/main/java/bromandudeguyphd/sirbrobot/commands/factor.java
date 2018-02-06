@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IUser;
 /**
  *
  * @author BroManDudeGuyPhD
- * created on Oct.20.2017
+ * created on Feb.6.2018
  */
 public class factor implements Command{
     @Override

@@ -21,8 +21,8 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 /**
- * <br>
- * Created by BroManDudeGuyPhD (using Arsen's structuring) on 4.8.17.
+ * @author BroManDudeGuyPhD (using Arsen's structuring) 
+ * created on Aug.4.17.
  */
 public class ServerInfo implements Command {
 

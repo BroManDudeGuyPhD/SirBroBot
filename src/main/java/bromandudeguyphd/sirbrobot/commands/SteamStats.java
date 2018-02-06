@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package bromandudeguyphd.sirbrobot.commands;
 import bromandudeguyphd.sirbrobot.DiscordListener;
 import bromandudeguyphd.sirbrobot.Messages;
@@ -29,7 +23,7 @@ import sx.blah.discord.util.EmbedBuilder;
 
 /**
  * <br>
- * Created by BroManDudeGuyPhD on 6.11.2017.
+ * Created by BroManDudeGuyPhD on Nov.6.2017.
  */
 public class SteamStats implements Command{
     @Override
