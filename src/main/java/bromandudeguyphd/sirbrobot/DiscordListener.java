@@ -462,6 +462,9 @@ public class DiscordListener {
     @EventSubscriber
     public void mentioned(MentionEvent event) {
 
+        if (!event.getAuthor().isBot()){
+            
+        
         IMessage message = event.getMessage();
         String mcontent = message.getContent().replace("<@166913295457058817>", "").toLowerCase();
         MessageBuilder messageBuilder = new MessageBuilder(event.getClient()).withChannel(event.getMessage().getChannel());
@@ -739,6 +742,7 @@ public class DiscordListener {
             
         
         messagesSeen++;
+        }
     }
     
 
@@ -749,8 +753,8 @@ public class DiscordListener {
     @EventSubscriber
     @SuppressWarnings("SleepWhileInLoop")
     public void onMessageReceived(MessageReceivedEvent event) throws InterruptedException, SQLException{
-
-
+        
+        if (!event.getAuthor().isBot()){
         root = event.getClient().getUserByID(Long.parseLong(tokens.rootID()));
         IChannel updateChannel = event.getClient().getChannelByID(197567480439373824L);
         IChannel channel = event.getMessage().getChannel();
@@ -2408,7 +2412,7 @@ usageCounter++;
                 usageCounter++;
             }
         }
-        
+        }
     }
 
     
