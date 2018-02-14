@@ -114,6 +114,11 @@
             <version>5.1.42</version>
         </dependency>
         
+        <dependency>
+        <groupId>com.github.DiscordBotList</groupId>
+        <artifactId>DBL-Java-Wrapper</artifactId>
+        <version>0185d3f1cee8457143753e8ece5299832936f0ae</version>
+    </dependency>
        
         
     </dependencies>

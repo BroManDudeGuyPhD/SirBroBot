@@ -1,10 +1,5 @@
 // Started Jun 22, 2016, 10:05:48 PM 
 
- /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bromandudeguyphd.sirbrobot;
 
 import bromandudeguyphd.sirbrobot.commandprep.CommandDispatcher;
@@ -18,20 +13,15 @@ import com.samczsun.skype4j.exceptions.InvalidCredentialsException;
 import com.samczsun.skype4j.exceptions.NotParticipatingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.Discord4J;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-//import sx.blah.discord.util.RateLimitException;
+import org.discordbots.api.client.DiscordBotListAPI;
 
 
 /**
@@ -62,7 +52,17 @@ public class SirBroBot {
         client.getDispatcher().registerListener(dispatcher = new CommandDispatcher());
         client.getDispatcher().registerListener(new DiscordListener());
         
+        //DiscordBots API 
         
+        
+    }
+    
+    public static void postDBLStats(){
+        DiscordBotListAPI api = new DiscordBotListAPI.Builder().token(tokens.DiscordBotsListtoken()).build();
+        String botId = "166913295457058817";
+        int serverCount = client.getGuilds().size();
+
+        api.setStats(botId, serverCount);
     }
 
     public static void bootSkype() throws InvalidCredentialsException, ConnectionException, NotParticipatingException {
@@ -103,9 +103,8 @@ public class SirBroBot {
 //        skype.subscribe();
     }
 
-        
-        public static String getUptime() {
-            
+    public static String getUptime() {
+
         long tEnd = System.currentTimeMillis();
         long tDelta = tEnd - startTime;
 
@@ -116,8 +115,8 @@ public class SirBroBot {
 
         return String.format("%02dd:%02dh:%02dm:%02ds", days, hrs, min, sec);
     }
-        
-        public static String getTimeFromMilis(long milis) {
+
+    public static String getTimeFromMilis(long milis) {
 
         long hrs = TimeUnit.MILLISECONDS.toHours(milis);
         long min = TimeUnit.MILLISECONDS.toMinutes(milis) - (TimeUnit.MILLISECONDS.toHours(milis) * 60);
@@ -125,14 +124,14 @@ public class SirBroBot {
 
         return String.format("%02dh:%02dm:%02ds", hrs, min, sec);
     }
-        
-        public static String getDateTime(){
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            
-            return dtf.format(now);
-        }
-        
+
+    public static String getDateTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        return dtf.format(now);
+    }
+
     public static Integer getRand() {
         int Low = 0;
         int High = 10;
@@ -143,7 +142,5 @@ public class SirBroBot {
         return Result;
     }
 
-    }
-
-
+}
 

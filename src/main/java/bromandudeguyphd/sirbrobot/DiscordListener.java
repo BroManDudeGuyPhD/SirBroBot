@@ -8,6 +8,7 @@ import bromandudeguyphd.webconnections.PostingHTMLData;
 import bromandudeguyphd.imagewriting.MirrorImage;
 import bromandudeguyphd.imagewriting.NegativeImage;
 import bromandudeguyphd.sirbrobot.music.GuildMusicManager;
+import bromandudeguyphd.webconnections.DiscordBotsListUpdate;
 import bromandudeguyphd.webconnections.StatisticsUpdate;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -191,6 +192,8 @@ public class DiscordListener {
         //Begins the Statistics update for webhook requests
         Timer timer = new Timer();
         timer.schedule(new StatisticsUpdate(), 0, 60000);
+        timer.schedule(new DiscordBotsListUpdate(), 0, 60000);
+        SirBroBot.postDBLStats();
 
     }
 
