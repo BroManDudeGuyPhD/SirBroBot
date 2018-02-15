@@ -109,7 +109,7 @@ public class DiscordListener {
     File enemy = new File("src/images/enemy.png");
 
     long twitterID = 0;
-    static long messagesSeen = 0;
+    public static long messagesSeen = 0;
     
     
     nlpLibrary nlp = new nlpLibrary();
@@ -998,23 +998,7 @@ public class DiscordListener {
 
                 } 
                 
-                else if (Mcontent.startsWith("?guildid")) {
-                    updateChannel.sendMessage("**Guild** " + message.getGuild().getName() + " **ID:** " + message.getGuild().getStringID());
-                    usageCounter++;
-                } 
-                
-                else if (Mcontent.startsWith("?channelid")) {
-                    updateChannel.sendMessage("**Guild** " + message.getGuild().getName() + " **Channel** " + message.getChannel().getName() + " **ID:** " + message.getChannel().getStringID());
-                    usageCounter++;
-                } 
-                
-                else if (message.getContent().startsWith("?getID ")) {
-                    message.delete();
-                    IUser user;
-                    user = message.getMentions().get(0);
-                    Messages.send(user.getName() + "'s ID is: " + user.getStringID(), channel);
-                    usageCounter++;
-                } //Broadcasts message to server owners
+                //Broadcasts message to server owners
                 
                 else if (Mcontent.startsWith("?broadcast ")) {
                     System.out.print("Broadcast Request Recieved");
@@ -1125,23 +1109,24 @@ public class DiscordListener {
 
                 } 
                 
-                else if (Mcontent.equals("?tweetabout")) {
-
-                    try {
-                        twitter.updateStatus(
-                                "Discord Servers: " + event.getClient().getGuilds().size() + "\n"
-                                        + "Voice Channels: " + event.getClient().getVoiceChannels().size() + "\n"
-                                                + "Text Channels: " + event.getClient().getChannels(false).size() + "\n"
-                                                        + "Total Users: " + getUsers() + "\n"
-                                                                + "Messages Seen: " + messagesSeen + "\n"
-                                                                        + "Uptime: " + getUptime() + "\n");
-                    } catch (TwitterException ex) {
-                        message.reply("Error tweeting");
-                    }
-                    event.getMessage().getChannel().sendMessage("Server stats sent!");
-                    usageCounter++;
-
-                } 
+//                else if (Mcontent.equals("?tweetabout")) {
+//
+//                    try {
+//                        twitter.updateStatus(
+//                                "Discord Servers: " + event.getClient().getGuilds().size() + "\n"
+//                              + "Voice Channels: " + event.getClient().getVoiceChannels().size() + "\n"
+//                              + "Text Channels: " + event.getClient().getChannels(false).size() + "\n"
+//                              + "Total Users: " + getUsers() + "\n"
+//                              + "Messages Seen: " + messagesSeen + "\n"
+//                              + "Uptime: " + getUptime() + "\n");
+//                        
+//                    } catch (TwitterException ex) {
+//                        message.reply("Error tweeting");
+//                    }
+//                    event.getMessage().getChannel().sendMessage("Server stats sent!");
+//                    usageCounter++;
+//
+//                } 
                 
                 else if (Mcontent.startsWith("?tweet:")) {
 
@@ -1173,16 +1158,6 @@ public class DiscordListener {
                     usageCounter++;
                 } 
                 
-                
-                else if (Mcontent.equals("?togglemessages")) {
-                    messageStatus = !messageStatus;
-                    message.reply("Messages " + (messageStatus ? "ON" : "OFF"));
-                } 
-                
-                else if (Mcontent.equals("?toggleupdates")) {
-                    updateDispatcher = !updateDispatcher;
-                    message.reply("Updates " + (updateDispatcher ? "ON" : "OFF"));
-                } 
                 
                 else if (Mcontent.equals("?purge")) {
                     FileChecker.purge();

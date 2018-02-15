@@ -16,6 +16,7 @@ import bromandudeguyphd.sirbrobot.Messages;
 import bromandudeguyphd.sirbrobot.SirBroBot;
 import bromandudeguyphd.sirbrobot.commands.factor;
 import bromandudeguyphd.sirbrobot.commands.pi;
+import bromandudeguyphd.sirbrobot.commands.tweetabout;
 import sx.blah.discord.api.events.IListener;
 
 import java.util.Arrays;
@@ -45,8 +46,10 @@ public class CommandDispatcher implements IListener<MessageReceivedEvent> {
         registerCommand(new ASCII());
         registerCommand(new Knight());
         registerCommand(new Github());
+        registerCommand(new tweetabout());
         registerCommand(new pi());
         registerCommand(new factor());
+        
     }
 
     /**

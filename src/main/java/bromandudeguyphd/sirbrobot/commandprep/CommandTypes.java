@@ -13,6 +13,7 @@ import java.util.function.BiPredicate;
 public enum CommandTypes {
     MUSIC(">", (guild, user) -> true),
     OWNER("?", (guild, user) -> guild.getOwner().equals(user)),
+    BROMAN("?", (guild, user) -> user.getStringID().equals("150074847546966017")),
     NORMAL("?", (guild, user) -> true),
     MENTION(null, (guild, user) -> true){
         @Override
