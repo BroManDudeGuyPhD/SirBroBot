@@ -130,9 +130,8 @@ public class DiscordListener {
                         "\nThank you so much for using me, it means so much to my owner! ", false);
                 embed.appendField("First Steps","Get started using me with ?commands in a server channel that I have permission to speak in. \n I can also understand some conversations, so mention me or message me here to ask questions or get to know me",false);
                 embed.appendField("Servers:  ", ""+SirBroBot.client.getGuilds().size(), false);
-               
                 embed.appendField("Programmer: ",  DiscordListener.root.mention(), false);
-                embed.appendField("Important links: ", "" + "Website: https://sirbrobot.com \nYouTube https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ \nTwitter: https://twitter.com/SirBroBotThe1st", false);
+                embed.appendField("Links", "" + "<:SirBroBot_website:415563293340729345>[ Website](https://sirbrobot.com)  <:SirBroBot_YouTube:415563282187943936>[ YouTube](https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ)  <:SirBroBot_Twitter:415563272289517568>[ Twitter](https://twitter.com/SirBroBotThe1st)", false);
                 embed.withFooterText("I am the MOST chivalrous Discord Bot");
                 embed.withFooterIcon(event.getGuild().getOwner().getAvatarURL());
                 embed.withColor(Color.red);

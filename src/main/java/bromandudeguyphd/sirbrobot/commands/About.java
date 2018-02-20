@@ -6,7 +6,6 @@ import bromandudeguyphd.sirbrobot.commandprep.Command;
 import bromandudeguyphd.sirbrobot.commandprep.CommandTypes;
 import java.awt.Color;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
@@ -23,24 +22,23 @@ public class About implements Command {
                 
                 embed.withTitle("About Me\n");
                 embed.withUrl("https://sirbrobot.com");
-                embed.appendField("Servers:  ", ""+SirBroBot.client.getGuilds().size(), true);
-                int totalChannels = SirBroBot.client.getVoiceChannels().size()+SirBroBot.client.getChannels(false).size();
-                
                 embed.withDesc("The most chivalrous Java Chatbot");
-                embed.appendDesc("\n---------------------------------------------------------");
+                embed.appendDesc("\n------------------------------------------------------------------------------------------------");
+                
+                int totalChannels = SirBroBot.client.getVoiceChannels().size()+SirBroBot.client.getChannels(false).size();
                 long totalUsers = DiscordListener.getUsers();
                 double guildUsers = channel.getGuild().getUsers().size(); 
                 double guildPercent = guildUsers/totalUsers; 
                 String guildUsersString = ""+guildUsers;
                 DecimalFormat decimalFormat = new DecimalFormat("0.000");
-                
-                embed.appendField("Total Users: "+ DiscordListener.getUsers(), channel.getGuild().getName()+": "+ guildUsersString.replace(".0", "") + "\n"+decimalFormat.format(guildPercent*100)+"% of userbase \n   ", true);
-                embed.appendField("Total Channels: "+ totalChannels," Voice: "+ SirBroBot.client.getVoiceChannels().size()+"  |  Text:"+SirBroBot.client.getChannels(false).size() ,true);
+                embed.appendField("Users: "+ DiscordListener.getUsers(),"•"+channel.getGuild().getName()+": "+ guildUsersString.replace(".0", "") + "\n•"+decimalFormat.format(guildPercent*100)+"% of userbase \n   ", true);
+                embed.appendField("Channels: "+ totalChannels,"•Voice: "+ SirBroBot.client.getVoiceChannels().size()+" \n•Text:"+SirBroBot.client.getChannels(false).size() ,true);
+                embed.appendField("Servers:  ", ""+SirBroBot.client.getGuilds().size(), true);
+                embed.appendField("Uptime: ", "•" + SirBroBot.getUptime(), true);
                 embed.appendField("Messages Seen: ", "" + DiscordListener.getMessagesSeen(), true);
-                embed.appendField("Uptime: ", "" + SirBroBot.getUptime(), true);
                 embed.appendField("Commands Executed: ", "" + DiscordListener.getUseCounter(), true);
                 embed.appendField("Programmer: ",  DiscordListener.root.mention(), false);
-                embed.appendField("Links", "" + ":earth_americas:[ Website](https://sirbrobot.com) \n<:youtube1:415519970001158146>[ YouTube](https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ) \n<:twitter:415532664850874379>[ Twitter](https://twitter.com/SirBroBotThe1st)", false);
+                embed.appendField("Links", "" + "<:SirBroBot_website:415563293340729345>[ Website](https://sirbrobot.com)  <:SirBroBot_YouTube:415563282187943936>[ YouTube](https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ)  <:SirBroBot_Twitter:415563272289517568>[ Twitter](https://twitter.com/SirBroBotThe1st)", false);
                 embed.withFooterText(" ?about ");
                 embed.withFooterIcon("https://www.sitewelder.com/art2012/logo-big-information.png");
                 embed.withColor(Color.red);
