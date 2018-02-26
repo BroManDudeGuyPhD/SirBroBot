@@ -62,28 +62,59 @@ public class queries {
 
     }
 
-    public static CachedRowSet getDataDB(String query) {
-        Statement stmt = null;
-        ResultSet results = null;
-        CachedRowSet rowset = null;
+//    public static CachedRowSet getDataDB(String query) {
+//        Statement stmt = null;
+//        ResultSet results = null;
+//        CachedRowSet rowset = null;
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//
+//            stmt = con.createStatement();
+//
+//            results = stmt.executeQuery(query);
+//
+//            rowset = new CachedRowSetImpl();
+//            rowset.populate(results);
+//            con.close();
+//
+//        } catch (SQLException err) {
+//            System.out.println("ERROR IN GETDB QUERY" + err.getMessage());
+//        } catch (ClassNotFoundException ex) {
+//            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        return rowset;
+//
+//    }
+    
+    public static ResultSet getDataDB(String query) {
+        Connection con = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-
-            stmt = con.createStatement();
-
-            results = stmt.executeQuery(query);
-
-            rowset = new CachedRowSetImpl();
-            rowset.populate(results);
-            con.close();
-
-        } catch (SQLException err) {
-            System.out.println("ERROR IN GETDB QUERY" + err.getMessage());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+            con = (Connection) DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
         }
 
-        return rowset;
+        Statement stmt = null;
+
+        try {
+            stmt = (Statement) con.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+            
+            return rs;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
+        return null;
 
     }
 
@@ -346,6 +377,7 @@ public class queries {
         return null;
 
     }
+    
 
 
 }

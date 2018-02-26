@@ -1186,16 +1186,14 @@ public class DiscordListener {
                 ArrayList<String> databaseGuilds = new ArrayList<>(); 
                 ResultSet results = queries.getDataDB("select guild_id from guilds;");
                 while (results.next()){
-                    
-                        databaseGuilds.add(results.getString("guild_id"));
-                    
+                    databaseGuilds.add(results.getString("guild_id"));
+                }
                 
-                    for (int i = 0; i < databaseGuilds.size(); i++){
-                        if(!clientGuilds.contains(databaseGuilds.get(i))){
-                          queries.sendDataDB("delete from guilds where guild_id = '"+databaseGuilds.get(i)+"' ");  
-                        }
+                for (int i = 0; i < databaseGuilds.size(); i++){
+                    if(!clientGuilds.contains(databaseGuilds.get(i))){
+                        queries.sendDataDB("delete from guilds where guild_id = '"+databaseGuilds.get(i)+"' ");  
                     }
-            }
+                }
             }
                 
                 
