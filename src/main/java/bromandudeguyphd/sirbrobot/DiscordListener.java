@@ -112,7 +112,7 @@ public class DiscordListener {
     public static long messagesSeen = 0;
     
     
-    nlpLibrary nlp = new nlpLibrary();
+    nlpLibrary4Discord nlp = new nlpLibrary4Discord();
     int guilds = 0;
     @EventSubscriber
     public void onGuildCreate(GuildCreateEvent event) {
@@ -1177,7 +1177,7 @@ public class DiscordListener {
                 
                 if(Mcontent.equals("?purgedb")){
                
-                ArrayList<String> clientGuilds = new ArrayList<>();
+               ArrayList<String> clientGuilds = new ArrayList<>();
                 
                 for(int i = 0; i < SirBroBot.client.getGuilds().size(); i++){
                     clientGuilds.add(SirBroBot.client.getGuilds().get(i).getStringID());

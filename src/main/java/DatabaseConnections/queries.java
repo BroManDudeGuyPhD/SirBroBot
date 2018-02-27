@@ -42,7 +42,7 @@ public class queries {
         }
 
     }
-
+    
     public static void sendDBWithMessage(String query, IMessage messageEvent, String messageContent) throws SQLException {
 
         try {
@@ -378,6 +378,46 @@ public class queries {
 
     }
     
+    
+    public static String getDiscordNicknameQuery(String userID) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        String list = "None";
+
+        try {
+            connection = DriverManager.getConnection(tokens.dbConnection(), tokens.dbUsername(), tokens.dbPassword());
+            statement = connection.prepareStatement("select nickname from discord_users where user_discord_id ='" + userID + "';");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                list = resultSet.getString("nickname");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(queries.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException logOrIgnore) {
+                }
+            }
+        }
+
+        return list;
+
+    }
 
 
 }
