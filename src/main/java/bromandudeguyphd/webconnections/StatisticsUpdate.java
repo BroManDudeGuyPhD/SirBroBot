@@ -25,22 +25,14 @@ import java.util.logging.Logger;
 public class StatisticsUpdate extends TimerTask {
     public void run() {
         
-       String stats = "<!DOCTYPE html>"
-                + "<html>"
-                + "<head>"
-                + "  <title>Stats data</title>"
-                + "  <meta name=\"google-site-verification\" content=\"DO2kB7uoA7gkpKZHDIQRuGhrTd6etVY5ZDf7QhQh0fk\" />"
-                + "  <link rel=\"shortcut icon\" type=\"image/png\" href=\"/favicon.png\"/>"
-                + "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/styling/main_style.css\">"
-                + "</head>"
-                + "<body>"
-                + "Discord Servers: " + SirBroBot.client.getGuilds().size() + "<br>"
-                + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size() + "<br>"
-                + "Text Channels: " + SirBroBot.client.getChannels(true).size() + "<br>"
-                + "Total Users: " + getUsers() + "<br>"
-                + "Messages Seen: " + DiscordListener.getMessagesSeen()+ "<br>" + "Uptime: " + getUptime() + "<br>"
-                + "</body>"
-                + "</html> ";
+       String stats = 
+                  "Discord Servers: " + SirBroBot.client.getGuilds().size() 
+                + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size()
+                + "Text Channels: " + SirBroBot.client.getChannels(true).size()
+                + "Total Users: " + getUsers()
+                + "Messages Seen: " + DiscordListener.getMessagesSeen()
+                + "Uptime: " + getUptime();
+
 
         File fileOne = new File(tokens.webhookLink());
 
