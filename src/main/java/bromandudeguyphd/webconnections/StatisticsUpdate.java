@@ -26,11 +26,11 @@ public class StatisticsUpdate extends TimerTask {
     public void run() {
         
        String stats = 
-                  "Discord Servers: " + SirBroBot.client.getGuilds().size() 
-                + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size()
-                + "Text Channels: " + SirBroBot.client.getChannels(true).size()
-                + "Total Users: " + getUsers()
-                + "Messages Seen: " + DiscordListener.getMessagesSeen()
+                  "Discord Servers: " + SirBroBot.client.getGuilds().size() +"\n"
+                + "Voice Channels: " + SirBroBot.client.getVoiceChannels().size() +"\n"
+                + "Text Channels: " + SirBroBot.client.getChannels(true).size() +"\n"
+                + "Total Users: " + getUsers() +"\n"
+                + "Messages Seen: " + DiscordListener.getMessagesSeen() +"\n"
                 + "Uptime: " + getUptime();
 
 
