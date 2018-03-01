@@ -13,6 +13,8 @@ import bromandudeguyphd.sirbrobot.fileIO;
 import bromandudeguyphd.sirbrobot.tokens;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -36,16 +38,14 @@ public class StatisticsUpdate extends TimerTask {
        
   
 
-        File fileOne = new File(tokens.webhookLink());
 
-        try (PrintWriter writer = new PrintWriter(fileOne)) {
+        try (FileWriter writer = new FileWriter(tokens.webhookLink())) {
 
             writer.write(obj.toJSONString());
             writer.flush();
             
-        } catch (FileNotFoundException ex) {
-            System.out.println("File Not Found");
-            Logger.getLogger(fileIO.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (IOException ex) {
+            Logger.getLogger(StatisticsUpdate.class.getName()).log(Level.SEVERE, null, ex);
         } 
     
     }
