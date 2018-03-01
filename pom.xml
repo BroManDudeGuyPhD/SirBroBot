@@ -119,8 +119,12 @@
         <artifactId>DBL-Java-Wrapper</artifactId>
         <version>0185d3f1cee8457143753e8ece5299832936f0ae</version>
     </dependency>
-       
-        
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
      <!-- Fix D4J and Lavaplayer dependency error -->
