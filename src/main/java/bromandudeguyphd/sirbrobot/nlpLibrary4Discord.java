@@ -65,8 +65,8 @@ public class nlpLibrary4Discord {
                         //SocialMedia intent                                                                           
                         if (response.getResult().getMetadata().getIntentId().equals("6b5a215a-f980-48b5-a97f-3e66690fe6e9")) {
                             returnedMessage = "**These are my social media links and website**   \n"
-                                    + "<:SirBroBot_website:415563293340729345> <https://sirbrobot.com>"
-                                    + "<:SirBroBot_Twitter:415563272289517568> <https://twitter.com/sirbrobotthe1st?lang=en>\n"
+                                    + "<:SirBroBot_website:415563293340729345> <https://sirbrobot.com>\n"
+                                    + "<:SirBroBot_Twitter:415563272289517568> <https://twitter.com/sirbrobotthe1st>\n"
                                     + "<:SirBroBot_Facebook:417717351664975877> <https://www.facebook.com/sirbrobot/>\n"
                                     + "<:SirBroBot_YouTube:415563282187943936> <https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n";
                          }
