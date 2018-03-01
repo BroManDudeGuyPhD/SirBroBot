@@ -190,7 +190,7 @@ public class DiscordListener {
         
         //Begins the Statistics update for webhook requests
         Timer timer = new Timer();
-        timer.schedule(new StatisticsUpdate(), 0, 60000);
+        timer.schedule(new StatisticsUpdate(), 0, 10000);
         timer.schedule(new DiscordBotsListUpdate(), 0, 60000);
         SirBroBot.postDBLStats();
 

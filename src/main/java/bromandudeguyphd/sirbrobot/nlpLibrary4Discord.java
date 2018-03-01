@@ -65,11 +65,11 @@ public class nlpLibrary4Discord {
                         //SocialMedia intent                                                                           
                         if (response.getResult().getMetadata().getIntentId().equals("6b5a215a-f980-48b5-a97f-3e66690fe6e9")) {
                             returnedMessage = "**These are my social media links and website**   \n"
-                                    + "`Twitter`: <https://twitter.com/sirbrobotthe1st?lang=en>\n"
-                                    + "`Facebook`: <https://www.facebook.com/sirbrobot/>\n"
-                                    + "`YouTube`: <https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n"
-                                    + "`Website`: <http://bootswithdefer.tumblr.com/SirBroBot>";
-                        }
+                                    + "<:SirBroBot_website:415563293340729345> <https://sirbrobot.com>"
+                                    + "<:SirBroBot_Twitter:415563272289517568> <https://twitter.com/sirbrobotthe1st?lang=en>\n"
+                                    + "<:SirBroBot_Facebook:417717351664975877> <https://www.facebook.com/sirbrobot/>\n"
+                                    + "<:SirBroBot_YouTube:415563282187943936> <https://www.youtube.com/channel/UCZi_pzKLVb5zvTmDOCEMbtQ>\n";
+                         }
                         
                         //Set Nickname
                         if (response.getResult().getMetadata().getIntentId().equals("982a5a46-37e0-4ab4-a3f6-9f6d1c3cd0a9")) {
