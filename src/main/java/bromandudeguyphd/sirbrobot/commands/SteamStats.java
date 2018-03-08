@@ -101,7 +101,7 @@ public class SteamStats implements Command{
                 embed.withFooterText(" ?steamstats ");
                 embed.withFooterIcon("https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1024px-Steam_icon_logo.svg.png");
                 embed.withColor(Color.red);
-                embed.withTimestamp(LocalDateTime.now());
+                
 
                 
             

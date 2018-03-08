@@ -28,11 +28,10 @@ public class ServerInfo implements Command {
 
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
-
         EmbedBuilder embed = new EmbedBuilder().setLenient(true);
         embed.withTitle(channel.getGuild().getName());
         embed.withDescription("Owner: " + channel.getGuild().getOwner().mention() + "\n");
-        embed.appendField("Created on: ", channel.getGuild().getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE), false);
+        embed.appendField("Created on: ", channel.getGuild().getCreationDate().toString(),false);
         embed.appendField("Members: ", "" + channel.getGuild().getUsers().size(), false);
         embed.appendField("Region: ", channel.getGuild().getRegion().getName(), false);
         embed.appendField("Custom Emojis: ", "" + channel.getGuild().getEmojis().size(), false);
@@ -41,7 +40,6 @@ public class ServerInfo implements Command {
         embed.withFooterIcon(sender.getAvatarURL());
 
         embed.withColor(Color.red);
-        embed.withTimestamp(LocalDateTime.now());
 
         embed.withThumbnail(channel.getGuild().getIconURL());
 

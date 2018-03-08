@@ -168,9 +168,7 @@ public class DiscordListener {
     @EventSubscriber
     public void onReadyEvent(@SuppressWarnings("UnusedParameters") ReadyEvent event) {
           
-        SirBroBot.client.streaming("sirbrobot.com | ?commands", "https://www.twitch.tv/SirBroBot/profile");
-       
-
+        SirBroBot.client.changeStreamingPresence(StatusType.ONLINE, "sirbrobot.com | ?commands", "https://www.twitch.tv/SirBroBot/profile");
         try {
             fileIO.readFile(autoJoinChannels, "src/dataDocuments/autoJoinChannels.txt");
         } catch (IOException ignored) {
@@ -974,27 +972,28 @@ public class DiscordListener {
 
                 } 
                 
-                else if (Mcontent.startsWith("?updatestatus")) {
-                    
-                    try {
-                        message.delete();
-                    } catch (MissingPermissionsException ignored) {
-                    }
-                    event.getClient().changePlayingText(message.getContent().replace("?updatestatus ", ""));
+                else if (Mcontent.startsWith("?updateplaying")) {
+                    try {message.delete();} catch (MissingPermissionsException ignored) {}
+                    SirBroBot.client.changePresence(StatusType.ONLINE, ActivityType.PLAYING, message.getContent().replace("?updatestatus ", ""));
                     usageCounter++;
-
+                } 
+                
+                else if (Mcontent.startsWith("?updatewatching")) {
+                    try {message.delete();} catch (MissingPermissionsException ignored) {}
+                    SirBroBot.client.changePresence(StatusType.ONLINE, ActivityType.WATCHING, message.getContent().replace("?updatestatus ", ""));
+                    usageCounter++;
+                } 
+                
+                else if (Mcontent.startsWith("?updatelistening")) {
+                    try {message.delete();} catch (MissingPermissionsException ignored) {}
+                    SirBroBot.client.changePresence(StatusType.ONLINE, ActivityType.LISTENING, message.getContent().replace("?updatestatus ", ""));
+                    usageCounter++;
                 } 
                 
                 else if (Mcontent.startsWith("?updatestream")) {
-                    
-                    try {
-                        message.delete();
-                    } catch (MissingPermissionsException ignored) {
-                    }
-                    SirBroBot.client.streaming(message.getContent().replace("?updatestream ", ""), "https://www.twitch.tv/SirBroBot/profile");
-
+                    try {message.delete();} catch (MissingPermissionsException ignored) {}
+                    SirBroBot.client.changeStreamingPresence(StatusType.ONLINE, message.getContent().replace("?updatestream ", ""), "https://www.twitch.tv/SirBroBot/profile");
                     usageCounter++;
-
                 } 
                 
                 //Broadcasts message to server owners
@@ -1800,38 +1799,34 @@ public class DiscordListener {
                 }
             } //Returns Authors token in chat USE CAREFULLY
             
-            else if (Mcontent.equals("?myinfo")) {
-                try {
-                    message.delete();
-                } catch (MissingPermissionsException ignored) {
-                }
-                event.getClient().getOrCreatePMChannel(message.getAuthor())
-                        .sendMessage("Info for user " + message.getAuthor().getName() + " #" + message.getAuthor().getDiscriminator() + "\n"
-                                + "ID: " + message.getAuthor().getStringID() + "\n"
-                                + "Account created: " + message.getAuthor().getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
-                                + "Connected Voice Channel: " + message.getAuthor().getClient().getConnectedVoiceChannels().get(0).getName() + "/n```"
-                                + "IconURL: " + message.getAuthor().getAvatarURL());
-
-                usageCounter++;
-
-            } 
+//            else if (Mcontent.equals("?myinfo")) {
+//                try {
+//                    message.delete();
+//                } catch (MissingPermissionsException ignored) {
+//                }
+//                event.getClient().getOrCreatePMChannel(message.getAuthor())
+//                        .sendMessage("Info for user " + message.getAuthor().getName() + " #" + message.getAuthor().getDiscriminator() + "\n"
+//                                + "ID: " + message.getAuthor().getStringID() + "\n"
+//                                + "Account created: " + message.getAuthor().getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
+//                                + "Connected Voice Channel: " + message.getAuthor().getClient().getConnectedVoiceChannels().get(0).getName() + "/n```"
+//                                + "IconURL: " + message.getAuthor().getAvatarURL());
+//
+//                usageCounter++;
+//
+//            } 
             
             else if (Mcontent.startsWith("?whois")) {
                 IUser who = message.getMentions().get(0);
                 String rolesForWho = "";
                 String game = null;
-
+                IPresence presence = null;
                 for (int i = 0; i < +who.getRolesForGuild(message.getGuild()).size(); i++) {
                     rolesForWho += who.getRolesForGuild(message.getGuild()).get(i).getName() + ", ";
                 }
 
-                if (who.getPresence().getPlayingText().isPresent()) {
-                    game = who.getPresence().getPlayingText().toString();
-                }
-
-                if (!who.getPresence().getPlayingText().isPresent()) {
-                    game = "None";
-                }
+                
+                game = who.getPresence().getStatus().toString();
+                
 
                 if (who.getAvatarURL().contains("/null.jpg")) {
                     try {
@@ -1842,7 +1837,7 @@ public class DiscordListener {
                                 + "Name: " + who.getName()
                                 + " #" + who.getDiscriminator() + "\n"
                                 + "Roles: " + rolesForWho + "\n"
-                                + "Account created: " + who.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
+                                + "Account created: " + who.getCreationDate().toString() + "\n"
                                 + "Currently playing: " + game + "\n"
                                 + "Presence: " + who.getPresence() + "\n"
                                 + "```", channel);
@@ -1862,7 +1857,7 @@ public class DiscordListener {
                                 + "Name: " + who.getName()
                                 + " #" + who.getDiscriminator() + "\n"
                                 + "Roles: " + rolesForWho + "\n"
-                                + "Account created: " + who.getCreationDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + "\n"
+                                + "Account created: " + who.getCreationDate()+ "\n"
                                 + "Currently playing: " + game + "\n"
                                 + "Presence: " + who.getPresence() + "\n"
                                 + "```", channel);
@@ -2168,7 +2163,7 @@ public class DiscordListener {
             
             else if (Mcontent.equals(">leaveall") && message.getAuthor().equals(root)) {
 
-                SirBroBot.client.changePlayingText("Rebooting Audio");
+                SirBroBot.client.changePresence(StatusType.ONLINE, ActivityType.LISTENING, "Rebooting Audio");
 
                 List<IVoiceChannel> leaveList = SirBroBot.client.getConnectedVoiceChannels();
 
@@ -2192,7 +2187,9 @@ public class DiscordListener {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                SirBroBot.client.streaming("?commands", "https://www.twitch.tv/sirbrobot/profile");
+                
+                SirBroBot.client.changeStreamingPresence(StatusType.ONLINE, "sirbrobot.com | ?commands", "https://www.twitch.tv/SirBroBot/profile");
+                
                 
 
                 usageCounter++;
