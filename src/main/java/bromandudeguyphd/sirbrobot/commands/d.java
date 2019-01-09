@@ -16,7 +16,11 @@ public class d implements Command{
     @Override
     public void execute(String[] args, IUser sender, IChannel channel) {
         
-        int random = (int) (Math.random() * Integer.parseInt(args[0]) + 1);
+        if(args[0].equals("?d") || args[0].equals("?d ")){
+            Messages.send(sender.mention() +"you need to put a number, like ?d20", channel);
+        }
+        
+        int random = (int) (Math.random() * Integer.parseInt(args[0].replace("#", "")) + 1);
         
         String[] results = convertDigitsToWords.NumberToSingalDigits(random).split(" ");
         String finalNumber = "";
