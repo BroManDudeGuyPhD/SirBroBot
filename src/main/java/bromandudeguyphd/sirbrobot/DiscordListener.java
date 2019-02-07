@@ -1762,18 +1762,18 @@ public class DiscordListener {
             else if (Mcontent.startsWith("?tsearch")) {
                 //Searches twitter for given username
                 try {
-                    String[] userToSearch;
-                    userToSearch = message.getContent().trim().split("?tsearch");
+                    String userToSearch;
+                    userToSearch = message.getContent().replace("?tsearch", "");
                     boolean iconSaveStatus = false;
 
-                    String iconUrl = twitter.users().showUser(userToSearch[1].trim()).getBiggerProfileImageURL();
+                    String iconUrl = twitter.users().showUser(userToSearch.trim()).getBiggerProfileImageURL();
 
                     
                     
                     //twitterProfiles.add(twitter.users().showUser(userToSearch[1]).getName());
-                    File serverIcon = new File("src/images/twitterIcons/" + twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg");
+                    File serverIcon = new File("src/images/twitterIcons/" + twitter.users().showUser(userToSearch).getName().trim().replace(" ", "").replace(":", "") + ".jpg");
                     try {
-                        fileIO.saveImage(iconUrl, twitter.users().showUser(userToSearch[1]).getName().trim().replace(" ", "").replace(":", "") + ".jpg", "src/images/twitterIcons/");
+                        fileIO.saveImage(iconUrl, twitter.users().showUser(userToSearch).getName().trim().replace(" ", "").replace(":", "") + ".jpg", "src/images/twitterIcons/");
                     } catch (IOException ex) {
                         Logger.getLogger(DiscordListener.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -1782,14 +1782,14 @@ public class DiscordListener {
 
                     usageCounter++;
 
-                    Messages.send(userToSearch[1] + "'s info: \n"
-                            + "```Name: " + twitter.users().showUser(userToSearch[1]).getName() + "\n"
-                            + "Screen Name: " + twitter.users().showUser(userToSearch[1]).getScreenName() + "\n"
-                            + "Twitter ID: " + twitter.users().showUser(userToSearch[1]).getId() + "\n"
-                            + "Location: " + twitter.users().showUser(userToSearch[1]).getLocation() + "\n"
-                            + "Followers: " + twitter.users().showUser(userToSearch[1]).getFollowersCount() + "\n"
-                            + "Following: " + twitter.users().showUser(userToSearch[1]).getFriendsCount() + "\n"
-                            + "Tweets: " + twitter.users().showUser(userToSearch[1]).getStatusesCount() + "\n"
+                    Messages.send(userToSearch + "'s info: \n"
+                            + "```Name: " + twitter.users().showUser(userToSearch).getName() + "\n"
+                            + "Screen Name: " + twitter.users().showUser(userToSearch).getScreenName() + "\n"
+                            + "Twitter ID: " + twitter.users().showUser(userToSearch).getId() + "\n"
+                            + "Location: " + twitter.users().showUser(userToSearch).getLocation() + "\n"
+                            + "Followers: " + twitter.users().showUser(userToSearch).getFollowersCount() + "\n"
+                            + "Following: " + twitter.users().showUser(userToSearch).getFriendsCount() + "\n"
+                            + "Tweets: " + twitter.users().showUser(userToSearch).getStatusesCount() + "\n"
                             + "```", channel);
                 } catch (TwitterException ignored) {
 
