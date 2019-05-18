@@ -36,7 +36,7 @@ public class AudioProvider implements IAudioProvider {
       lastFrame = audioPlayer.provide();
     }
 
-    byte[] data = lastFrame != null ? lastFrame.getData() : null;
+    byte[] data = lastFrame != null ? lastFrame.data : null;
     lastFrame = null;
 
     return data;
