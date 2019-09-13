@@ -2199,7 +2199,7 @@ public class DiscordListener {
             } 
             
             else if (Mcontent.equals(">play")) {
-                message.reply("Being reworked under new Music system, >stream with a URL still works");
+                message.reply("Being reworked under new Music system");
 //                AudioPlayer audio = AudioPlayer.getAudioPlayerForGuild(event.getMessage().getGuild());
 //                audio.setVolume((float) 0.13);
 //
@@ -2236,8 +2236,10 @@ public class DiscordListener {
 //                audio.queue(new File("src/songs/leaguesongs/The Glory (James Egbert Remix).mp3"));
 //                audio.queue(new File("src/songs/leaguesongs/Welcome to Planet Urf (Jauz Remix).mp3"));
 //                audio.queue(new File("src/songs/leaguesongs/Worlds Collide (Arty Remix).mp3"));
-usageCounter++;
+                usageCounter++;
             } 
+            
+            
             else if (Mcontent.startsWith(">leave")) {
                 SirBroBot.client.getConnectedVoiceChannels().stream().filter((IVoiceChannel Vchannel) -> Vchannel.getGuild().equals(message.getGuild())).findFirst().ifPresent(IVoiceChannel::leave);
                     
@@ -2249,6 +2251,7 @@ usageCounter++;
 //                if (voiceChannel != null) {
 //                    try {
 //                        voiceChannel.join();
+            
             
             else if (Mcontent.startsWith(">skip")) {
                 if(Mcontent.equals(">skip")){
@@ -2335,44 +2338,47 @@ usageCounter++;
             } 
             
             else if (Mcontent.startsWith(">search")) {
+                message.reply("Being reworked under new Music system");
                 
                
-                String[] videoSearch = Mcontent.split("search");
-                String temp;
-                IMessage tempmessage = null;
-                MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
-                if (videoSearch.length == 2) {
-                    try {
-                        message.delete();
-                    } catch (MissingPermissionsException ignored) {
-                    }
-                    tempmessage = messageBuilder.withChannel(channel).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
-                    
-                    loadAndPlay(message.getChannel(), HTMLUnit.youtubeSearch(videoSearch[1].trim()), message.getAuthor());
-                    
-                } else {
-                    temp = null;
-                    message.reply("Command error. Syntax is `>search keywords`");
-                }
-                usageCounter++;
+//                String[] videoSearch = Mcontent.split("search");
+//                String temp;
+//                IMessage tempmessage = null;
+//                MessageBuilder messageBuilder = new MessageBuilder(event.getClient());
+//                if (videoSearch.length == 2) {
+//                    try {
+//                        message.delete();
+//                    } catch (MissingPermissionsException ignored) {
+//                    }
+//                    tempmessage = messageBuilder.withChannel(channel).withContent("Searching `YouTube` for terms: `" + videoSearch[1].trim()+"`").send();
+//                    
+//                    loadAndPlay(message.getChannel(), HTMLUnit.youtubeSearch(videoSearch[1].trim()), message.getAuthor());
+//                    
+//                } else {
+//                    temp = null;
+//                    message.reply("Command error. Syntax is `>search keywords`");
+//                }
+//                usageCounter++;
             } 
-            
+          
             else if (Mcontent.startsWith(">stream")) {
-                if(musicManager.getAudioProvider().getChannels()==0){
-                message.reply(":warning: **WARNING** :warning: Control volume on the `User Volume` menu from Discord. Access by right clicking on the User menu on SirBroBots name. `Waiting 10 seconds to play any audio` (Message may be deleivered twice for redundancy)");
-                Thread.sleep(10000);
-                }
-                AudioSourceManagers.registerRemoteSources(playerManager);
-                AudioSourceManagers.registerLocalSource(playerManager);
-
+                message.reply("Being reworked under new Music system");
                 
-                String[] urlContent = message.getContent().split(">stream");
-
-                if (urlContent.length < 1) {
-                    message.reply("Put space between >stream and URL");
-                } else {
-                    loadAndPlay(message.getChannel(), urlContent[1].trim(), message.getAuthor());
-                }
+//                if(musicManager.getAudioProvider().getChannels()==0){
+//                message.reply(":warning: **WARNING** :warning: Control volume on the `User Volume` menu from Discord. Access by right clicking on the User menu on SirBroBots name. `Waiting 10 seconds to play any audio` (Message may be deleivered twice for redundancy)");
+//                Thread.sleep(10000);
+//                }
+//                AudioSourceManagers.registerRemoteSources(playerManager);
+//                AudioSourceManagers.registerLocalSource(playerManager);
+//
+//                
+//                String[] urlContent = message.getContent().split(">stream");
+//
+//                if (urlContent.length < 1) {
+//                    message.reply("Put space between >stream and URL");
+//                } else {
+//                    loadAndPlay(message.getChannel(), urlContent[1].trim(), message.getAuthor());
+//                }
                 usageCounter++;
             }
         }
